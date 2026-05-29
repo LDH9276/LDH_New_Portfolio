@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useRef } from "react";
-import '../src/Route/css/main.css';
 import Banner from '../src/Component/Banner';
 import About from '../src/Component/About';
 import PersonProject from '../src/Component/PersonProject';
@@ -13,7 +12,6 @@ export default function Page() {
   const { isStart, activeSlide, setActiveSlide, reset } = useAppContext();
   const containerRef = useRef(null);
 
-  // Use IntersectionObserver to update activeSlide as the user scrolls
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -45,27 +43,26 @@ export default function Page() {
   };
 
   return (
-    <div className={`main ${isStart}`}>
+    <div className={`transition-opacity duration-[2.5s] ${isStart === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <Pos handleSlideNavigation={handleSlideNavigation} activeSlide={activeSlide} />
       
-      {/* Native scroll container using Tailwind snap scroll utilities */}
       <div 
         ref={containerRef}
-        className="h-screen w-full overflow-y-scroll scroll-smooth"
+        className="h-screen w-full overflow-y-auto scroll-smooth"
       >
         <section data-index="0" className="scroll-section h-screen w-full relative">
           <Banner activeSlide={activeSlide} />
         </section>
-        <section data-index="1" className="scroll-section h-screen w-full relative">
+        <section data-index="1" className="scroll-section min-h-screen w-full relative">
           <About activeSlide={activeSlide} />
         </section>
-        <section data-index="2" className="scroll-section h-screen w-full relative">
+        <section data-index="2" className="scroll-section min-h-screen w-full relative">
           <PersonProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="3" className="scroll-section h-screen w-full relative">
+        <section data-index="3" className="scroll-section min-h-screen w-full relative">
           <TeamProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="4" className="scroll-section h-screen w-full relative">
+        <section data-index="4" className="scroll-section min-h-screen w-full relative">
           <Contact activeSlide={activeSlide} />
         </section>
       </div>

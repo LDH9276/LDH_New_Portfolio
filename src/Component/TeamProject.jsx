@@ -1,46 +1,56 @@
 import React from 'react';
 import Link from 'next/link';
 import portfolio from './team'
-import './css/portfolioteam.css'
 import Scroll from '../Header/Scroll';
 import Image from 'next/image';
 
 function TeamProject({reset}) {
   return (
-    <div className='main-comp team'>
-      <div className="main-line">&nbsp;</div>
-      <div className="main-index-wrap">
-        <p className='main-subtitle'>
-          The LDH
-        </p>
-        <h2 className='main-title'>
-          Team Project
-        </h2>
+    <div className="relative w-full h-full flex items-center">
+      <div className="section-container py-20">
+        <div className="mb-10">
+          <span className="section-label">The LDH</span>
+          <h2 className="section-title">Team Project</h2>
+          <div className="accent-line" />
+        </div>
 
-        <div className="team-portfolio">
-        {portfolio.person.slice(0).reverse().map((item, index) => {
-            return ( // 결과출력은 반드시 return으로 해야한다.
-              <div className="team-portfolio_item" key={index}>
-                <Link href={`/portfolio/${item.id}`}  onClick={reset} className="team-portfolio_link" key={index}  >
-                <Image src={`/images/${item.program}`} alt={item.family} width={800} height={600} className='portfolio-program'/>
-                <div className="team-portfolio-info_wrap">
-                  <p className='portfolio-subtitle'>{item.family}</p>
-                  <p className='portfolio-title'>{item.name}</p>
-                </div>
-                <span className="papper-white">&nbsp;</span>
-                <span className="papper-fold">&nbsp;</span>
-                </Link>
-                <div className='papper-thumb'>
-                  <Link href={`/portfolio/${item.id}`}  onClick={reset}>
-                  <Image src={`/images/${item.thumb}`} alt={item.family} width={400} height={300} className='portfolio-thumb'/>
-                  </Link>
-                </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {portfolio.person.slice(0).reverse().map((item, index) => (
+            <Link 
+              href={`/portfolio/${item.id}`} 
+              key={index} 
+              onClick={reset}
+              className="card group block"
+            >
+              {/* Thumbnail */}
+              <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted-light dark:bg-surface-muted-dark">
+                <Image 
+                  src={`/images/${item.thumb}`} 
+                  alt={item.name} 
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+                <div className="absolute inset-0 bg-lime/0 group-hover:bg-lime/10 transition-colors duration-300" />
               </div>
-            );
-          })}
+              
+              {/* Info */}
+              <div className="p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Image src={`/images/${item.program}`} alt={item.family} width={16} height={16} 
+                    className="dark:invert" />
+                  <span className="text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted-dark">
+                    {item.family}
+                  </span>
+                </div>
+                <h3 className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark
+                  group-hover:text-lime transition-colors duration-300">
+                  {item.name}
+                </h3>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
-      <div className="main-line02">&nbsp;</div>
       <Scroll />
     </div>
   );

@@ -1,104 +1,102 @@
 import React, {useState, useEffect} from 'react';
-import './css/about.css'
 import Scroll from '../Header/Scroll';
 import Image from 'next/image';
 
 function About( {activeSlide} ) {
-
   const [active, setActive] = useState('ready');
-  const [isScroll, setIsScroll] = useState('');
 
   useEffect(() => {
-  if (activeSlide === 1) {
-    setActive('');
-    setIsScroll('');
-  } else {
-    setActive('ready');
-    setIsScroll('active');
-  }}, [activeSlide]);
+    if (activeSlide === 1) setActive('');
+    else setActive('ready');
+  }, [activeSlide]);
 
-
+  const skills = [
+    { icon: '/images/item03.svg', title: 'HTML / CSS', desc: '프론트엔드 기본 중의 기본. 퍼블리싱 경험을 바탕으로 탄탄한 마크업이 가능합니다.' },
+    { icon: '/images/item04.svg', title: 'JavaScript', desc: 'ES6+ 문법을 활용한 동적 인터랙션 구현. 모던 프레임워크 기반 개발이 가능합니다.' },
+    { icon: '/images/item02.svg', title: 'PHP / SQL', desc: '서버사이드 연동 및 DB 출력. 리액트와의 데이터 통신 경험을 보유하고 있습니다.' },
+    { icon: '/images/item01.svg', title: 'React.js', desc: '컴포넌트 기반 SPA 개발. 상태관리와 라우팅까지 실무 수준의 역량을 갖추고 있습니다.' },
+  ];
 
   return (
-    <div className={`main-comp about-me ${active}`}>
-      <div className="main-line">&nbsp;</div>
-      <div className="main-line02">&nbsp;</div>
-      <div className="main-index-wrap">
-        <p className='main-subtitle'>
-          The LDH
-        </p>
-        <h2 className='main-title'>
-          About Me
-        </h2>
-        <div className="about-wrap">
-          <div className="about-title-wrap">
-            <div className="about-informantion">
-              <h2 className='about-title'>프론트엔드 개발자 <br/>이동헌입니다.</h2>
-              <div className="about-text-wrap">
-                <p className='about-text-info'>
-                  웹 퍼블리셔를 넘어 <br />
-                  프론트엔드 영역까지 열심히 달려왔습니다. <br />
-                  이제 프론트엔드에서의 더 큰 영역에서 <br />
-                  뛰어들 준비가 끝났습니다.
-                </p>
-                <ul className='about-text-career'>
-                  <li><span>2016 - 2020</span>책나무출판사 (북다지이너)</li>
-                  <li><span>2020 - 2022</span>케이패밀리코퍼레이션 (영상디자이너)</li>
-                  <li><span>LICENSE</span>웹디자인기능사</li>
-                </ul>
-              </div>
+    <div className={`relative w-full h-full flex items-center
+      transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
+      
+      <div className="section-container py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+          
+          {/* Left: Info */}
+          <div className="space-y-8">
+            <div>
+              <span className="section-label">The LDH</span>
+              <h2 className="section-title">About Me</h2>
+              <div className="accent-line mb-6" />
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark">
+                프론트엔드 개발자<br/>이동헌입니다.
+              </h3>
+              <p className="text-sm md:text-base leading-relaxed text-text-secondary-light dark:text-text-secondary-dark">
+                웹 퍼블리셔를 넘어 프론트엔드 영역까지 열심히 달려왔습니다.
+                이제 프론트엔드에서의 더 큰 영역에서 뛰어들 준비가 끝났습니다.
+              </p>
+            </div>
+
+            <ul className="space-y-3 text-sm">
+              <li className="flex gap-4 text-text-secondary-light dark:text-text-secondary-dark">
+                <span className="font-semibold text-lime min-w-[120px]">2016 – 2020</span>
+                책나무출판사 (북디자이너)
+              </li>
+              <li className="flex gap-4 text-text-secondary-light dark:text-text-secondary-dark">
+                <span className="font-semibold text-lime min-w-[120px]">2020 – 2022</span>
+                케이패밀리코퍼레이션 (영상디자이너)
+              </li>
+              <li className="flex gap-4 text-text-secondary-light dark:text-text-secondary-dark">
+                <span className="font-semibold text-lime min-w-[120px]">LICENSE</span>
+                웹디자인기능사
+              </li>
+            </ul>
+
+            {/* Profile image - mobile */}
+            <div className="block lg:hidden relative aspect-[4/3] w-full overflow-hidden">
+              <Image src="/images/thumb.webp" alt="프로필" fill className="object-cover" />
+              <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-surface-light dark:from-surface-dark to-transparent" />
             </div>
           </div>
-          <div className="about-box-wrap">
-            <div className={`about-bg-1 ${isScroll}`}> 
-            <Image src={`/images/thumb.webp`} alt="메인" width={500} height={500} />
-            </div>
-            <div className={`about-bg-2 ${isScroll}`}>
-              <div className="about-box">
-              </div>
-              <div className="about-box01">
-              </div>
+
+          {/* Right: Skills */}
+          <div className="space-y-6">
+            {/* Profile image - desktop */}
+            <div className="hidden lg:block relative aspect-[4/3] w-full overflow-hidden mb-8">
+              <Image src="/images/thumb.webp" alt="프로필" fill className="object-cover" />
+              <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-surface-light dark:from-surface-dark to-transparent" />
             </div>
 
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {skills.map((skill, i) => (
+                <div key={i} className="card p-5 group">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 flex items-center justify-center
+                      bg-surface-muted-light dark:bg-surface-muted-dark flex-shrink-0">
+                      <Image src={skill.icon} alt={skill.title} width={24} height={24} 
+                        className="dark:invert dark:brightness-200" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark mb-1">
+                        {skill.title}
+                      </h4>
+                      <p className="text-xs leading-relaxed text-text-muted-light dark:text-text-muted-dark">
+                        {skill.desc}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-
-        <ul className="info_graphic">
-        <li>
-          <Image src={`/images/item03.svg`} alt="HTML" width={50} height={50} className='info_graphic_icon'/>
-          <p>
-            <span className="info_graphic_title">HTML / CSS</span>
-            <span className='info_graphic_subtitle'>프론트엔드 기본 중의 기본</span>
-            <span className="info_graphic_text">프론트엔드 입문에서는 당연히 기본으로 다룰 줄 알아야하는 것이 HTML / CSS입니다. 이전 홈페이지 퍼블리싱을 담당해오면서 기본적으로 쓰기가 가능합니다.</span>
-          </p>
-        </li>
-        <li>
-          <Image src={`/images/item04.svg`} alt="JS" width={50} height={50} className='info_graphic_icon'/>
-          <p>
-            <span className="info_graphic_title">JAVASCRIPT</span>
-            <span className='info_graphic_subtitle'>동적인 ES6 사용가능</span>
-            <span className="info_graphic_text">자바스크립트는 이전에는 제이쿼리만 사용해왔으나 이제는 ES6 문법을 어느정도 할 수 있게 되었습니다. 바로 다음 리엑트에서 자세히 말할 수 있을 것 같네요!</span>
-          </p>
-        </li>
-        <li>
-          <Image src={`/images/item02.svg`} alt="PHP" width={50} height={50} className='info_graphic_icon'/>
-          <p>
-            <span className="info_graphic_title">PHP / SQL</span>
-            <span className='info_graphic_subtitle'>DB기초를 다룰줄 아는 개발자</span>
-            <span className="info_graphic_text">서버사이드 언어를 다룰 수 있습니다. DB를 출력해서 리액트와 Html 모두 연동이 가능할 정도의 실력을 가지고 있습니다. 아래의 포트폴리오를 같이 보시죠!</span>
-          </p>
-        </li>
-        <li>
-          <Image src={`/images/item01.svg`} alt="REACT" width={50} height={50} className='info_graphic_icon'/>
-          <p>
-            <span className="info_graphic_title">REACT.JS</span>
-            <span className='info_graphic_subtitle'>준비된 주니어 리액트 개발자</span>
-            <span className="info_graphic_text">ES6를 마스터한 이유는 바로 리액트를 위해서였습니다! 리액트로 DB까지 출력해서 쇼핑몰 하나를 만들 수 있을 정도로 성장했습니다.</span>
-          </p>
-        </li>
-      </ul>
       </div>
+
       <Scroll />
     </div>
   );

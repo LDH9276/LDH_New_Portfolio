@@ -1,36 +1,44 @@
 import React, {useEffect, useState} from 'react';
-import './css/banner.css'
 import Scroll from '../Header/Scroll';
 
 function Banner({activeSlide}) {
-
   const [active, setActive] = useState('ready');
 
   useEffect(() => {
-  if (activeSlide === 0) {
-    setActive('');
-  } else {
-    setActive('ready');
-  }}, [activeSlide]);
+    if (activeSlide === 0) setActive('');
+    else setActive('ready');
+  }, [activeSlide]);
 
   return (
-    <div className={`main-comp banner ${active}`}>
-      <div className="main-line">&nbsp;</div>
-      <div className="main-line02">&nbsp;</div>
-      <div className="main-index-wrap" id='banner'>
-        <p className='main-subtitle'>
-          The LDH
-        </p>
-        <h2 className='main-title'>
-          Introduce
-        </h2>
-        <div className="banner-wrap">
-          <video src={`${process.env.PUBLIC_URL}/videos/introduce.mp4`} autoPlay loop muted className='main-banner'></video>
-          <p className='main-banner-subtitle'>Front-end DEVELOPER</p>
-          <p className='main-banner-title'>Portfolio</p>
-          <p className='main-banner-subtitle2'>The Frontier - 디자인을 넘어서</p>
+    <div className={`relative w-full h-full flex items-center justify-center overflow-hidden
+      transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
+      
+      {/* Video Background */}
+      <video 
+        src="/videos/introduce.mp4" 
+        autoPlay loop muted playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50" />
+
+      {/* Content */}
+      <div className="relative z-10 section-container flex flex-col items-start justify-center h-full py-20">
+        <div className="space-y-4 md:space-y-6">
+          <div className="accent-line" />
+          <p className="text-xs md:text-sm font-medium uppercase tracking-[0.3em] text-white/60">
+            Front-end Developer
+          </p>
+          <h2 className="text-display text-white leading-none">
+            Portfolio
+          </h2>
+          <p className="text-sm md:text-base text-white/50 max-w-md">
+            디자인을 넘어서 — The Frontier
+          </p>
         </div>
       </div>
+
       <Scroll />
     </div>
   );
