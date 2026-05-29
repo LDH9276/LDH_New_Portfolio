@@ -33,16 +33,16 @@ const highlight = (text) => {
   
   return parts.map((part, i) => {
     if (['const', 'function', 'return', 'new', 'import', 'from'].includes(part)) 
-      return <span key={i} className="text-purple-400">{part}</span>;
+      return <span key={i} className="text-purple-700 dark:text-purple-400">{part}</span>;
     if (['Promise', 'setTimeout', 'log', 'then'].includes(part)) 
-      return <span key={i} className="text-yellow-300">{part}</span>;
+      return <span key={i} className="text-yellow-600 dark:text-yellow-300">{part}</span>;
     if (['developer', 'console', 'React', 'useState', 'useEffect'].includes(part)) 
-      return <span key={i} className="text-blue-400">{part}</span>;
+      return <span key={i} className="text-blue-600 dark:text-blue-400">{part}</span>;
     if (['name', 'role', 'skills', 'passion', 'status', 'dev'].includes(part)) 
-      return <span key={i} className="text-blue-300">{part}</span>;
+      return <span key={i} className="text-teal-700 dark:text-blue-300">{part}</span>;
     if (part.startsWith("'") || part.startsWith("`")) 
-      return <span key={i} className="text-green-400">{part}</span>;
-    return <span key={i} className="text-gray-300">{part}</span>;
+      return <span key={i} className="text-green-700 dark:text-green-400">{part}</span>;
+    return <span key={i} className="text-gray-700 dark:text-gray-300">{part}</span>;
   });
 };
 
@@ -72,18 +72,18 @@ export default function IDEBackground() {
   }, [currentLineIdx, currentCharIdx]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden bg-[#0d1117] pointer-events-none select-none opacity-80 md:opacity-100 z-0">
+    <div className="absolute inset-0 overflow-hidden bg-surface-light dark:bg-[#0d1117] transition-colors duration-500 pointer-events-none select-none opacity-80 md:opacity-100 z-0">
       <div className="w-full h-full p-4 md:p-8 font-mono text-[10px] md:text-xs lg:text-sm leading-loose md:leading-loose">
         {lines.map((line, idx) => (
           <div key={idx} className="flex">
-            <span className="w-8 text-right pr-4 text-gray-600 select-none">{idx + 1}</span>
+            <span className="w-8 text-right pr-4 text-gray-400 dark:text-gray-600 select-none">{idx + 1}</span>
             <span className="whitespace-pre">{highlight(line)}</span>
           </div>
         ))}
         
         {currentLineIdx < rawCode.length && (
           <div className="flex">
-            <span className="w-8 text-right pr-4 text-gray-600 select-none">{lines.length + 1}</span>
+            <span className="w-8 text-right pr-4 text-gray-400 dark:text-gray-600 select-none">{lines.length + 1}</span>
             <span className="whitespace-pre">
               {highlight(rawCode[currentLineIdx].substring(0, currentCharIdx))}
               <span className="inline-block w-2 h-4 md:h-5 bg-lime ml-1 align-middle animate-pulse" />
@@ -93,8 +93,8 @@ export default function IDEBackground() {
       </div>
       
       {/* 어두운 오버레이 그라데이션으로 위쪽 컨텐츠가 잘 보이게 함 */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0d1117]/80 via-[#0d1117]/40 to-[#0d1117]/90" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0d1117] via-transparent to-[#0d1117]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-surface-light/80 via-surface-light/40 to-surface-light/90 dark:from-[#0d1117]/80 dark:via-[#0d1117]/40 dark:to-[#0d1117]/90 transition-colors duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-r from-surface-light via-transparent to-surface-light dark:from-[#0d1117] dark:via-transparent dark:to-[#0d1117] transition-colors duration-500" />
     </div>
   );
 }
