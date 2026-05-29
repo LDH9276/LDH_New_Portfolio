@@ -9,8 +9,21 @@ import Pos from '../src/Header/Pos';
 import { useAppContext } from './Context';
 
 export default function Page() {
-  const { isStart, activeSlide, setActiveSlide, setIsScrolled, reset } = useAppContext();
+  const { isStart, activeSlide, setActiveSlide, setIsScrolled, pendingScrollIndex, setPendingScrollIndex, reset } = useAppContext();
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (pendingScrollIndex !== null) {
+      setTimeout(() => {
+        setActiveSlide(pendingScrollIndex);
+        const section = containerRef.current?.querySelector(`[data-index="${pendingScrollIndex}"]`);
+        if (section) {
+          section.scrollIntoView({ behavior: 'instant' });
+        }
+        setPendingScrollIndex(null);
+      }, 50);
+    }
+  }, [pendingScrollIndex, setActiveSlide, setPendingScrollIndex]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

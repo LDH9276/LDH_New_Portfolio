@@ -6,7 +6,7 @@ import Image from 'next/image';
 import ThemeToggle from '../../app/ThemeToggle';
 
 function Header() {
-  const { isStart, setActiveSlide, isScrolled, reset } = useAppContext();
+  const { isStart, setActiveSlide, isScrolled, setPendingScrollIndex, reset } = useAppContext();
   const [toggle, setToggle] = useState('');
   const [menus , setMenus] = useState(false);
   const router = useRouter();
@@ -19,16 +19,23 @@ function Header() {
     setActiveSlide(0);
     const section = document.querySelector(`[data-index="0"]`);
     if (section) section.scrollIntoView({ behavior: 'smooth' });
-    router.push('/');
+    if (window.location.pathname !== '/') {
+      setPendingScrollIndex(0);
+      router.push('/');
+    }
   }
 
   const handleNavClick = (index) => {
-    setActiveSlide(index);
-    const section = document.querySelector(`[data-index="${index}"]`);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+    if (window.location.pathname === '/') {
+      setActiveSlide(index);
+      const section = document.querySelector(`[data-index="${index}"]`);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      setPendingScrollIndex(index);
+      router.push('/');
     }
-    router.push('/');
   };
 
   const menuEvent = () => {
