@@ -51,21 +51,21 @@ export default function Page() {
       {/* Native scroll container using Tailwind snap scroll utilities */}
       <div 
         ref={containerRef}
-        className="h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth"
+        className="h-screen w-full overflow-y-scroll scroll-smooth"
       >
-        <section data-index="0" className="snap-start h-screen w-full relative">
+        <section data-index="0" className="scroll-section h-screen w-full relative">
           <Banner activeSlide={activeSlide} />
         </section>
-        <section data-index="1" className="snap-start h-screen w-full relative">
+        <section data-index="1" className="scroll-section h-screen w-full relative">
           <About activeSlide={activeSlide} />
         </section>
-        <section data-index="2" className="snap-start h-screen w-full relative">
+        <section data-index="2" className="scroll-section h-screen w-full relative">
           <PersonProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="3" className="snap-start h-screen w-full relative">
+        <section data-index="3" className="scroll-section h-screen w-full relative">
           <TeamProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="4" className="snap-start h-screen w-full relative">
+        <section data-index="4" className="scroll-section h-screen w-full relative">
           <Contact activeSlide={activeSlide} />
         </section>
       </div>
