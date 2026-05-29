@@ -1,15 +1,15 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import portfoliodata from '../../src/Component/portfoliodata.json';
-import '../../src/Route/css/main.css';
-import '../../src/Component/css/portfolio.css';
-import Scroll from '../../src/Header/Scroll';
+import portfoliodata from '../../../src/Component/portfoliodata.json';
+import '../../../src/Route/css/main.css';
+import '../../../src/Component/css/portfolio.css';
+import Scroll from '../../../src/Header/Scroll';
 
-import PortPesronPos from '../../src/Header/PortPersonPos';
-import PortTeamPos from '../../src/Header/PortTeamPos';
-import ScrollPf from '../../src/Header/ScrollPf';
-import { useAppContext } from '../../app/Context';
+import PortPesronPos from '../../../src/Header/PortPersonPos';
+import PortTeamPos from '../../../src/Header/PortTeamPos';
+import ScrollPf from '../../../src/Header/ScrollPf';
+import { useAppContext } from '../../../app/Context';
 
 function PortfolioPage() {
   const { p_slide, setP_slide, isStart, setActiveSlide } = useAppContext();

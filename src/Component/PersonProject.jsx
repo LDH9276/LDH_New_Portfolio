@@ -2,7 +2,7 @@ import React from 'react';
 import portfolio from './person'
 import './css/portfolioitem.css'
 import Scroll from '../Header/Scroll';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 function PersonProject( {reset} ) {
 
@@ -22,7 +22,7 @@ function PersonProject( {reset} ) {
           {portfolio.person.slice(0).reverse().map((item, index) => {
             return ( // 결과출력은 반드시 return으로 해야한다.
               <div className="person-portfolio_item" key={index}>
-                <Link to={`/portfolio/${item.id}`} className="portfolio_link" key={index} onClick={reset}>
+                <Link href={`/portfolio/${item.id}`} className="portfolio_link" key={index} onClick={reset}>
                 <img src={`${process.env.PUBLIC_URL}/images/${item.program}`} alt={item.family} 
                 className='portfolio-program'/>
                 <div className="portfolio-info_wrap">
@@ -33,7 +33,7 @@ function PersonProject( {reset} ) {
                 <span className="papper-fold">&nbsp;</span>
                 </Link>
                 <div className='papper-thumb'>
-                  <Link to ={`/portfolio/${item.id}`} className="portfolio_link" key={index} onClick={reset}>
+                  <Link href ={`/portfolio/${item.id}`} className="portfolio_link" key={index} onClick={reset}>
                   <img src={`${process.env.PUBLIC_URL}/images/${item.thumb}`} alt={item.family}                    className='portfolio-thumb'/>
                   </Link>
                 </div>

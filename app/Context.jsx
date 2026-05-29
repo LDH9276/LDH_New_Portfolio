@@ -1,7 +1,15 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AppContext = createContext();
+const AppContext = createContext({
+  isStart: '',
+  setIsStart: () => {},
+  activeSlide: 0,
+  setActiveSlide: () => {},
+  p_slide: 0,
+  setP_slide: () => {},
+  reset: () => {}
+});
 
 export function AppProvider({ children }) {
   const [showIntro, setShowIntro] = useState(true);

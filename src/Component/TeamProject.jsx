@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import portfolio from './team'
 import './css/portfolioteam.css'
 import Scroll from '../Header/Scroll';
@@ -20,7 +20,7 @@ function TeamProject({reset}) {
         {portfolio.person.slice(0).reverse().map((item, index) => {
             return ( // 결과출력은 반드시 return으로 해야한다.
               <div className="team-portfolio_item" key={index}>
-                <Link to={`/portfolio/${item.id}`}  onClick={reset} className="team-portfolio_link" key={index}  >
+                <Link href={`/portfolio/${item.id}`}  onClick={reset} className="team-portfolio_link" key={index}  >
                 <img src={`${process.env.PUBLIC_URL}/images/${item.program}`} alt={item.family} className='portfolio-program'/>
                 <div className="team-portfolio-info_wrap">
                   <p className='portfolio-subtitle'>{item.family}</p>
@@ -30,7 +30,7 @@ function TeamProject({reset}) {
                 <span className="papper-fold">&nbsp;</span>
                 </Link>
                 <div className='papper-thumb'>
-                  <Link to={`/portfolio/${item.id}`}  onClick={reset}>
+                  <Link href={`/portfolio/${item.id}`}  onClick={reset}>
                   <img src={`${process.env.PUBLIC_URL}/images/${item.thumb}`} alt={item.family}  className='portfolio-thumb'/>
                   </Link>
                 </div>
