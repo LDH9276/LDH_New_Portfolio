@@ -8,7 +8,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="group relative w-10 h-10 flex items-center justify-center
+      className="group relative w-9 h-9 flex items-center justify-center rounded-none
                  border border-border-light dark:border-border-dark
                  bg-surface-card-light dark:bg-surface-card-dark
                  transition-all duration-300
@@ -17,7 +17,7 @@ export default function ThemeToggle() {
     >
       {/* Sun icon */}
       <svg
-        className={`absolute w-5 h-5 transition-all duration-300
+        className={`absolute w-4 h-4 transition-all duration-300 text-text-primary-light dark:text-text-primary-dark
           ${theme === 'dark' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-90 scale-0'}`}
         fill="none"
         viewBox="0 0 24 24"
@@ -29,7 +29,7 @@ export default function ThemeToggle() {
       </svg>
       {/* Moon icon */}
       <svg
-        className={`absolute w-5 h-5 transition-all duration-300
+        className={`absolute w-4 h-4 transition-all duration-300 text-text-primary-light dark:text-text-primary-dark
           ${theme === 'light' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'}`}
         fill="none"
         viewBox="0 0 24 24"
