@@ -15,13 +15,14 @@
 }
 .main-comp{
   width: 100%;
-  height: 790px;
+  min-height: 790px;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
 .main-index-wrap{
-  width: 1170px;
+  width: 100%;
+  max-width: 1170px;
   margin: 0 auto;
   padding: 0px 24px;
   height: 100%;

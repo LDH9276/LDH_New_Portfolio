@@ -11,3 +11,80 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .main-index-wrap {
+    @apply w-full px-4;
+  }
+  .main-comp {
+    @apply min-h-screen top-0 transform-none relative mt-20;
+  }
+  .main-banner {
+    @apply w-full static transform-none mt-10;
+  }
+  .banner-wrap {
+    @apply static h-auto flex flex-col items-center text-center;
+  }
+  .main-banner-title, .main-banner-subtitle, .main-banner-subtitle2 {
+    @apply static right-auto top-auto text-center mt-4;
+  }
+  .main-banner-title {
+    @apply text-4xl;
+  }
+  .about-wrap {
+    @apply flex-col items-center;
+  }
+  .about-box-wrap {
+    @apply static w-full h-auto mt-10 flex flex-col items-center;
+  }
+  .about-bg-1, .about-bg-2 {
+    @apply static w-full h-auto;
+  }
+  .info_graphic {
+    @apply flex-col space-y-6;
+  }
+  .info_graphic li {
+    @apply w-full flex-col text-center items-center;
+  }
+  .portfolio-developer {
+    @apply flex-col;
+  }
+  .portfolio-item {
+    @apply flex-col;
+  }
+  .person-portfolio, .team-portfolio {
+    @apply grid grid-cols-1 gap-8 mt-10;
+  }
+  .person-portfolio_item, .team-portfolio_item {
+    @apply w-full static mb-10 h-auto;
+  }
+  .portfolio-program {
+    @apply w-full h-auto relative;
+  }
+  .papper-thumb {
+    @apply hidden;
+  }
+  .contact-info_wrap {
+    @apply w-full h-auto static flex flex-col items-center;
+  }
+  .contact-profile {
+    @apply relative mx-auto block mt-10 w-2/3;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    @apply hidden; /* Hide sidebar on mobile */
+  }
+  .header-wrap h1 {
+    @apply w-20;
+  }
+  .main-title {
+    @apply text-3xl;
+  }
+  .intro-title {
+    @apply text-4xl;
+  }
+}
+
