@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import './css/menu.css'
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../app/Context';
+import Image from 'next/image';
 
 function Menus( {toggle, setToggle, menuEvent} ) {
   const { setActiveSlide, reset } = useAppContext();
@@ -52,7 +53,7 @@ function Menus( {toggle, setToggle, menuEvent} ) {
             About Me
           </li>
           <li onClick={menuOpen01}>Person Project
-            <img src={`${process.env.PUBLIC_URL}/images/lnb_toggle.svg`} alt="toggle" className={`lnb-toggle ${menu01}`} />
+            <Image src={`/images/lnb_toggle.svg`} alt="toggle" width={24} height={24} className={`lnb-toggle ${menu01}`} />
             <ul className={`lnb ${menu01}`}>
               <li onClick={() => gnbHandleEvent(2)}>개인 프로젝트 한 눈에 보기</li>
               <li>
@@ -79,7 +80,7 @@ function Menus( {toggle, setToggle, menuEvent} ) {
           </li>
           <li onClick={menuOpen02}>
             Team Project
-            <img src={`${process.env.PUBLIC_URL}/images/lnb_toggle.svg`} alt="toggle" className={`lnb-toggle ${menu02}`} />
+            <Image src={`/images/lnb_toggle.svg`} alt="toggle" width={24} height={24} className={`lnb-toggle ${menu02}`} />
             <ul className={`lnb ${menu02}`}>
               <li onClick={() => gnbHandleEvent(3)}>팀 프로젝트 한 눈에 보기</li>
               <li>
@@ -109,7 +110,7 @@ function Menus( {toggle, setToggle, menuEvent} ) {
           </li>
         </ul>
       </nav>
-      <img src={`${process.env.PUBLIC_URL}/images/logo-white.svg`} alt="" className='menu-logo-bg' />
+      <Image src={`/images/logo-white.svg`} alt="" width={200} height={100} className='menu-logo-bg' />
     </div>
   );
 }

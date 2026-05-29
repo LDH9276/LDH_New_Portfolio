@@ -10,6 +10,7 @@ import PortPesronPos from '../../../src/Header/PortPersonPos';
 import PortTeamPos from '../../../src/Header/PortTeamPos';
 import ScrollPf from '../../../src/Header/ScrollPf';
 import { useAppContext } from '../../../app/Context';
+import Image from 'next/image';
 
 function PortfolioPage() {
   const { p_slide, setP_slide, isStart, setActiveSlide } = useAppContext();
@@ -94,7 +95,7 @@ function PortfolioPage() {
       >
         <section data-index="0" className="scroll-section snap-start h-screen w-full relative">
           <div className="portfolio-intro">
-            <img src={`/portfolio/${portfolioItem.main_img}`} alt={portfolioItem.name} className='intro-main'/>
+            <Image src={`/portfolio/${portfolioItem.main_img}`} alt={portfolioItem.name} width={1200} height={800} className='intro-main'/>
             <div className="text-wrap">
               <p className='intro-subtitle'>{portfolioItem.family}</p>
               <p className='intro-title'>{portfolioItem.name}</p>
@@ -118,7 +119,7 @@ function PortfolioPage() {
                 Introduce
               </h2>
               <div className="portfolio-info">
-                <img src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name + '01'} className='portfolio-mainimg01'/>
+                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name + '01'} width={800} height={600} className='portfolio-mainimg01'/>
                 <div>
                   <p className='portfolio-item-title'>{portfolioItem.Headtitle}</p>
                   <pre className='portfolio-text'>
@@ -162,15 +163,15 @@ function PortfolioPage() {
 
                 {(id === '1' || id === '4' || id === '2' || id === '7') && (
                   <div className="design-img_wrap">
-                    {img === 0 ? (<img src={`/images/${portfolioItem.textimg02}`} alt="" className='design-image'/>) : (<img src={`/images/${portfolioItem.textimg02}`} alt="" className='design-image disabled'/>)}
-                    {img === 1 ? (<img src={`/images/${portfolioItem.textimg03}`} alt="" className='design-image'/>) : (<img src={`/images/${portfolioItem.textimg03}`} alt="" className='design-image disabled'/>)}
-                    {img === 2 ? (<img src={`/images/${portfolioItem.textimg04}`} alt="" className='design-image'/>) : (<img src={`/images/${portfolioItem.textimg04}`} alt="" className='design-image disabled'/>)}
+                    {img === 0 ? (<Image src={`/images/${portfolioItem.textimg02}`} alt="" width={800} height={600} className='design-image'/>) : (<Image src={`/images/${portfolioItem.textimg02}`} alt="" width={800} height={600} className='design-image disabled'/>)}
+                    {img === 1 ? (<Image src={`/images/${portfolioItem.textimg03}`} alt="" width={800} height={600} className='design-image'/>) : (<Image src={`/images/${portfolioItem.textimg03}`} alt="" width={800} height={600} className='design-image disabled'/>)}
+                    {img === 2 ? (<Image src={`/images/${portfolioItem.textimg04}`} alt="" width={800} height={600} className='design-image'/>) : (<Image src={`/images/${portfolioItem.textimg04}`} alt="" width={800} height={600} className='design-image disabled'/>)}
                   </div>
                 )}
 
                 {(id === '3' || id === '6' || id === '5' || id === '8') && (
                   <div className="design-img_wrap">
-                    <img src={`/images/${portfolioItem.textimg02}`} alt="" className='design-image'/>
+                    <Image src={`/images/${portfolioItem.textimg02}`} alt="" width={800} height={600} className='design-image'/>
                   </div>
                 )}
               </div>
@@ -267,7 +268,7 @@ function PortfolioPage() {
                   {portfolioItem.text04}
                   </pre>
                 </div>
-                <img src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name + '01'} className='portfolio-mainimg01'/>
+                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name + '01'} width={800} height={600} className='portfolio-mainimg01'/>
               </div>
             </div>
             {productID < 5 ? (<button className='portfolio-tolist' onClick={toList}>목록으로</button>) : (<button className='portfolio-tolist 2' onClick={toList2}>목록으로</button>)}

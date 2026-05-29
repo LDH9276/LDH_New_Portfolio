@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './css/about.css'
 import Scroll from '../Header/Scroll';
+import Image from 'next/image';
 
 function About( {activeSlide} ) {
 
@@ -50,7 +51,7 @@ function About( {activeSlide} ) {
           </div>
           <div className="about-box-wrap">
             <div className={`about-bg-1 ${isScroll}`}> 
-            <img src={`${process.env.PUBLIC_URL}/images/thumb.webp`} alt="메인" />
+            <Image src={`/images/thumb.webp`} alt="메인" width={500} height={500} />
             </div>
             <div className={`about-bg-2 ${isScroll}`}>
               <div className="about-box">
@@ -65,7 +66,7 @@ function About( {activeSlide} ) {
 
         <ul className="info_graphic">
         <li>
-          <img src={`${process.env.PUBLIC_URL}/images/item03.svg`} alt="HTML" className='info_graphic_icon'/>
+          <Image src={`/images/item03.svg`} alt="HTML" width={50} height={50} className='info_graphic_icon'/>
           <p>
             <span className="info_graphic_title">HTML / CSS</span>
             <span className='info_graphic_subtitle'>프론트엔드 기본 중의 기본</span>
@@ -73,7 +74,7 @@ function About( {activeSlide} ) {
           </p>
         </li>
         <li>
-          <img src={`${process.env.PUBLIC_URL}/images/item04.svg`} alt="HTML" className='info_graphic_icon'/>
+          <Image src={`/images/item04.svg`} alt="JS" width={50} height={50} className='info_graphic_icon'/>
           <p>
             <span className="info_graphic_title">JAVASCRIPT</span>
             <span className='info_graphic_subtitle'>동적인 ES6 사용가능</span>
@@ -81,7 +82,7 @@ function About( {activeSlide} ) {
           </p>
         </li>
         <li>
-          <img src={`${process.env.PUBLIC_URL}/images/item02.svg`} alt="HTML" className='info_graphic_icon'/>
+          <Image src={`/images/item02.svg`} alt="PHP" width={50} height={50} className='info_graphic_icon'/>
           <p>
             <span className="info_graphic_title">PHP / SQL</span>
             <span className='info_graphic_subtitle'>DB기초를 다룰줄 아는 개발자</span>
@@ -89,7 +90,7 @@ function About( {activeSlide} ) {
           </p>
         </li>
         <li>
-          <img src={`${process.env.PUBLIC_URL}/images/item01.svg`} alt="HTML" className='info_graphic_icon'/>
+          <Image src={`/images/item01.svg`} alt="REACT" width={50} height={50} className='info_graphic_icon'/>
           <p>
             <span className="info_graphic_title">REACT.JS</span>
             <span className='info_graphic_subtitle'>준비된 주니어 리액트 개발자</span>

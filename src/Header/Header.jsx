@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import './css/header.css'
 import Menus from './Menus';
 import { useAppContext } from '../../app/Context';
+import Image from 'next/image';
 
 function Header() {
   const { isStart, setActiveSlide, reset } = useAppContext();
@@ -40,7 +41,7 @@ function Header() {
     <header className={`header ${isStart}`}>
       <div className="header-wrap">
         <h1 onClick={toMainTitle}>
-            <img src={`${process.env.PUBLIC_URL}/images/logo.svg`} alt="로고" />
+            <Image src={`/images/logo.svg`} alt="로고" width={100} height={50} />
         </h1>
 
         <div className={`toggleBtn ${toggle}`} onClick={toggleHandleClick}>

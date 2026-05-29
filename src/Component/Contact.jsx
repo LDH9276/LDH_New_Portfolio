@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './css/contact.css'
+import Image from 'next/image';
 
 function Contact({activeSlide}) {
 
@@ -46,7 +47,7 @@ function Contact({activeSlide}) {
               <p className='main-contact-notice'>COPYRIGHT &copy; LDH 2023</p>
             </div>
           </div>
-          <img src={`${process.env.PUBLIC_URL}/images/profile.webp`} alt="프로필" className='contact-profile'/>
+          <Image src={`/images/profile.webp`} alt="프로필" width={300} height={400} className='contact-profile'/>
         </div>
       </div>
       <div className="contact-bg">&nbsp;</div>

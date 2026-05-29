@@ -3,6 +3,7 @@ import Link from 'next/link';
 import portfolio from './team'
 import './css/portfolioteam.css'
 import Scroll from '../Header/Scroll';
+import Image from 'next/image';
 
 function TeamProject({reset}) {
   return (
@@ -21,7 +22,7 @@ function TeamProject({reset}) {
             return ( // 결과출력은 반드시 return으로 해야한다.
               <div className="team-portfolio_item" key={index}>
                 <Link href={`/portfolio/${item.id}`}  onClick={reset} className="team-portfolio_link" key={index}  >
-                <img src={`${process.env.PUBLIC_URL}/images/${item.program}`} alt={item.family} className='portfolio-program'/>
+                <Image src={`/images/${item.program}`} alt={item.family} width={800} height={600} className='portfolio-program'/>
                 <div className="team-portfolio-info_wrap">
                   <p className='portfolio-subtitle'>{item.family}</p>
                   <p className='portfolio-title'>{item.name}</p>
@@ -31,7 +32,7 @@ function TeamProject({reset}) {
                 </Link>
                 <div className='papper-thumb'>
                   <Link href={`/portfolio/${item.id}`}  onClick={reset}>
-                  <img src={`${process.env.PUBLIC_URL}/images/${item.thumb}`} alt={item.family}  className='portfolio-thumb'/>
+                  <Image src={`/images/${item.thumb}`} alt={item.family} width={400} height={300} className='portfolio-thumb'/>
                   </Link>
                 </div>
               </div>

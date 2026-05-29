@@ -3,6 +3,7 @@ import portfolio from './person'
 import './css/portfolioitem.css'
 import Scroll from '../Header/Scroll';
 import Link from 'next/link';
+import Image from 'next/image';
 
 function PersonProject( {reset} ) {
 
@@ -23,8 +24,7 @@ function PersonProject( {reset} ) {
             return ( // 결과출력은 반드시 return으로 해야한다.
               <div className="person-portfolio_item" key={index}>
                 <Link href={`/portfolio/${item.id}`} className="portfolio_link" key={index} onClick={reset}>
-                <img src={`${process.env.PUBLIC_URL}/images/${item.program}`} alt={item.family} 
-                className='portfolio-program'/>
+                <Image src={`/images/${item.program}`} alt={item.family} width={800} height={600} className='portfolio-program'/>
                 <div className="portfolio-info_wrap">
                   <p className='portfolio-subtitle'>{item.family}</p>
                   <p className='portfolio-title'>{item.name}</p>
@@ -34,7 +34,7 @@ function PersonProject( {reset} ) {
                 </Link>
                 <div className='papper-thumb'>
                   <Link href ={`/portfolio/${item.id}`} className="portfolio_link" key={index} onClick={reset}>
-                  <img src={`${process.env.PUBLIC_URL}/images/${item.thumb}`} alt={item.family}                    className='portfolio-thumb'/>
+                  <Image src={`/images/${item.thumb}`} alt={item.family} width={400} height={300} className='portfolio-thumb'/>
                   </Link>
                 </div>
               </div>
