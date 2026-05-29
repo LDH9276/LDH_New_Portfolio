@@ -69,15 +69,21 @@ function Contact({ activeSlide }) {
           </div>
 
           {/* Right: Profile */}
-          <div className="w-full max-w-[280px] sm:max-w-[350px] lg:max-w-none lg:w-5/12 relative aspect-[3/4] lg:aspect-[4/5] overflow-hidden rounded-2xl bg-surface-muted-light dark:bg-surface-muted-dark/50">
+          <div className="w-full max-w-[280px] sm:max-w-[350px] lg:max-w-none lg:w-5/12 relative aspect-[3/4] lg:aspect-[4/5] overflow-hidden bg-lime/20 dark:bg-lime/10 border border-lime group">
             <Image
               src="/images/profile02-2.png"
               alt="프로필"
               fill
-              className="object-cover lg:object-cover scale-105 hover:scale-110 transition-transform duration-700"
+              className="object-cover lg:object-cover scale-105 group-hover:scale-110 transition-transform duration-700 mix-blend-luminosity group-hover:mix-blend-normal"
             />
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-surface-light dark:from-surface-dark via-transparent to-transparent opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-lime/80 via-transparent to-transparent opacity-50 dark:opacity-40" />
+            
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-16 h-[2px] bg-lime" />
+            <div className="absolute bottom-0 left-0 w-[2px] h-16 bg-lime" />
+            <div className="absolute top-0 right-0 w-[2px] h-16 bg-lime" />
+            <div className="absolute bottom-0 left-0 w-16 h-[2px] bg-lime" />
           </div>
         </div>
       </div>
