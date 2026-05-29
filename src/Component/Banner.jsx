@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import Scroll from '../Header/Scroll';
+import IDEBackground from './IDEBackground';
 
 function Banner({ activeSlide }) {
   const [active, setActive] = useState('ready');
@@ -9,7 +10,6 @@ function Banner({ activeSlide }) {
 
   useEffect(() => {
     if (activeSlide === 0) setActive('');
-    else setActive('ready');
   }, [activeSlide]);
 
   const handleMouseMove = (e) => {
@@ -29,8 +29,7 @@ function Banner({ activeSlide }) {
       className={`relative w-full h-full flex items-center justify-center overflow-hidden bg-surface-light dark:bg-surface-dark
         transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}
     >
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-grid-pattern-light dark:bg-grid-pattern-dark opacity-50" />
+      <IDEBackground />
 
       {/* Interactive Spotlight */}
       <div 
