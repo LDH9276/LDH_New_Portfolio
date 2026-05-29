@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import './css/menu.css'
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import { useAppContext } from '../../app/Context';
 
-function Menus( {reset, toggle, setToggle, setActiveSlide, menuEvent} ) {
-
+function Menus( {toggle, setToggle, menuEvent} ) {
+  const { setActiveSlide, reset } = useAppContext();
   const [menu01, setMenu01] = useState('');
   const [menu02, setMenu02] = useState('');
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const menuOpen01 = () => {
     if (menu01 === '') {
@@ -29,14 +30,14 @@ function Menus( {reset, toggle, setToggle, setActiveSlide, menuEvent} ) {
     setToggle('');
     menuEvent();
     setActiveSlide(index);
-    navigate('/');
+    router.push('/');
   }
 
   const toPortfolio = (index) => {
     setToggle('');
     menuEvent();
     reset();
-    navigate(`/portfolio/${index}`);
+    router.push(`/portfolio/${index}`);
   }
 
 

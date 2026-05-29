@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import './css/header.css'
 import Menus from './Menus';
+import { useAppContext } from '../../app/Context';
 
-function Header( {reset, isStart, setActiveSlide} ) {
-
+function Header() {
+  const { isStart, setActiveSlide, reset } = useAppContext();
   const [toggle, setToggle] = useState('');
   const [menus , setMenus] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const toMainTitle = () => {
     setToggle('');
@@ -15,7 +16,7 @@ function Header( {reset, isStart, setActiveSlide} ) {
       setMenus(false);
     }, 500);
     setActiveSlide(0);
-    navigate('/');
+    router.push('/');
   }
 
   const menuEvent = () => {
@@ -47,7 +48,7 @@ function Header( {reset, isStart, setActiveSlide} ) {
           <span>&nbsp;</span>
         </div>
       </div>
-      {menus === true && <Menus setToggle={setToggle} toggle={toggle} setActiveSlide={setActiveSlide} menuEvent={menuEvent} reset={reset}/>}
+      {menus === true && <Menus setToggle={setToggle} toggle={toggle} menuEvent={menuEvent} />}
     </header>
   );
 }
