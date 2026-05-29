@@ -6,7 +6,7 @@ import Image from 'next/image';
 import ThemeToggle from '../../app/ThemeToggle';
 
 function Header() {
-  const { isStart, setActiveSlide, reset } = useAppContext();
+  const { isStart, setActiveSlide, isScrolled, reset } = useAppContext();
   const [toggle, setToggle] = useState('');
   const [menus , setMenus] = useState(false);
   const router = useRouter();
@@ -17,11 +17,17 @@ function Header() {
       setMenus(false);
     }, 500);
     setActiveSlide(0);
+    const section = document.querySelector(`[data-index="0"]`);
+    if (section) section.scrollIntoView({ behavior: 'smooth' });
     router.push('/');
   }
 
   const handleNavClick = (index) => {
     setActiveSlide(index);
+    const section = document.querySelector(`[data-index="${index}"]`);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
     router.push('/');
   };
 
@@ -48,13 +54,13 @@ function Header() {
   ];
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50
-      bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md
-      border-b border-border-light dark:border-border-dark
-      transition-all duration-500
-      ${isStart === 'ready' ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}`}
-    >
-      <div className="section-container flex items-center justify-between h-14 md:h-16">
+    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500
+      ${isScrolled 
+        ? 'bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark py-2' 
+        : 'bg-transparent border-b border-transparent py-4'}
+      ${isStart === 'ready' ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}
+    `}>
+      <div className={`section-container flex items-center justify-between transition-all duration-500 ${isScrolled ? 'h-10 md:h-12' : 'h-14 md:h-16'}`}>
         
         {/* Left: Logo */}
         <div className="flex items-center">
@@ -62,7 +68,7 @@ function Header() {
             onClick={toMainTitle} 
             className="cursor-pointer transition-opacity duration-300 hover:opacity-70 flex-shrink-0"
           >
-            <Image src="/images/logo.svg" alt="로고" width={90} height={35} className="dark:invert dark:brightness-200" />
+            <Image src="/images/logo.svg" alt="로고" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="dark:invert dark:brightness-200 transition-all duration-500" />
           </h1>
         </div>
 

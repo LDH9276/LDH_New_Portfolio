@@ -8,7 +8,8 @@ const AppContext = createContext({
   activeSlide: 0,
   setActiveSlide: () => {},
   p_slide: 0,
-  setP_slide: () => {},
+  isScrolled: false,
+  setIsScrolled: () => {},
   reset: () => {}
 });
 
@@ -23,6 +24,7 @@ export function AppProvider({ children }) {
   const [isStart, setIsStart] = useState('ready');
   const [activeSlide, setActiveSlide] = useState(0);
   const [p_slide, setP_slide] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
@@ -62,6 +64,7 @@ export function AppProvider({ children }) {
         isStart, setIsStart,
         activeSlide, setActiveSlide,
         p_slide, setP_slide,
+        isScrolled, setIsScrolled,
         reset
       }}>
         {children}

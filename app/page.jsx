@@ -9,7 +9,7 @@ import Pos from '../src/Header/Pos';
 import { useAppContext } from './Context';
 
 export default function Page() {
-  const { isStart, activeSlide, setActiveSlide, reset } = useAppContext();
+  const { isStart, activeSlide, setActiveSlide, setIsScrolled, reset } = useAppContext();
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -48,6 +48,13 @@ export default function Page() {
       
       <div 
         ref={containerRef}
+        onScroll={(e) => {
+          if (e.target.scrollTop > 50) {
+            setIsScrolled(true);
+          } else {
+            setIsScrolled(false);
+          }
+        }}
         className="h-screen w-full overflow-y-auto scroll-smooth"
       >
         <section data-index="0" className="scroll-section h-screen w-full relative">
