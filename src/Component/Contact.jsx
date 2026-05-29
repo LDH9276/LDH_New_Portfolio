@@ -6,7 +6,6 @@ function Contact({activeSlide}) {
 
   useEffect(() => {
     if (activeSlide === 4) setActive('');
-    else setActive('ready');
   }, [activeSlide]);
 
   const contactItems = [

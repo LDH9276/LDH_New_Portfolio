@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import portfolio from './person'
 import Scroll from '../Header/Scroll';
 import Link from 'next/link';
@@ -13,9 +13,15 @@ const getFamilyIcon = (family) => {
   return <Code2 size={16} className="text-lime" />;
 };
 
-function PersonProject( {reset} ) {
+function PersonProject( {activeSlide, reset} ) {
+  const [active, setActive] = useState('ready');
+
+  useEffect(() => {
+    if (activeSlide === 2) setActive('');
+  }, [activeSlide]);
+
   return (
-    <div className="relative w-full h-full flex items-center">
+    <div className={`relative w-full h-full flex items-center transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <div className="section-container py-20">
         <div className="mb-10">
           <span className="section-label">The LDH</span>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import portfolio from './team'
 import Scroll from '../Header/Scroll';
@@ -13,9 +13,15 @@ const getFamilyIcon = (family) => {
   return <Code2 size={16} className="text-lime" />;
 };
 
-function TeamProject({reset}) {
+function TeamProject({activeSlide, reset}) {
+  const [active, setActive] = useState('ready');
+
+  useEffect(() => {
+    if (activeSlide === 3) setActive('');
+  }, [activeSlide]);
+
   return (
-    <div className="relative w-full h-full flex items-center">
+    <div className={`relative w-full h-full flex items-center transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <div className="section-container py-20">
         <div className="mb-10">
           <span className="section-label">The LDH</span>

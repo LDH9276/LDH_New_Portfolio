@@ -7,7 +7,6 @@ function About( {activeSlide} ) {
 
   useEffect(() => {
     if (activeSlide === 1) setActive('');
-    else setActive('ready');
   }, [activeSlide]);
 
   const skills = [
