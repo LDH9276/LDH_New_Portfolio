@@ -1,14 +1,11 @@
 import React from 'react';
-import './css/scrolls_pf.css';
 
-function ScrollPf(props) {
+function ScrollPf() {
   return (
-      <div className="main-scroll-downs">
-        <div className="main-mousey">
-          <div className="main-scroller"></div>
-        </div>
-        <p className='main-scroll-text'>scroll</p>
-      </div>  
+    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+      <div className="scroll-indicator-bar" />
+      <span className="scroll-indicator-text">scroll</span>
+    </div>
   );
 }
 

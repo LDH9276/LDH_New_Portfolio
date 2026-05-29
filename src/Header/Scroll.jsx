@@ -1,14 +1,11 @@
 import React from 'react';
-import './css/scrolls.css';
 
-function Scroll(props) {
+function Scroll() {
   return (
-      <div className="scroll-downs">
-        <div className="mousey">
-          <div className="scroller"></div>
-        </div>
-        <p className='scroll-text'>scroll</p>
-      </div>  
+    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+      <div className="scroll-indicator-bar" />
+      <span className="scroll-indicator-text">scroll</span>
+    </div>
   );
 }
 

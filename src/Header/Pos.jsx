@@ -1,36 +1,32 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 function Pos( {handleSlideNavigation, activeSlide} ) {
-
-  for(let i = 0; i < 5; i++) {
-    if (activeSlide === i) {
-      var navBtn = ['', '', '', '', ''];
-      navBtn[i] = 'active';
-    }
-  }
+  const navItems = ['Introduce', 'About Me', 'Person Project', 'Team Project', 'Contact'];
 
   return (
-    <nav className='sidebar'>
-      <button className={`sidebar-btn ${navBtn[0]}`} onClick={() => handleSlideNavigation(0)}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        Introduce
-      </button>
-      <button className={`sidebar-btn ${navBtn[1]}`} onClick={() => handleSlideNavigation(1)}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        About Me
-      </button>
-      <button className={`sidebar-btn ${navBtn[2]}`} onClick={() => handleSlideNavigation(2)}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        Person Project
-      </button>
-      <button className={`sidebar-btn ${navBtn[3]}`} onClick={() => handleSlideNavigation(3)}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        Team Project
-      </button>
-      <button className={`sidebar-btn ${navBtn[4]}`} onClick={() => handleSlideNavigation(4)}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        Contact
-      </button>
+    <nav className="hidden lg:flex fixed right-8 top-1/2 -translate-y-1/2 z-40
+      flex-col items-end gap-4">
+      {navItems.map((label, index) => (
+        <button
+          key={index}
+          className={`group flex items-center gap-3 transition-all duration-300`}
+          onClick={() => handleSlideNavigation(index)}
+        >
+          <span className={`text-[11px] font-medium uppercase tracking-wider
+            transition-all duration-300
+            ${activeSlide === index 
+              ? 'opacity-100 text-lime translate-x-0' 
+              : 'opacity-0 text-text-secondary-light dark:text-text-secondary-dark translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'}`}
+          >
+            {label}
+          </span>
+          <span className={`block transition-all duration-300
+            ${activeSlide === index 
+              ? 'w-8 h-[2px] bg-lime' 
+              : 'w-4 h-[1px] bg-text-muted-light dark:bg-text-muted-dark group-hover:w-6 group-hover:bg-lime'}`} 
+          />
+        </button>
+      ))}
     </nav>
   );
 }
