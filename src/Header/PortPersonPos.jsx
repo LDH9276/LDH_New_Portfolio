@@ -1,44 +1,41 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Link from 'next/link';
-import './css/header.css'
 
 function PortPesronPos( {act, dis, id, reset} ) {
-
-  const [navBtn, setNavBtn] = useState(['', '', '', '']);
-
-
-  useEffect(() => {
-    if (id === '1') {
-      setNavBtn(['active', '', '', '']);
-    } else if (id === '2') {
-      setNavBtn(['', 'active', '', '']);
-    } else if (id === '3') {
-      setNavBtn(['', '', 'active', '']);
-    } else if (id === '4') {
-      setNavBtn(['', '', '', 'active']);
-    }
-  }, [id]);
-
+  const items = [
+    { id: 1, name: '사세' },
+    { id: 2, name: 'B&O' },
+    { id: 3, name: '가계부' },
+    { id: 4, name: '무인양품' },
+  ];
 
   return (
-    <nav className={`sidebar ${dis} ${act}`}>
-      <span className='port-sidebarText'>개인 포트폴리오 목록</span>
-      <Link href="/portfolio/1" className={`sidebar-btn ${navBtn[0]}`} onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        사세 적응형 프로젝트
-      </Link>
-      <Link href="/portfolio/2" className={`sidebar-btn ${navBtn[1]}`}onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        B&O 리뉴얼 프로젝트
-      </Link>
-      <Link href="/portfolio/3" className={`sidebar-btn ${navBtn[2]}`}onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        나만의 가계부 프로젝트
-      </Link>
-      <Link href="/portfolio/4" className={`sidebar-btn ${navBtn[3]}`}onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        무인양품 리뉴얼 프로젝트
-      </Link>
+    <nav className={`hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 z-40
+      flex-col items-start gap-3
+      transition-all duration-500
+      ${dis === 'disable' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      {items.map((item) => (
+        <Link 
+          key={item.id}
+          href={`/portfolio/${item.id}`}
+          onClick={reset}
+          className={`flex items-center gap-3 group transition-all duration-300`}
+        >
+          <span className={`block transition-all duration-300
+            ${Number(id) === item.id 
+              ? 'w-8 h-[2px] bg-lime' 
+              : 'w-4 h-[1px] bg-text-muted-light dark:bg-text-muted-dark group-hover:w-6 group-hover:bg-lime'}`} 
+          />
+          <span className={`text-[11px] font-medium tracking-wider
+            transition-all duration-300
+            ${Number(id) === item.id 
+              ? 'opacity-100 text-lime' 
+              : 'opacity-0 text-text-secondary-light dark:text-text-secondary-dark group-hover:opacity-100'}`}
+          >
+            {item.name}
+          </span>
+        </Link>
+      ))}
     </nav>
   );
 }

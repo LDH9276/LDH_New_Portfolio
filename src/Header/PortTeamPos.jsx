@@ -1,44 +1,41 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Link from 'next/link';
-import './css/header.css'
 
 function PortTeamPos( {act, dis, id, reset} ) {
-
-  const [navBtn, setNavBtn] = useState(['', '', '', '']);
-
-
-  useEffect(() => {
-    if (id === '5') {
-      setNavBtn(['active', '', '', '']);
-    } else if (id === '6') {
-      setNavBtn(['', 'active', '', '']);
-    } else if (id === '7') {
-      setNavBtn(['', '', 'active', '']);
-    } else if (id === '8') {
-      setNavBtn(['', '', '', 'active']);
-    }
-  }, [id]);
-
+  const items = [
+    { id: 5, name: '시드물' },
+    { id: 6, name: '넷마블' },
+    { id: 7, name: 'LMS관리자' },
+    { id: 8, name: 'LMS유저' },
+  ];
 
   return (
-    <nav className={`sidebar ${dis} ${act}`}>
-      <span className='port-sidebarText'>팀 포트폴리오 목록</span>
-      <Link href="/portfolio/5" className={`sidebar-btn ${navBtn[0]}`} onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        시드물 반응형 프로젝트
-      </Link>
-      <Link href="/portfolio/6" className={`sidebar-btn ${navBtn[1]}`}onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        넷마블 브랜드 프로젝트
-      </Link>
-      <Link href="/portfolio/7" className={`sidebar-btn ${navBtn[2]}`}onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        LMS프로젝트 - 관리자
-      </Link>
-      <Link href="/portfolio/8" className={`sidebar-btn ${navBtn[3]}`}onClick={reset}>
-      <span className='sidebar-progress'>&nbsp;</span>
-        LMS프로젝트 - 유저
-      </Link>
+    <nav className={`hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 z-40
+      flex-col items-start gap-3
+      transition-all duration-500
+      ${dis === 'disable' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      {items.map((item) => (
+        <Link 
+          key={item.id}
+          href={`/portfolio/${item.id}`}
+          onClick={reset}
+          className={`flex items-center gap-3 group transition-all duration-300`}
+        >
+          <span className={`block transition-all duration-300
+            ${Number(id) === item.id 
+              ? 'w-8 h-[2px] bg-lime' 
+              : 'w-4 h-[1px] bg-text-muted-light dark:bg-text-muted-dark group-hover:w-6 group-hover:bg-lime'}`} 
+          />
+          <span className={`text-[11px] font-medium tracking-wider
+            transition-all duration-300
+            ${Number(id) === item.id 
+              ? 'opacity-100 text-lime' 
+              : 'opacity-0 text-text-secondary-light dark:text-text-secondary-dark group-hover:opacity-100'}`}
+          >
+            {item.name}
+          </span>
+        </Link>
+      ))}
     </nav>
   );
 }

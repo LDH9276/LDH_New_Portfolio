@@ -2,15 +2,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import portfoliodata from '../../../src/Component/portfoliodata.json';
-import '../../../src/Route/css/main.css';
-import '../../../src/Component/css/portfolio.css';
 import Scroll from '../../../src/Header/Scroll';
-
-import PortPesronPos from '../../../src/Header/PortPersonPos';
-import PortTeamPos from '../../../src/Header/PortTeamPos';
 import ScrollPf from '../../../src/Header/ScrollPf';
 import { useAppContext } from '../../../app/Context';
 import Image from 'next/image';
+import Link from 'next/link';
 
 function PortfolioPage() {
   const { p_slide, setP_slide, isStart, setActiveSlide } = useAppContext();
@@ -24,17 +20,12 @@ function PortfolioPage() {
   const params = useParams();
   const id = params.id;
   const productID = Number(id);
-  
-  const act = 'active';
-  const dis = 'disable';
 
   const data = JSON.stringify(portfoliodata.portfolio);
   const totaldata = data.replace(/\n/g, "<br>");
   const portfolio = JSON.parse(totaldata);
-
   const portfolioItem = portfolio.find(item => item.id === productID);
 
-  // Scroll spy to update p_slide
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -45,239 +36,192 @@ function PortfolioPage() {
           }
         });
       },
-      {
-        root: containerRef.current,
-        threshold: 0.5,
-      }
+      { root: containerRef.current, threshold: 0.5 }
     );
-
     if (containerRef.current) {
       const sections = containerRef.current.querySelectorAll('.scroll-section');
       sections.forEach((section) => observer.observe(section));
     }
-
     return () => observer.disconnect();
   }, [setP_slide]);
 
   const reset = () => {
     setP_slide(0);
-    if (containerRef.current) {
-      containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setImg((prevImg) => (prevImg + 1) % 3);
-    }, 4500); 
+      setImg((prev) => (prev + 1) % 3);
+    }, 4500);
     return () => clearInterval(interval);
   }, []);
-  
-  const tabChange = (num) => setTab(num);
-  const tabChange01 = (num) => setTab01(num);
 
-  const toList = () => {
-    setActiveSlide(2);
-    router.push('/');
-  }
-  const toList2 = () => {
-    setActiveSlide(3);
-    router.push('/');
-  }
+  const toList = () => { setActiveSlide(2); router.push('/'); }
+  const toList2 = () => { setActiveSlide(3); router.push('/'); }
 
-  if (!portfolioItem) return <div>Loading...</div>;
+  if (!portfolioItem) return (
+    <div className="h-screen flex items-center justify-center">
+      <p className="text-text-muted-light dark:text-text-muted-dark">Loading...</p>
+    </div>
+  );
 
   return (
-    <div className={`main ${isStart}`}>
+    <div className={`transition-opacity duration-[2.5s] ${isStart === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <div 
         ref={containerRef}
-        className="main-contain h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth"
+        className="h-screen w-full overflow-y-auto scroll-smooth"
       >
-        <section data-index="0" className="scroll-section snap-start h-screen w-full relative">
-          <div className="portfolio-intro">
-            <Image src={`/portfolio/${portfolioItem.main_img}`} alt={portfolioItem.name} width={1200} height={800} className='intro-main'/>
-            <div className="text-wrap">
-              <p className='intro-subtitle'>{portfolioItem.family}</p>
-              <p className='intro-title'>{portfolioItem.name}</p>
-              <p className='intro-subtitle'>{portfolioItem.project_date}</p>
-              <p className='intro-subtitle'>{portfolioItem.project_program}</p>
-              <p className='intro-btn-wrap'>
-                <a href={portfolioItem.homepage} title="포트폴리오 페이지 가기" className='portfolio-btn' target="_blank" rel="noopener noreferrer">페이지 이동</a>
-              </p>
+        {/* Slide 0: Intro */}
+        <section data-index="0" className="scroll-section h-screen w-full relative">
+          <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+            <Image src={`/portfolio/${portfolioItem.main_img}`} alt={portfolioItem.name} fill className="object-cover" />
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="relative z-10 section-container text-center space-y-4">
+              <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.family}</span>
+              <h1 className="text-display text-white">{portfolioItem.name}</h1>
+              <p className="text-sm text-white/40">{portfolioItem.project_date}</p>
+              <p className="text-xs text-white/30">{portfolioItem.project_program}</p>
+              <a href={portfolioItem.homepage} target="_blank" rel="noopener noreferrer" className="btn-primary mt-6 inline-flex">
+                페이지 이동 →
+              </a>
             </div>
             <ScrollPf />
           </div>
         </section>
 
-        <section data-index="1" className="scroll-section snap-start h-screen w-full relative">
-          <div className={`main-comp banner`}>
-            <div className="main-line">&nbsp;</div>
-            <div className="main-line02">&nbsp;</div>
-            <div className="main-index-wrap" id='banner'>
-                {portfolioItem.name}
-              <h2 className='main-title'>
-                Introduce
-              </h2>
-              <div className="portfolio-info">
-                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name + '01'} width={800} height={600} className='portfolio-mainimg01'/>
-                <div>
-                  <p className='portfolio-item-title'>{portfolioItem.Headtitle}</p>
-                  <pre className='portfolio-text'>
+        {/* Slide 1: Introduce */}
+        <section data-index="1" className="scroll-section min-h-screen w-full relative flex items-center">
+          <div className="section-container py-20">
+            <span className="section-label">{portfolioItem.name}</span>
+            <h2 className="section-title">Introduce</h2>
+            <div className="accent-line mb-10" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              <div className="relative aspect-video overflow-hidden">
+                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name} fill className="object-cover" />
+              </div>
+              <div>
+                <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">{portfolioItem.Headtitle}</h3>
+                <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
                   {portfolioItem.text01}
-                  </pre>
+                </pre>
+              </div>
+            </div>
+          </div>
+          <Scroll />
+        </section>
+
+        {/* Slide 2: Design */}
+        <section data-index="2" className="scroll-section min-h-screen w-full relative flex items-center">
+          <div className="section-container py-20">
+            <span className="section-label">{portfolioItem.name}</span>
+            <h2 className="section-title">개발환경 및 디자인</h2>
+            <div className="accent-line mb-10" />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div>
+                {/* Tabs */}
+                <div className="flex gap-0 mb-6">
+                  {['UI / UX', 'Library'].map((label, i) => (
+                    <button key={i}
+                      onClick={() => setTab01(i)}
+                      className={`px-5 py-2 text-sm font-medium transition-all duration-300 border
+                        ${tab01 === i 
+                          ? 'bg-lime text-surface-dark border-lime' 
+                          : 'bg-transparent text-text-secondary-light dark:text-text-secondary-dark border-border-light dark:border-border-dark hover:border-lime'}`}
+                    >{label}</button>
+                  ))}
                 </div>
+                <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
+                  {tab01 === 0 ? portfolioItem.design : portfolioItem.text03}
+                </pre>
               </div>
-              <Scroll />
-            </div>
-          </div>
-        </section>
 
-        <section data-index="2" className="scroll-section snap-start h-screen w-full relative">
-          <div className={`main-comp banner`}>
-            <div className="main-line">&nbsp;</div>
-            <div className="main-line02">&nbsp;</div>
-            <div className="main-index-wrap" id='banner'>
-                {portfolioItem.name}
-              <h2 className='main-title'>
-                개발환경 및 디자인
-              </h2>
-              <div className="portfolio-info">
-                <div className="design-wrap">
-                  <ul className='dev-chapter'>
-                    <li className={`dev-chapter-btn ${tab01 === 0 ? 'active' : ''}`} onClick={() => tabChange01(0)}>UI / UX</li>
-                    <li className={`dev-chapter-btn ${tab01 === 1 ? 'active' : ''}`} onClick={() => tabChange01(1)}>Library</li>
-                  </ul>
-                  <ul className="portfolio-item-wrap">
-                    <li className={`design-item ${tab01 === 0 ? 'active' : ''}`}>
-                    <pre className='portfolio-text'>
-                      {portfolioItem.design}
-                    </pre>
-                    </li>
-                    <li className={`design-item ${tab01 === 1 ? 'active' : ''}`}>
-                    <pre className='portfolio-text'>
-                      {portfolioItem.text03}
-                    </pre>
-                    </li>
-                  </ul>
+              {/* Images */}
+              {(id === '1' || id === '4' || id === '2' || id === '7') && (
+                <div className="relative aspect-video overflow-hidden">
+                  {[portfolioItem.textimg02, portfolioItem.textimg03, portfolioItem.textimg04].map((imgSrc, i) => (
+                    <Image key={i} src={`/images/${imgSrc}`} alt="" fill
+                      className={`object-cover transition-opacity duration-700 ${img === i ? 'opacity-100' : 'opacity-0'}`} />
+                  ))}
                 </div>
-
-                {(id === '1' || id === '4' || id === '2' || id === '7') && (
-                  <div className="design-img_wrap">
-                    {img === 0 ? (<Image src={`/images/${portfolioItem.textimg02}`} alt="" width={800} height={600} className='design-image'/>) : (<Image src={`/images/${portfolioItem.textimg02}`} alt="" width={800} height={600} className='design-image disabled'/>)}
-                    {img === 1 ? (<Image src={`/images/${portfolioItem.textimg03}`} alt="" width={800} height={600} className='design-image'/>) : (<Image src={`/images/${portfolioItem.textimg03}`} alt="" width={800} height={600} className='design-image disabled'/>)}
-                    {img === 2 ? (<Image src={`/images/${portfolioItem.textimg04}`} alt="" width={800} height={600} className='design-image'/>) : (<Image src={`/images/${portfolioItem.textimg04}`} alt="" width={800} height={600} className='design-image disabled'/>)}
-                  </div>
-                )}
-
-                {(id === '3' || id === '6' || id === '5' || id === '8') && (
-                  <div className="design-img_wrap">
-                    <Image src={`/images/${portfolioItem.textimg02}`} alt="" width={800} height={600} className='design-image'/>
-                  </div>
-                )}
-              </div>
+              )}
+              {(id === '3' || id === '6' || id === '5' || id === '8') && (
+                <div className="relative aspect-video overflow-hidden">
+                  <Image src={`/images/${portfolioItem.textimg02}`} alt="" fill className="object-cover" />
+                </div>
+              )}
             </div>
-            <Scroll />
           </div>
+          <Scroll />
         </section>
 
-        <section data-index="3" className="scroll-section snap-start h-screen w-full relative">
-          <div className={`main-comp banner`}>
-            <div className="main-line">&nbsp;</div>
-            <div className="main-line02">&nbsp;</div>
-            <div className="main-index-wrap" id='banner'>
-              <p className='main-subtitle'>
-                {portfolioItem.name}
-              </p>
-              <h2 className='main-title'>
-                Develope
-              </h2>
-              <div className="portfolio-developer">
-                <ul className='dev-chapter'>
-                  <li className={`dev-chapter-btn ${tab === 0 ? 'active' : ''}`} onClick={() => tabChange(0)}>Chapter01</li>
-                  <li className={`dev-chapter-btn ${tab === 1 ? 'active' : ''}`} onClick={() => tabChange(1)}>Chapter02</li>
-                  <li className={`dev-chapter-btn ${tab === 2 ? 'active' : ''}`} onClick={() => tabChange(2)}>Chapter03</li>
-                  <li className={`dev-chapter-btn ${tab === 3 ? 'active' : ''}`} onClick={() => tabChange(3)}>Chapter04</li>
-                </ul>
-                <ul className='portfolio-developer-item'>
-                  <li className={`portfolio-item ${tab === 0 ? 'active' : ''}`}>
-                    <pre className='portfolio-code'>
-                      {portfolioItem.code1}
-                    </pre>
-                    <div className="portfolio-item-wrap">
-                      <p className='portfolio-item-title'>{portfolioItem.title01}</p>
-                      <pre className='portfolio-text'>
-                        {portfolioItem.text02_1}
-                      </pre>
-                    </div>
-                  </li>
-                  <li className={`portfolio-item ${tab === 1 ? 'active' : ''}`}>
-                    <pre className='portfolio-code'>
-                      {portfolioItem.code2}
-                    </pre>
-                    <div className="portfolio-item-wrap">
-                      <p className='portfolio-item-title'>{portfolioItem.title02}</p>
-                      <pre className='portfolio-text'>
-                        {portfolioItem.text02_2}
-                      </pre>
-                    </div>
-                  </li>
-                  <li className={`portfolio-item ${tab === 2 ? 'active' : ''}`}>
-                    <pre className='portfolio-code'>
-                      {portfolioItem.code3}
-                    </pre>
-                    <div className="portfolio-item-wrap">
-                      <p className='portfolio-item-title'>{portfolioItem.title03}</p>
-                      <pre className='portfolio-text'>
-                        {portfolioItem.text02_3}
-                      </pre>
-                    </div>
-                  </li>
-                  <li className={`portfolio-item ${tab === 3 ? 'active' : ''}`}>
-                    <pre className='portfolio-code'>
-                      {portfolioItem.code4}
-                    </pre>
-                    <div className="portfolio-item-wrap">
-                      <p className='portfolio-item-title'>{portfolioItem.title04}</p>
-                      <pre className='portfolio-text'>
-                        {portfolioItem.text02_4}
-                      </pre>
-                    </div>
-                  </li>
-                </ul>
+        {/* Slide 3: Develop */}
+        <section data-index="3" className="scroll-section min-h-screen w-full relative flex items-center">
+          <div className="section-container py-20">
+            <span className="section-label">{portfolioItem.name}</span>
+            <h2 className="section-title">Develop</h2>
+            <div className="accent-line mb-10" />
+
+            <div className="flex gap-0 mb-6 flex-wrap">
+              {['Chapter01', 'Chapter02', 'Chapter03', 'Chapter04'].map((label, i) => (
+                <button key={i}
+                  onClick={() => setTab(i)}
+                  className={`px-5 py-2 text-sm font-medium transition-all duration-300 border
+                    ${tab === i 
+                      ? 'bg-lime text-surface-dark border-lime' 
+                      : 'bg-transparent text-text-secondary-light dark:text-text-secondary-dark border-border-light dark:border-border-dark hover:border-lime'}`}
+                >{label}</button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="card p-6 bg-surface-muted-light dark:bg-surface-muted-dark border-none overflow-x-auto">
+                <pre className="text-xs leading-relaxed text-lime font-mono whitespace-pre-wrap">
+                  {[portfolioItem.code1, portfolioItem.code2, portfolioItem.code3, portfolioItem.code4][tab]}
+                </pre>
+              </div>
+              <div>
+                <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">
+                  {[portfolioItem.title01, portfolioItem.title02, portfolioItem.title03, portfolioItem.title04][tab]}
+                </h3>
+                <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
+                  {[portfolioItem.text02_1, portfolioItem.text02_2, portfolioItem.text02_3, portfolioItem.text02_4][tab]}
+                </pre>
               </div>
             </div>
-            <Scroll />
           </div>
+          <Scroll />
         </section>
 
-        <section data-index="4" className="scroll-section snap-start h-screen w-full relative">
-          <div className={`main-comp banner`}>
-            <div className="main-line">&nbsp;</div>
-            <div className="main-line02">&nbsp;</div>
-            <div className="main-index-wrap" id='banner'>
-              <p className='main-subtitle'>
-                {portfolioItem.name}
-              </p>
-              <h2 className='main-title'>
-                후기 및 느낀점
-              </h2>
-              <div className="portfolio-info">
-                <div>
-                  <p className='portfolio-item-title'>총평 및 후기</p>
-                  <pre className='portfolio-text'>
+        {/* Slide 4: Review */}
+        <section data-index="4" className="scroll-section min-h-screen w-full relative flex items-center">
+          <div className="section-container py-20">
+            <span className="section-label">{portfolioItem.name}</span>
+            <h2 className="section-title">후기 및 느낀점</h2>
+            <div className="accent-line mb-10" />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">총평 및 후기</h3>
+                <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
                   {portfolioItem.text04}
-                  </pre>
-                </div>
-                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name + '01'} width={800} height={600} className='portfolio-mainimg01'/>
+                </pre>
+              </div>
+              <div className="relative aspect-video overflow-hidden">
+                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name} fill className="object-cover" />
               </div>
             </div>
-            {productID < 5 ? (<button className='portfolio-tolist' onClick={toList}>목록으로</button>) : (<button className='portfolio-tolist 2' onClick={toList2}>목록으로</button>)}
+
+            <div className="mt-12">
+              {productID < 5 
+                ? <button className="btn-outline" onClick={toList}>← 목록으로</button>
+                : <button className="btn-outline" onClick={toList2}>← 목록으로</button>
+              }
+            </div>
           </div>
         </section>
       </div>
-
-      {productID < 5 && p_slide > 0 ? (<PortPesronPos id={id} act={act} reset={reset}/>) : (<PortPesronPos dis={dis} id={id} reset={reset}/>)}
-      {productID >= 5 && p_slide > 0 ? (<PortTeamPos act={act} id={id} reset={reset}/>) : (<PortTeamPos dis={dis} id={id} reset={reset}/>)}
     </div>
   );
 }
