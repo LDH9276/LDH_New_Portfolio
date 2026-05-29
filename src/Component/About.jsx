@@ -11,10 +11,10 @@ function About( {activeSlide} ) {
   }, [activeSlide]);
 
   const skills = [
-    { icon: '/images/item03.svg', title: 'HTML / CSS', desc: '프론트엔드 기본 중의 기본. 퍼블리싱 경험을 바탕으로 탄탄한 마크업이 가능합니다.' },
-    { icon: '/images/item04.svg', title: 'JavaScript', desc: 'ES6+ 문법을 활용한 동적 인터랙션 구현. 모던 프레임워크 기반 개발이 가능합니다.' },
-    { icon: '/images/item02.svg', title: 'PHP / SQL', desc: '서버사이드 연동 및 DB 출력. 리액트와의 데이터 통신 경험을 보유하고 있습니다.' },
-    { icon: '/images/item01.svg', title: 'React.js', desc: '컴포넌트 기반 SPA 개발. 상태관리와 라우팅까지 실무 수준의 역량을 갖추고 있습니다.' },
+    { icon: '/images/item03.svg', darkIcon: '/images/item03-dark.svg', title: 'HTML / CSS', desc: '프론트엔드 기본 중의 기본. 퍼블리싱 경험을 바탕으로 탄탄한 마크업이 가능합니다.' },
+    { icon: '/images/item04.svg', darkIcon: '/images/item04-dark.svg', title: 'JavaScript', desc: 'ES6+ 문법을 활용한 동적 인터랙션 구현. 모던 프레임워크 기반 개발이 가능합니다.' },
+    { icon: '/images/item02.svg', darkIcon: '/images/item02-dark.svg', title: 'PHP / SQL', desc: '서버사이드 연동 및 DB 출력. 리액트와의 데이터 통신 경험을 보유하고 있습니다.' },
+    { icon: '/images/item01.svg', darkIcon: '/images/item01-dark.svg', title: 'React.js', desc: '컴포넌트 기반 SPA 개발. 상태관리와 라우팅까지 실무 수준의 역량을 갖추고 있습니다.' },
   ];
 
   return (
@@ -79,7 +79,9 @@ function About( {activeSlide} ) {
                     <div className="w-10 h-10 flex items-center justify-center
                       bg-surface-muted-light dark:bg-surface-muted-dark flex-shrink-0">
                       <Image src={skill.icon} alt={skill.title} width={24} height={24} 
-                        className="dark:invert dark:brightness-200" />
+                        className="block dark:hidden" />
+                      <Image src={skill.darkIcon} alt={skill.title} width={24} height={24} 
+                        className="hidden dark:block" />
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark mb-1">

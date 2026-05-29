@@ -73,9 +73,10 @@ function Header() {
         <div className="flex items-center">
           <h1 
             onClick={toMainTitle} 
-            className="cursor-pointer transition-opacity duration-300 hover:opacity-70 flex-shrink-0"
+            className="cursor-pointer transition-opacity duration-300 hover:opacity-70 flex-shrink-0 flex items-center"
           >
-            <Image src="/images/logo.svg" alt="로고" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="dark:invert dark:brightness-200 transition-all duration-500" />
+            <Image src="/images/logo.svg" alt="로고" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="block dark:hidden transition-all duration-500" />
+            <Image src="/images/logo-dark.svg" alt="로고" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="hidden dark:block transition-all duration-500" />
           </h1>
         </div>
 

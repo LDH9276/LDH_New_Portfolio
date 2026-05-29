@@ -8,9 +8,9 @@ import { FileCode, Atom, Server, Code2 } from 'lucide-react';
 const getFamilyIcon = (family) => {
   const f = family.toUpperCase();
   if (f.includes('REACT')) return <Atom size={16} className="text-lime" />;
-  if (f.includes('PHP')) return <Server size={16} className="text-blue-400" />;
-  if (f.includes('JQUERY') || f.includes('JAVASCRIPT')) return <FileCode size={16} className="text-yellow-400" />;
-  return <Code2 size={16} className="text-gray-400" />;
+  if (f.includes('PHP')) return <Server size={16} className="text-lime" />;
+  if (f.includes('JQUERY') || f.includes('JAVASCRIPT')) return <FileCode size={16} className="text-lime" />;
+  return <Code2 size={16} className="text-lime" />;
 };
 
 function PersonProject( {reset} ) {
