@@ -134,4 +134,17 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-lime to-lime-dark;
   }
+
+  /* Grid pattern for interactive banner */
+  .bg-grid-pattern-light {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  }
+
+  .bg-grid-pattern-dark {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
 }
