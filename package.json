@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "http://dongheonplace.co.kr/",
   "dependencies": {
+    "lucide-react": "^1.17.0",
     "next": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

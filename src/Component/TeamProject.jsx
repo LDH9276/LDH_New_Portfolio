@@ -3,6 +3,15 @@ import Link from 'next/link';
 import portfolio from './team'
 import Scroll from '../Header/Scroll';
 import Image from 'next/image';
+import { FileCode, Atom, Server, Code2 } from 'lucide-react';
+
+const getFamilyIcon = (family) => {
+  const f = family.toUpperCase();
+  if (f.includes('REACT')) return <Atom size={16} className="text-lime" />;
+  if (f.includes('PHP')) return <Server size={16} className="text-blue-400" />;
+  if (f.includes('JQUERY') || f.includes('JAVASCRIPT')) return <FileCode size={16} className="text-yellow-400" />;
+  return <Code2 size={16} className="text-gray-400" />;
+};
 
 function TeamProject({reset}) {
   return (
@@ -36,8 +45,7 @@ function TeamProject({reset}) {
               {/* Info */}
               <div className="p-4 space-y-2">
                 <div className="flex items-center gap-2">
-                  <Image src={`/images/${item.program}`} alt={item.family} width={16} height={16} 
-                    className="dark:invert" />
+                  {getFamilyIcon(item.family)}
                   <span className="text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted-dark">
                     {item.family}
                   </span>
