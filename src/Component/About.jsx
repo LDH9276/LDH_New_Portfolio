@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Scroll from '../Header/Scroll';
 import Image from 'next/image';
 
-function About( {activeSlide} ) {
+function About({ activeSlide }) {
   const [active, setActive] = useState('ready');
 
   useEffect(() => {
@@ -19,10 +19,10 @@ function About( {activeSlide} ) {
   return (
     <div className={`relative w-full h-full flex items-center
       transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
-      
+
       <div className="section-container py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          
+
           {/* Left: Info */}
           <div className="space-y-8">
             <div>
@@ -33,7 +33,7 @@ function About( {activeSlide} ) {
 
             <div className="space-y-4">
               <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark">
-                프론트엔드 개발자<br/>이동헌입니다.
+                프론트엔드 개발자<br />이동헌입니다.
               </h3>
               <p className="text-sm md:text-base leading-relaxed text-text-secondary-light dark:text-text-secondary-dark">
                 웹 퍼블리셔를 넘어 프론트엔드 영역까지 열심히 달려왔습니다.
@@ -51,6 +51,10 @@ function About( {activeSlide} ) {
                 케이패밀리코퍼레이션 (영상디자이너)
               </li>
               <li className="flex gap-4 text-text-secondary-light dark:text-text-secondary-dark">
+                <span className="font-semibold text-lime min-w-[120px]">2023 – 2025</span>
+                히어앤나우 (웹 퍼블리셔)
+              </li>
+              <li className="flex gap-4 text-text-secondary-light dark:text-text-secondary-dark">
                 <span className="font-semibold text-lime min-w-[120px]">LICENSE</span>
                 웹디자인기능사
               </li>
@@ -58,7 +62,7 @@ function About( {activeSlide} ) {
 
             {/* Profile image - mobile */}
             <div className="block lg:hidden relative aspect-[4/3] w-full overflow-hidden">
-              <Image src="/images/thumb.webp" alt="프로필" fill className="object-cover" />
+              <Image src="/images/profile1-1.png" alt="프로필" fill className="object-contain" />
               <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-surface-light dark:from-surface-dark to-transparent" />
             </div>
           </div>
@@ -67,7 +71,7 @@ function About( {activeSlide} ) {
           <div className="space-y-6">
             {/* Profile image - desktop */}
             <div className="hidden lg:block relative aspect-[4/3] w-full overflow-hidden mb-8">
-              <Image src="/images/thumb.webp" alt="프로필" fill className="object-cover" />
+              <Image src="/images/profile1-1.png" alt="프로필" fill className="object-contain" />
               <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-surface-light dark:from-surface-dark to-transparent" />
             </div>
 
@@ -77,9 +81,9 @@ function About( {activeSlide} ) {
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 flex items-center justify-center
                       bg-surface-muted-light dark:bg-surface-muted-dark flex-shrink-0">
-                      <Image src={skill.icon} alt={skill.title} width={24} height={24} 
+                      <Image src={skill.icon} alt={skill.title} width={24} height={24}
                         className="block dark:hidden" />
-                      <Image src={skill.darkIcon} alt={skill.title} width={24} height={24} 
+                      <Image src={skill.darkIcon} alt={skill.title} width={24} height={24}
                         className="hidden dark:block" />
                     </div>
                     <div>
