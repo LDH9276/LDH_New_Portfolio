@@ -116,7 +116,6 @@ function PersonProject({ activeSlide, reset }) {
           ))}
         </div>
       </div>
-      <Scroll />
     </div>
   );
 }

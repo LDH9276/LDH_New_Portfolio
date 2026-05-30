@@ -116,7 +116,6 @@ function TeamProject({ activeSlide, reset }) {
           ))}
         </div>
       </div>
-      <Scroll />
     </div>
   );
 }

@@ -174,7 +174,7 @@ function About({ activeSlide }) {
       transition-opacity duration-[1.5s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
 
       <div className="section-container w-full h-full flex flex-col justify-center">
-        
+
         {/* Top Header */}
         <div className="mb-8">
           <span className="section-label">The LDH</span>
@@ -190,7 +190,7 @@ function About({ activeSlide }) {
               <p className={`text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark
                 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 style={{ transitionDelay: isVisible ? '1800ms' : '0ms' }}>
-                5년간의 디자인 실무와 2년간의 웹 퍼블리싱 경험을 바탕으로 프론트엔드 개발로 커리어를 전환했습니다.<br className="hidden md:block"/>
+                5년간의 디자인 실무와 2년간의 웹 퍼블리싱 경험을 바탕으로 프론트엔드 개발로 커리어를 전환했습니다.<br className="hidden md:block" />
                 유지보수와 확장성을 고려한 아키텍처로 서비스를 탄탄하게 구축합니다.
               </p>
             </div>
@@ -199,24 +199,9 @@ function About({ activeSlide }) {
 
         {/* Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 flex-1 min-h-0 overflow-hidden">
-          
-          {/* Left: Profile & Skills */}
-          <div className="col-span-1 lg:col-span-5 flex flex-col gap-6 overflow-y-auto pr-2 pb-4 scrollbar-hide lg:border-r border-border-light dark:border-border-dark">
-            <div className="relative aspect-[3/4] w-full overflow-hidden group bg-surface-muted-light dark:bg-surface-muted-dark border border-border-light dark:border-border-dark">
-              <Image src="/images/profile1-1.png" alt="프로필" fill
-                className="object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-lime/0 group-hover:bg-lime/10 transition-colors duration-500 mix-blend-overlay" />
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {skills.map((skill, i) => (
-                <SkillCard key={i} skill={skill} index={i} isVisible={isVisible} />
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Timeline (Interactive Tabs + Custom Scrollable Area) */}
-          <div className="col-span-1 lg:col-span-7 flex flex-col min-h-0 relative">
+          {/* Timeline (Interactive Tabs + Custom Scrollable Area) */}
+          <div className="col-span-1 lg:col-span-7 flex flex-col min-h-0 relative order-2 lg:order-1 lg:border-r border-border-light dark:border-border-dark lg:pr-8">
             
             {/* Tabs */}
             <div className={`flex gap-6 mb-6 border-b border-border-light dark:border-border-dark
@@ -241,17 +226,16 @@ function About({ activeSlide }) {
             </div>
 
             {/* Scrollable Timeline */}
-            <div className="flex-1 pr-4 relative pb-10">
-
+            <div className="flex-1 pr-4 relative pb-10 custom-scrollbar overflow-y-auto">
               <div className="space-y-10 relative">
                 {currentList.map((item, i) => (
                   <div
                     key={`${tab}-${i}`}
                     className={`group relative flex flex-col items-start gap-3
                       animate-slideInUp opacity-0 border-l-4 border-lime/30 pl-4 py-1 hover:border-lime transition-colors duration-300`}
-                    style={{ 
+                    style={{
                       animationFillMode: 'forwards',
-                      animationDelay: `${i * 150}ms` 
+                      animationDelay: `${i * 150}ms`
                     }}
                   >
                     {/* The Content */}
@@ -286,11 +270,23 @@ function About({ activeSlide }) {
                 ))}
               </div>
             </div>
+          </div>
 
+          {/* Profile & Skills */}
+          <div className="col-span-1 lg:col-span-5 flex flex-col gap-6 overflow-y-auto pb-4 scrollbar-hide order-1 lg:order-2">
+            <div className="relative w-full overflow-hidden group flex items-center justify-center">
+              <Image src="/images/profile1-1.png" alt="프로필" width={500} height={667}
+                className="w-full h-auto object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-auto">
+              {skills.map((skill, i) => (
+                <SkillCard key={i} skill={skill} index={i} isVisible={isVisible} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
-      <Scroll />
     </div>
   );
 }

@@ -58,8 +58,8 @@ export default function Page() {
   return (
     <div className={`transition-opacity duration-[2.5s] ${isStart === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <Pos handleSlideNavigation={handleSlideNavigation} activeSlide={activeSlide} />
-      
-      <div 
+
+      <div
         ref={containerRef}
         onScroll={(e) => {
           if (e.target.scrollTop > 50) {
@@ -76,13 +76,13 @@ export default function Page() {
         <section data-index="1" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
           <About activeSlide={activeSlide} />
         </section>
-        <section data-index="2" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
+        <section data-index="2" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <PersonProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="3" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
+        <section data-index="3" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <TeamProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="4" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
+        <section data-index="4" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <Contact activeSlide={activeSlide} />
         </section>
       </div>
