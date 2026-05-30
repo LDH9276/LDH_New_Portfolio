@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Scroll from '../Header/Scroll';
 import IDEBackground from './IDEBackground';
+import ThreeBackground from './ThreeBackground';
 
 function Banner({ activeSlide }) {
   const [active, setActive] = useState('ready');
@@ -30,6 +31,7 @@ function Banner({ activeSlide }) {
         transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}
     >
       <IDEBackground />
+      <ThreeBackground mousePos={mousePos} containerRef={containerRef} />
 
       {/* Interactive Spotlight */}
       <div 
