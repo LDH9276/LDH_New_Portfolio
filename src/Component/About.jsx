@@ -93,50 +93,6 @@ function TypingText({ text, isVisible, delay = 0 }) {
   );
 }
 
-/* ── Role Badge Carousel ── */
-function RoleBadges({ isVisible }) {
-  const roles = [
-    { icon: Paintbrush, label: '디자이너', color: 'text-pink-400', border: 'border-pink-400/30' },
-    { icon: Layers,     label: '퍼블리셔', color: 'text-blue-400', border: 'border-blue-400/30' },
-    { icon: Code2,      label: '프론트엔드', color: 'text-lime', border: 'border-lime/30' },
-    { icon: Monitor,    label: '개발자', color: 'text-amber-400', border: 'border-amber-400/30' },
-  ];
-  const [activeRole, setActiveRole] = useState(0);
-
-  useEffect(() => {
-    if (!isVisible) return;
-    const interval = setInterval(() => {
-      setActiveRole(prev => (prev + 1) % roles.length);
-    }, 2200);
-    return () => clearInterval(interval);
-  }, [isVisible, roles.length]);
-
-  return (
-    <div className="flex flex-wrap gap-2 mt-4">
-      {roles.map((role, i) => {
-        const Icon = role.icon;
-        const isActive = i === activeRole;
-        return (
-          <button
-            key={i}
-            onClick={() => setActiveRole(i)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-medium uppercase tracking-wider
-              border transition-all duration-500 cursor-pointer select-none
-              ${isActive
-                ? `${role.border} bg-surface-muted-light dark:bg-surface-muted-dark ${role.color} scale-105 shadow-sm`
-                : 'border-transparent bg-transparent text-text-muted-light dark:text-text-muted-dark hover:border-border-light dark:hover:border-border-dark'}
-              ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
-            style={{ transitionDelay: isVisible ? `${i * 80 + 300}ms` : '0ms' }}
-          >
-            <Icon size={12} strokeWidth={2} />
-            {role.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 /* ── Main About Component ── */
 function About({ activeSlide }) {
   const [active, setActive] = useState('ready');
@@ -237,7 +193,6 @@ function About({ activeSlide }) {
                 5년간의 디자인 실무와 2년간의 웹 퍼블리싱 경험을 바탕으로 프론트엔드 개발로 커리어를 전환했습니다.<br className="hidden md:block"/>
                 유지보수와 확장성을 고려한 아키텍처로 서비스를 탄탄하게 구축합니다.
               </p>
-              <RoleBadges isVisible={isVisible} />
             </div>
           </div>
         </div>
@@ -247,9 +202,9 @@ function About({ activeSlide }) {
           
           {/* Left: Profile & Skills */}
           <div className="col-span-1 lg:col-span-5 flex flex-col gap-6 overflow-y-auto pr-2 pb-4 scrollbar-hide lg:border-r border-border-light dark:border-border-dark">
-            <div className="relative aspect-video lg:aspect-[4/3] w-full overflow-hidden group bg-surface-muted-light dark:bg-surface-muted-dark border border-border-light dark:border-border-dark">
+            <div className="relative aspect-[3/4] w-full overflow-hidden group bg-surface-muted-light dark:bg-surface-muted-dark border border-border-light dark:border-border-dark">
               <Image src="/images/profile1-1.png" alt="프로필" fill
-                className="object-contain lg:object-cover scale-100 transition-transform duration-700 group-hover:scale-105" />
+                className="object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-lime/0 group-hover:bg-lime/10 transition-colors duration-500 mix-blend-overlay" />
             </div>
 
@@ -287,51 +242,41 @@ function About({ activeSlide }) {
 
             {/* Scrollable Timeline */}
             <div className="flex-1 overflow-y-auto pr-4 relative custom-scrollbar pb-10">
-              
-              {/* The Vertical Line: mathematically aligned to the dot centers */}
-              <div className="absolute left-[7px] top-4 bottom-4 w-[1px] bg-border-light dark:bg-border-dark" />
 
-              <div className="space-y-8 relative">
+              <div className="space-y-10 relative">
                 {currentList.map((item, i) => (
                   <div
                     key={`${tab}-${i}`}
-                    className={`group relative flex items-start gap-5
-                      animate-slideInUp opacity-0`}
+                    className={`group relative flex flex-col items-start gap-3
+                      animate-slideInUp opacity-0 border-l-4 border-lime/30 pl-4 py-1 hover:border-lime transition-colors duration-300`}
                     style={{ 
                       animationFillMode: 'forwards',
                       animationDelay: `${i * 150}ms` 
                     }}
                   >
-                    {/* The Dot */}
-                    <div className="relative flex-shrink-0 w-[15px] h-[15px] flex items-center justify-center mt-1.5 z-10 bg-surface-light dark:bg-surface-dark">
-                      <span className="block w-2.5 h-2.5 rounded-full bg-border-light dark:bg-border-dark
-                        group-hover:bg-lime group-hover:scale-150 transition-all duration-300
-                        shadow-[0_0_0_4px_var(--bg-surface-light)] dark:shadow-[0_0_0_4px_var(--bg-surface-dark)]" />
-                    </div>
-
                     {/* The Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 w-full">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1">
-                        <h4 className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark
+                        <h4 className="text-base font-bold text-text-primary-light dark:text-text-primary-dark
                           group-hover:text-lime transition-colors duration-300">
                           {item.company}
                         </h4>
-                        <span className="text-[11px] font-mono text-lime bg-lime/10 px-2 py-0.5 rounded-sm">
+                        <span className="text-[11px] font-mono text-lime bg-lime/10 px-2 py-0.5 rounded-sm self-start sm:self-auto">
                           {item.period}
                         </span>
                       </div>
-                      <span className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark mb-3">
+                      <span className="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark mb-4">
                         {item.role}
                       </span>
                       {item.desc && (
-                        <p className="text-xs leading-relaxed text-text-secondary-light dark:text-text-secondary-dark mb-3">
+                        <p className="text-[13px] leading-relaxed text-text-secondary-light dark:text-text-secondary-dark mb-4">
                           {item.desc}
                         </p>
                       )}
                       <ul className="space-y-2">
                         {item.points.map((point, ptIdx) => (
-                          <li key={ptIdx} className="text-xs text-text-muted-light dark:text-text-muted-dark leading-relaxed flex items-start gap-2">
-                            <span className="text-lime mt-0.5">•</span>
+                          <li key={ptIdx} className="text-[13px] text-text-muted-light dark:text-text-muted-dark leading-relaxed flex items-start gap-2">
+                            <span className="text-lime mt-0.5 text-[10px]">■</span>
                             <span className="flex-1">{point}</span>
                           </li>
                         ))}
