@@ -173,7 +173,7 @@ function About({ activeSlide }) {
     <div className={`relative w-full h-full flex items-center
       transition-opacity duration-[1.5s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
 
-      <div className="section-container py-16 md:py-20 h-full flex flex-col justify-center max-h-screen overflow-hidden">
+      <div className="section-container w-full h-full flex flex-col justify-center">
         
         {/* Top Header */}
         <div className="mb-8">
@@ -241,7 +241,7 @@ function About({ activeSlide }) {
             </div>
 
             {/* Scrollable Timeline */}
-            <div className="flex-1 overflow-y-auto pr-4 relative custom-scrollbar pb-10">
+            <div className="flex-1 pr-4 relative pb-10">
 
               <div className="space-y-10 relative">
                 {currentList.map((item, i) => (

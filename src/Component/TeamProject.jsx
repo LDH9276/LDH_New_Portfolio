@@ -97,7 +97,7 @@ function TeamProject({ activeSlide, reset }) {
 
   return (
     <div className={`relative w-full h-full flex items-center transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
-      <div className="section-container py-20">
+      <div className="section-container">
         <div className="mb-10">
           <span className="section-label">The LDH</span>
           <h2 className="section-title">Team Project</h2>

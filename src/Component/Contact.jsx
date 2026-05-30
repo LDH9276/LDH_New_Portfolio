@@ -40,7 +40,7 @@ function Contact({ activeSlide }) {
         }}
       />
 
-      <div className="section-container py-12 md:py-20 relative z-10">
+      <div className="section-container relative z-10">
         <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
 
           {/* Left: Contact info */}

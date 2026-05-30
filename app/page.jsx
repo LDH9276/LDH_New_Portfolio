@@ -73,16 +73,16 @@ export default function Page() {
         <section data-index="0" className="scroll-section h-screen w-full relative">
           <Banner activeSlide={activeSlide} />
         </section>
-        <section data-index="1" className="scroll-section min-h-screen w-full relative">
+        <section data-index="1" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
           <About activeSlide={activeSlide} />
         </section>
-        <section data-index="2" className="scroll-section min-h-screen w-full relative">
+        <section data-index="2" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
           <PersonProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="3" className="scroll-section min-h-screen w-full relative">
+        <section data-index="3" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
           <TeamProject activeSlide={activeSlide} reset={reset} />
         </section>
-        <section data-index="4" className="scroll-section min-h-screen w-full relative">
+        <section data-index="4" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
           <Contact activeSlide={activeSlide} />
         </section>
       </div>
