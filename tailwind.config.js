@@ -60,8 +60,9 @@ module.exports = {
       },
       animation: {
         'scroll-down': 'scrollDown 2s infinite',
-        'fade-in': 'fadeIn 0.8s ease-out forwards',
-        'slide-up': 'slideUp 0.6s ease-out forwards',
+        'fade-in': 'fadeIn 1.5s ease-out forwards',
+        'slide-up': 'slideUp 1s ease-out forwards',
+        'slideInUp': 'slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
       keyframes: {
         scrollDown: {
@@ -76,6 +77,10 @@ module.exports = {
           '0%': { opacity: '0', transform: 'translateY(30px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        slideInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        }
       },
     },
   },

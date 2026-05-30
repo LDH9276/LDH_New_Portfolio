@@ -176,6 +176,26 @@
   background: rgba(167, 198, 54, 0.5);
 }
 
+/* Custom Scrollbar classes */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(167, 198, 54, 0.5);
+  border-radius: 4px;
+}
+
 /* Selection highlight */
 ::selection {
   background: rgba(167, 198, 54, 0.3);
