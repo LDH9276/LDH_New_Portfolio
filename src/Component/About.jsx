@@ -177,7 +177,7 @@ function About({ activeSlide }) {
 
         {/* Top Section: Intro & Profile/Skills */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 mb-16 lg:mb-24 mt-12 md:mt-0">
-          
+
           {/* Left: Intro Text */}
           <div className="col-span-1 lg:col-span-6 flex flex-col justify-center">
             <div className="mb-8">
@@ -185,7 +185,7 @@ function About({ activeSlide }) {
               <h2 className="section-title mb-4">About Me</h2>
               <div className="accent-line mb-6" />
             </div>
-            
+
             <div className="space-y-4">
               <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark leading-snug">
                 <TypingText text="단순한 화면을 넘어, 구조를 설계하는" isVisible={isVisible} delay={200} />
@@ -199,16 +199,89 @@ function About({ activeSlide }) {
                 유지보수와 확장성을 고려한 아키텍처로 서비스를 탄탄하게 구축합니다.
               </p>
             </div>
+
+
+            {/* Bottom Section: Timeline (Experience / Education) */}
+            <div className="w-full my-8">
+
+              {/* Tabs */}
+              <div className={`flex gap-6 mb-8 border-b border-border-light dark:border-border-dark
+            transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                style={{ transitionDelay: '500ms' }}>
+                <button
+                  onClick={() => setTab('experience')}
+                  className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 relative flex items-center gap-2
+                ${tab === 'experience' ? 'text-lime' : 'text-text-muted-light dark:text-text-muted-dark hover:text-text-primary-light dark:hover:text-text-primary-dark'}`}
+                >
+                  <Briefcase size={16} /> Experience
+                  {tab === 'experience' && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-lime" />}
+                </button>
+                <button
+                  onClick={() => setTab('education')}
+                  className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 relative flex items-center gap-2
+                ${tab === 'education' ? 'text-lime' : 'text-text-muted-light dark:text-text-muted-dark hover:text-text-primary-light dark:hover:text-text-primary-dark'}`}
+                >
+                  <GraduationCap size={16} /> Education
+                  {tab === 'education' && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-lime" />}
+                </button>
+              </div>
+
+              {/* Timeline List (No forced scrolling, lets page handle it) */}
+              <div className="space-y-12">
+                {currentList.map((item, i) => (
+                  <div
+                    key={`${tab}-${i}`}
+                    className={`group relative flex flex-col items-start gap-3
+                  animate-slideInUp opacity-0 border-l-4 border-lime/30 pl-5 py-2 hover:border-lime transition-colors duration-300`}
+                    style={{
+                      animationFillMode: 'forwards',
+                      animationDelay: `${i * 100}ms`
+                    }}
+                  >
+                    {/* The Content */}
+                    <div className="w-full">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                        <h4 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark
+                      group-hover:text-lime transition-colors duration-300">
+                          {item.company}
+                        </h4>
+                        <span className="text-xs font-mono text-lime bg-lime/10 px-3 py-1 rounded-sm self-start sm:self-auto">
+                          {item.period}
+                        </span>
+                      </div>
+                      <span className="block text-[15px] font-semibold text-text-secondary-light dark:text-text-secondary-dark mb-4">
+                        {item.role}
+                      </span>
+                      {item.desc && (
+                        <p className="text-[14px] leading-relaxed text-text-secondary-light dark:text-text-secondary-dark mb-5">
+                          {item.desc}
+                        </p>
+                      )}
+                      <ul className="space-y-3">
+                        {item.points.map((point, ptIdx) => (
+                          <li key={ptIdx} className="text-[14px] text-text-muted-light dark:text-text-muted-dark leading-relaxed flex items-start gap-3">
+                            <span className="text-lime mt-1 text-[10px]">■</span>
+                            <span className="flex-1">{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
           {/* Right: Profile & Skills */}
-          <div className="col-span-1 lg:col-span-6 flex flex-col gap-6 lg:pl-8">
-            <div className="relative w-full overflow-hidden group flex items-center justify-center lg:justify-end">
+          <div className="col-span-1 lg:col-span-6 flex flex-col gap-6 lg:pl-8 h-fit self-start">
+            <div className="relative w-full flex justify-center items-center mx-auto">
               <Image src="/images/profile1-1.png" alt="프로필" width={400} height={533}
-                className="w-full max-w-[280px] lg:max-w-[340px] h-auto object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
+                style={{ width: '100%', maxWidth: '340px', height: 'auto', aspectRatio: '3/4' }}
+                className="object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 w-full">
               {skills.map((skill, i) => (
                 <SkillCard key={i} skill={skill} index={i} isVisible={isVisible} />
               ))}
@@ -216,75 +289,6 @@ function About({ activeSlide }) {
           </div>
         </div>
 
-        {/* Bottom Section: Timeline (Experience / Education) */}
-        <div className="w-full">
-          
-          {/* Tabs */}
-          <div className={`flex gap-6 mb-8 border-b border-border-light dark:border-border-dark
-            transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-            style={{ transitionDelay: '500ms' }}>
-            <button
-              onClick={() => setTab('experience')}
-              className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 relative flex items-center gap-2
-                ${tab === 'experience' ? 'text-lime' : 'text-text-muted-light dark:text-text-muted-dark hover:text-text-primary-light dark:hover:text-text-primary-dark'}`}
-            >
-              <Briefcase size={16} /> Experience
-              {tab === 'experience' && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-lime" />}
-            </button>
-            <button
-              onClick={() => setTab('education')}
-              className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 relative flex items-center gap-2
-                ${tab === 'education' ? 'text-lime' : 'text-text-muted-light dark:text-text-muted-dark hover:text-text-primary-light dark:hover:text-text-primary-dark'}`}
-            >
-              <GraduationCap size={16} /> Education
-              {tab === 'education' && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-lime" />}
-            </button>
-          </div>
-
-          {/* Timeline List (No forced scrolling, lets page handle it) */}
-          <div className="space-y-12">
-            {currentList.map((item, i) => (
-              <div
-                key={`${tab}-${i}`}
-                className={`group relative flex flex-col items-start gap-3
-                  animate-slideInUp opacity-0 border-l-4 border-lime/30 pl-5 py-2 hover:border-lime transition-colors duration-300`}
-                style={{
-                  animationFillMode: 'forwards',
-                  animationDelay: `${i * 100}ms`
-                }}
-              >
-                {/* The Content */}
-                <div className="w-full">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                    <h4 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark
-                      group-hover:text-lime transition-colors duration-300">
-                      {item.company}
-                    </h4>
-                    <span className="text-xs font-mono text-lime bg-lime/10 px-3 py-1 rounded-sm self-start sm:self-auto">
-                      {item.period}
-                    </span>
-                  </div>
-                  <span className="block text-[15px] font-semibold text-text-secondary-light dark:text-text-secondary-dark mb-4">
-                    {item.role}
-                  </span>
-                  {item.desc && (
-                    <p className="text-[14px] leading-relaxed text-text-secondary-light dark:text-text-secondary-dark mb-5">
-                      {item.desc}
-                    </p>
-                  )}
-                  <ul className="space-y-3">
-                    {item.points.map((point, ptIdx) => (
-                      <li key={ptIdx} className="text-[14px] text-text-muted-light dark:text-text-muted-dark leading-relaxed flex items-start gap-3">
-                        <span className="text-lime mt-1 text-[10px]">■</span>
-                        <span className="flex-1">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
