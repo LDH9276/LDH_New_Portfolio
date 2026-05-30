@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import portfolio from './person'
-import Scroll from '../Header/Scroll';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FileCode, Atom, Server, Code2 } from 'lucide-react';
+import { Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const getFamilyIcon = (family) => {
   const f = family.toUpperCase();
@@ -31,7 +32,7 @@ function ProjectCard({ item, index, isVisible, reset }) {
       href={`/portfolio/${item.id}`}
       onClick={reset}
       onMouseMove={handleMouseMove}
-      className={`card group block relative overflow-hidden
+      className={`card group block relative h-full overflow-hidden
         transition-all duration-500
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       style={{ transitionDelay: isVisible ? `${index * 100}ms` : '0ms' }}
@@ -104,17 +105,29 @@ function PersonProject({ activeSlide, reset }) {
           <div className="accent-line" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Swiper
+          modules={[Navigation, Pagination]}
+          navigation
+          pagination={{ clickable: true }}
+          spaceBetween={16}
+          slidesPerView={1.15}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+          className="portfolio-swiper"
+        >
           {items.map((item, index) => (
-            <ProjectCard
-              key={index}
-              item={item}
-              index={index}
-              isVisible={isVisible}
-              reset={reset}
-            />
+            <SwiperSlide key={item.id} className="h-auto">
+              <ProjectCard
+                item={item}
+                index={index}
+                isVisible={isVisible}
+                reset={reset}
+              />
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
       </div>
     </div>
   );
