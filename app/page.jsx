@@ -37,7 +37,8 @@ export default function Page() {
       },
       {
         root: containerRef.current,
-        threshold: 0.5,
+        rootMargin: '-45% 0px -45% 0px',
+        threshold: 0,
       }
     );
 
