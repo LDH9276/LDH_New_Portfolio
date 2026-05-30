@@ -277,7 +277,7 @@ function About({ activeSlide }) {
           <div className="col-span-1 lg:col-span-6 flex flex-col gap-6 lg:pl-8 h-fit self-start">
             <div className="relative w-full flex justify-center items-center mx-auto">
               <Image src="/images/profile1-1.png" alt="프로필" width={400} height={533}
-                style={{ width: '100%', maxWidth: '340px', height: 'auto', aspectRatio: '3/4' }}
+                style={{ width: '100%', height: 'auto', aspectRatio: '5/4' }}
                 className="object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
             </div>
 
