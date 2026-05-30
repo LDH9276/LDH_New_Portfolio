@@ -6,7 +6,7 @@ import Image from 'next/image';
 import ThemeToggle from '../../app/ThemeToggle';
 
 function Header() {
-  const { isStart, setActiveSlide, isScrolled, setPendingScrollIndex, reset } = useAppContext();
+  const { isStart, activeSlide, setActiveSlide, isScrolled, setPendingScrollIndex, reset } = useAppContext();
   const [toggle, setToggle] = useState('');
   const [menus , setMenus] = useState(false);
   const router = useRouter();
@@ -81,17 +81,25 @@ function Header() {
         </div>
 
         {/* Center: Desktop Inline Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-0.5 relative">
           {navItems.map((item) => (
             <button
               key={item.name}
               onClick={() => handleNavClick(item.index)}
-              className="px-3 py-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark
-                hover:text-text-primary-light dark:hover:text-text-primary-dark
-                hover:bg-surface-muted-light dark:hover:bg-surface-muted-dark
-                transition-colors duration-200 rounded-none"
+              className={`relative px-3 py-2 text-sm font-medium transition-colors duration-300 rounded-none
+                ${activeSlide === item.index 
+                  ? 'text-lime' 
+                  : 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark'}`}
             >
               {item.name}
+              {/* Active indicator bar */}
+              <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-lime
+                transition-all duration-300
+                ${activeSlide === item.index ? 'w-full opacity-100' : 'w-0 opacity-0'}`} />
+              {/* Hover underline */}
+              <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] bg-text-muted-light dark:bg-text-muted-dark
+                transition-all duration-300
+                ${activeSlide === item.index ? 'w-0 opacity-0' : 'w-0 opacity-0 group-hover:w-3/4 group-hover:opacity-100'}`} />
             </button>
           ))}
         </nav>
@@ -108,7 +116,9 @@ function Header() {
             className="hidden md:inline-flex items-center justify-center px-4 py-2 
               bg-text-primary-light dark:bg-text-primary-dark 
               text-surface-light dark:text-surface-dark 
-              text-sm font-medium transition-colors hover:opacity-90 rounded-none"
+              text-sm font-medium transition-all duration-300
+              hover:bg-lime hover:text-surface-dark
+              rounded-none"
           >
             GitHub
           </a>
