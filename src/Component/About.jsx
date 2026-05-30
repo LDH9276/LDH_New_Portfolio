@@ -273,13 +273,13 @@ function About({ activeSlide }) {
           </div>
 
           {/* Profile & Skills */}
-          <div className="col-span-1 lg:col-span-5 flex flex-col gap-6 overflow-y-auto pb-4 scrollbar-hide order-1 lg:order-2">
+          <div className="col-span-1 lg:col-span-5 flex flex-col gap-6 pb-4 order-1 lg:order-2 lg:sticky lg:top-[150px] self-start">
             <div className="relative w-full overflow-hidden group flex items-center justify-center">
               <Image src="/images/profile1-1.png" alt="프로필" width={500} height={667}
                 className="w-full h-auto object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {skills.map((skill, i) => (
                 <SkillCard key={i} skill={skill} index={i} isVisible={isVisible} />
               ))}
