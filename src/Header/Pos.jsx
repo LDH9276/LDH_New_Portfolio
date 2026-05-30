@@ -20,10 +20,24 @@ function Pos( {handleSlideNavigation, activeSlide} ) {
           >
             {label}
           </span>
+
+          {/* Dot with pulse ring on active */}
+          <span className="relative flex-shrink-0">
+            {activeSlide === index && (
+              <span className="absolute inset-0 w-full h-full rounded-full bg-lime/30 animate-ping" />
+            )}
+            <span className={`block relative z-10 rounded-full transition-all duration-300
+              ${activeSlide === index 
+                ? 'w-3 h-3 bg-lime shadow-[0_0_10px_rgba(167,198,54,0.5)]' 
+                : 'w-2 h-2 bg-text-muted-light dark:bg-text-muted-dark group-hover:bg-lime group-hover:scale-125'}`} 
+            />
+          </span>
+
+          {/* Active bar */}
           <span className={`block transition-all duration-300
             ${activeSlide === index 
-              ? 'w-8 h-[2px] bg-lime' 
-              : 'w-4 h-[1px] bg-text-muted-light dark:bg-text-muted-dark group-hover:w-6 group-hover:bg-lime'}`} 
+              ? 'w-6 h-[2px] bg-lime' 
+              : 'w-3 h-[1px] bg-text-muted-light dark:bg-text-muted-dark group-hover:w-5 group-hover:bg-lime'}`} 
           />
         </button>
       ))}
