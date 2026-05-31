@@ -68,7 +68,7 @@ function PublishingPage() {
         </section>
 
         {/* Slide 1: Overview */}
-        <section data-index="1" className="scroll-section min-h-screen w-full relative flex items-center">
+        <section data-index="1" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
             <span className="section-label">{portfolioItem.name}</span>
             <h2 className="section-title">작업 정보</h2>
@@ -106,11 +106,10 @@ function PublishingPage() {
               </div>
             </div>
           </div>
-          <Scroll />
         </section>
 
         {/* Slide 2: Pages */}
-        <section data-index="2" className="scroll-section min-h-screen w-full relative flex items-center">
+        <section data-index="2" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
             <span className="section-label">{portfolioItem.name}</span>
             <h2 className="section-title">담당 페이지</h2>
@@ -140,11 +139,10 @@ function PublishingPage() {
               </ul>
             </div>
           </div>
-          <Scroll />
         </section>
 
         {/* Slide 3: Samples */}
-        <section data-index="3" className="scroll-section min-h-screen w-full relative flex items-center">
+        <section data-index="3" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
             <span className="section-label">{portfolioItem.name}</span>
             <h2 className="section-title">이미지 샘플</h2>

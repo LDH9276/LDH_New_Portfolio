@@ -91,7 +91,7 @@ function PortfolioPage() {
         </section>
 
         {/* Slide 1: Introduce */}
-        <section data-index="1" className="scroll-section min-h-screen w-full relative flex items-center">
+        <section data-index="1" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
             <span className="section-label">{portfolioItem.name}</span>
             <h2 className="section-title">Introduce</h2>
@@ -112,7 +112,7 @@ function PortfolioPage() {
         </section>
 
         {/* Slide 2: Design */}
-        <section data-index="2" className="scroll-section min-h-screen w-full relative flex items-center">
+        <section data-index="2" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
             <span className="section-label">{portfolioItem.name}</span>
             <h2 className="section-title">개발환경 및 디자인</h2>
@@ -157,7 +157,7 @@ function PortfolioPage() {
         </section>
 
         {/* Slide 3: Develop */}
-        <section data-index="3" className="scroll-section min-h-screen w-full relative flex items-center">
+        <section data-index="3" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
             <span className="section-label">{portfolioItem.name}</span>
             <h2 className="section-title">Develop</h2>
@@ -195,7 +195,7 @@ function PortfolioPage() {
         </section>
 
         {/* Slide 4: Review */}
-        <section data-index="4" className="scroll-section min-h-screen w-full relative flex items-center">
+        <section data-index="4" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
             <span className="section-label">{portfolioItem.name}</span>
             <h2 className="section-title">후기 및 느낀점</h2>

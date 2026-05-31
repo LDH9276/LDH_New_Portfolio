@@ -2,13 +2,54 @@
   "portfolio": [
     {
       "id": 9,
-      "name": "회사 퍼블리싱 작업 01",
-      "client": "프로젝트명 추가 예정",
-      "family": "HTML, CSS, JAVASCRIPT",
+      "name": "Volvik 리뉴얼 작업",
+      "client": "Volvik",
+      "family": "HTML, PHP, CSS, JAVASCRIPT",
       "thumb": "/portfolio/id009_000.webp",
-      "duration": "작업 기간 추가 예정",
+      "duration": "2024-12 ~ 2025-05",
       "pages": [
-        "담당 페이지 추가 예정"
+        "국, 영문 메인 페이지 및 서브페이지 전반",
+        "메인페이지 소개",
+        "서브페이지 전반"
+      ],
+      "samples": [
+        {
+          "src": "/portfolio/company/image001.webp",
+          "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "웰파인 반응형 홈페이지",
+      "client": "웰파인",
+      "family": "HTML, PHP, CSS, JAVASCRIPT",
+      "thumb": "/portfolio/id009_000.webp",
+      "duration": "2024-10 ~ 2024-12",
+      "pages": [
+        "국, 영문 메인 페이지 및 서브페이지 전반",
+        "메인페이지 소개",
+        "서브페이지 전반"
+      ],
+      "samples": [
+        {
+          "src": "/portfolio/company/image001.webp",
+          "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "서울원 아이파크",
+      "client": "아이파크",
+      "family": "HTML, PHP, CSS, JAVASCRIPT",
+      "thumb": "/portfolio/id009_000.webp",
+      "duration": "2024-12 ~ 2025-05",
+      "pages": [
+        "사업안내",
+        "단지안내",
+        "분양안내(평면안내, 인테리어)",
+        "관심고객등록"
       ],
       "samples": [
         {
