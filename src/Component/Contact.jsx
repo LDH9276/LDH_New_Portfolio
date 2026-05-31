@@ -8,7 +8,7 @@ function Contact({ activeSlide }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    if (activeSlide === 4) setActive('');
+    if (activeSlide === 5) setActive('');
   }, [activeSlide]);
 
   const isVisible = active === '';

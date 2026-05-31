@@ -4,7 +4,7 @@ import { useAppContext } from '../../app/Context';
 import Image from 'next/image';
 
 function Menus( {toggle, setToggle, menuEvent} ) {
-  const { setActiveSlide, reset } = useAppContext();
+  const { setActiveSlide, setPendingScrollIndex, reset } = useAppContext();
   const [menu01, setMenu01] = useState('');
   const [menu02, setMenu02] = useState('');
   const router = useRouter();
@@ -22,6 +22,7 @@ function Menus( {toggle, setToggle, menuEvent} ) {
     setToggle('');
     menuEvent();
     setActiveSlide(index);
+    setPendingScrollIndex(index);
     router.push('/');
   }
 
@@ -38,7 +39,7 @@ function Menus( {toggle, setToggle, menuEvent} ) {
       transition-all duration-500
       ${toggle === 'active' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
     >
-      <nav className="h-full flex items-center justify-center">
+      <nav className="h-full flex items-center justify-center overflow-y-auto py-24">
         <ul className="flex flex-col gap-1 text-center">
           {/* Introduce */}
           <li>
@@ -110,10 +111,21 @@ function Menus( {toggle, setToggle, menuEvent} ) {
             </ul>
           </li>
 
-          {/* Contact */}
+          {/* Publishing Works */}
           <li>
             <button
               onClick={() => gnbHandleEvent(4)}
+              className="block w-full py-3 px-8 text-2xl md:text-4xl font-bold text-white/60
+                hover:text-lime transition-colors duration-300 tracking-tight"
+            >
+              Publishing Works
+            </button>
+          </li>
+
+          {/* Contact */}
+          <li>
+            <button
+              onClick={() => gnbHandleEvent(5)}
               className="block w-full py-3 px-8 text-2xl md:text-4xl font-bold text-white/60
                 hover:text-lime transition-colors duration-300 tracking-tight"
             >

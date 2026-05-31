@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Pos( {handleSlideNavigation, activeSlide} ) {
-  const navItems = ['Introduce', 'About Me', 'Person Project', 'Team Project', 'Contact'];
+  const navItems = ['Introduce', 'About Me', 'Person Project', 'Team Project', 'Publishing Works', 'Contact'];
 
   return (
     <nav className="hidden lg:flex fixed right-8 top-1/2 -translate-y-1/2 z-40
