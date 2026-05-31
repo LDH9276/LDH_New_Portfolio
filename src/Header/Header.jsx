@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation';
 import Menus from './Menus';
 import { useAppContext } from '../../app/Context';
@@ -10,6 +10,18 @@ function Header() {
   const [toggle, setToggle] = useState('');
   const [menus , setMenus] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const desktopMedia = window.matchMedia('(min-width: 1024px)');
+    const closeMobileMenu = (event) => {
+      if (!event.matches) return;
+      setToggle('');
+      setMenus(false);
+    };
+
+    desktopMedia.addEventListener('change', closeMobileMenu);
+    return () => desktopMedia.removeEventListener('change', closeMobileMenu);
+  }, []);
 
   const toMainTitle = () => {
     setToggle('');
@@ -62,13 +74,14 @@ function Header() {
   ];
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500
-      ${isScrolled 
-        ? 'bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark py-2' 
-        : 'bg-transparent border-b border-transparent py-4'}
-      ${isStart === 'ready' ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}
-    `}>
-      <div className={`section-container flex items-center justify-between transition-all duration-500 ${isScrolled ? 'h-10 md:h-12' : 'h-14 md:h-16'}`}>
+    <>
+      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500
+        ${isScrolled
+          ? 'bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark py-2'
+          : 'bg-transparent border-b border-transparent py-4'}
+        ${isStart === 'ready' ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}
+      `}>
+        <div className={`section-container flex items-center justify-between transition-all duration-500 ${isScrolled ? 'h-10 md:h-12' : 'h-14 md:h-16'}`}>
         
         {/* Left: Logo */}
         <div className="flex items-center">
@@ -125,27 +138,27 @@ function Header() {
           </a>
 
           {/* Mobile Hamburger */}
-          <button 
-            className={`lg:hidden relative w-9 h-9 flex flex-col items-center justify-center gap-[5px]
-              border border-border-light dark:border-border-dark
-              bg-surface-card-light dark:bg-surface-card-dark
-              transition-all duration-300 hover:border-lime rounded-none
-              ${toggle === 'active' ? 'border-lime' : ''}`}
-            onClick={menuEvent}
-            aria-label="Toggle menu"
-          >
-            <span className={`block w-4 h-[1.5px] bg-text-primary-light dark:bg-text-primary-dark
-              transition-all duration-300 origin-center
-              ${toggle === 'active' ? 'rotate-45 translate-y-[3.25px]' : ''}`} />
-            <span className={`block w-4 h-[1.5px] bg-text-primary-light dark:bg-text-primary-dark
-              transition-all duration-300 origin-center
-              ${toggle === 'active' ? '-rotate-45 -translate-y-[3.25px]' : ''}`} />
-          </button>
+            <button
+              className={`lg:hidden relative z-50 w-9 h-9 flex flex-col items-center justify-center gap-[5px]
+                border transition-all duration-300 hover:border-lime rounded-none
+                ${toggle === 'active'
+                  ? 'border-lime bg-lime'
+                  : 'border-border-light dark:border-border-dark bg-surface-card-light dark:bg-surface-card-dark'}`}
+              onClick={menuEvent}
+              aria-label={toggle === 'active' ? 'Close menu' : 'Open menu'}
+              aria-expanded={toggle === 'active'}
+            >
+              <span className={`block w-4 h-[1.5px] transition-all duration-300 origin-center
+                ${toggle === 'active' ? 'bg-surface-dark rotate-45 translate-y-[3.25px]' : 'bg-text-primary-light dark:bg-text-primary-dark'}`} />
+              <span className={`block w-4 h-[1.5px] transition-all duration-300 origin-center
+                ${toggle === 'active' ? 'bg-surface-dark -rotate-45 -translate-y-[3.25px]' : 'bg-text-primary-light dark:bg-text-primary-dark'}`} />
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
       {menus && <Menus setToggle={setToggle} toggle={toggle} menuEvent={menuEvent} />}
-    </header>
+    </>
   );
 }
 

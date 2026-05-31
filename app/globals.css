@@ -227,9 +227,8 @@
   width: 30px;
   height: 30px;
   margin-top: 0;
-  border: 1px solid rgba(167, 198, 54, 0.55);
   background: transparent;
-  transition: opacity 0.3s, color 0.3s, background 0.3s, border-color 0.3s;
+  transition: opacity 0.3s, color 0.3s, background 0.3s;
 }
 
 .portfolio-swiper .swiper-button-prev {
@@ -242,7 +241,6 @@
 
 .portfolio-swiper .swiper-button-prev:hover,
 .portfolio-swiper .swiper-button-next:hover {
-  border-color: #A7C636;
   background: #A7C636;
   color: #111113;
 }

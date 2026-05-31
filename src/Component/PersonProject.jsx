@@ -113,7 +113,7 @@ function PersonProject({ activeSlide, reset }) {
           slidesPerView={1.15}
           breakpoints={{
             640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
+            1024: { slidesPerView: 4 },
           }}
           className="portfolio-swiper"
         >
