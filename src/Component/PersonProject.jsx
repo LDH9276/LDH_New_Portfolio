@@ -3,8 +3,9 @@ import portfolio from './person'
 import Link from 'next/link';
 import Image from 'next/image';
 import { FileCode, Atom, Server, Code2 } from 'lucide-react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { A11y, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import PortfolioSwiperNavigation from './PortfolioSwiperNavigation';
 
 const getFamilyIcon = (family) => {
   const f = family.toUpperCase();
@@ -30,6 +31,7 @@ function ProjectCard({ item, index, isVisible, reset }) {
     <Link
       ref={cardRef}
       href={`/portfolio/${item.id}`}
+      aria-label={`${item.name} 포트폴리오 상세 보기`}
       onClick={reset}
       onMouseMove={handleMouseMove}
       className={`card group block relative h-full overflow-hidden
@@ -51,6 +53,7 @@ function ProjectCard({ item, index, isVisible, reset }) {
           src={`/images/${item.thumb}`}
           alt={item.name}
           fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 90vw"
           className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
         {/* Number overlay */}
@@ -106,11 +109,20 @@ function PersonProject({ activeSlide, reset }) {
         </div>
 
         <Swiper
-          modules={[Navigation, Pagination]}
-          navigation
+          modules={[A11y, Navigation, Pagination]}
+          navigation={{
+            prevEl: '.person-project-swiper-prev',
+            nextEl: '.person-project-swiper-next',
+          }}
           pagination={{ clickable: true }}
+          a11y={{
+            prevSlideMessage: '이전 프로젝트',
+            nextSlideMessage: '다음 프로젝트',
+            paginationBulletMessage: '{{index}}번째 프로젝트 보기',
+          }}
           spaceBetween={16}
           slidesPerView={1.15}
+          watchOverflow={false}
           breakpoints={{
             640: { slidesPerView: 2 },
             1024: { slidesPerView: 4 },
@@ -127,6 +139,12 @@ function PersonProject({ activeSlide, reset }) {
               />
             </SwiperSlide>
           ))}
+          <PortfolioSwiperNavigation
+            prevClassName="person-project-swiper-prev"
+            nextClassName="person-project-swiper-next"
+            prevLabel="이전 개인 프로젝트"
+            nextLabel="다음 개인 프로젝트"
+          />
         </Swiper>
       </div>
     </div>

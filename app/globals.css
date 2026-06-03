@@ -212,45 +212,61 @@
 
 /* Portfolio swiper */
 .portfolio-swiper {
-  --swiper-navigation-color: #A7C636;
-  --swiper-navigation-size: 14px;
   --swiper-pagination-color: #A7C636;
   --swiper-pagination-bullet-inactive-color: #888888;
   --swiper-pagination-bullet-inactive-opacity: 0.35;
-  padding-bottom: 48px;
+  overflow: hidden;
+  padding: 0 4px 60px;
 }
 
-.portfolio-swiper .swiper-button-prev,
-.portfolio-swiper .swiper-button-next {
+.portfolio-swiper .portfolio-swiper-button {
   top: auto;
   bottom: 0;
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
   margin-top: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 10;
   background: transparent;
-  transition: opacity 0.3s, color 0.3s, background 0.3s;
+  color: #A7C636;
+  cursor: pointer;
+  transition: opacity 0.3s, color 0.3s, transform 0.3s;
 }
 
-.portfolio-swiper .swiper-button-prev {
-  left: calc(50% - 92px);
+.portfolio-swiper .portfolio-swiper-button::after {
+  content: none;
 }
 
-.portfolio-swiper .swiper-button-next {
-  right: calc(50% - 92px);
+.portfolio-swiper .portfolio-swiper-button svg {
+  width: 18px;
+  height: 18px;
 }
 
-.portfolio-swiper .swiper-button-prev:hover,
-.portfolio-swiper .swiper-button-next:hover {
-  background: #A7C636;
-  color: #111113;
+.portfolio-swiper .portfolio-swiper-button-prev {
+  left: calc(50% - 112px);
+}
+
+.portfolio-swiper .portfolio-swiper-button-next {
+  right: calc(50% - 112px);
+}
+
+.portfolio-swiper .portfolio-swiper-button:hover {
+  color: #c9e85a;
+  transform: translateY(-1px);
 }
 
 .portfolio-swiper .swiper-button-disabled {
   opacity: 0.2;
+  cursor: default;
 }
 
 .portfolio-swiper .swiper-pagination {
-  bottom: 11px;
+  bottom: 19px;
   left: 50%;
   display: flex;
   width: auto;
@@ -268,6 +284,13 @@
 
 .portfolio-swiper .swiper-pagination-bullet-active {
   width: 20px;
+}
+
+@media (min-width: 1024px) {
+  .portfolio-swiper .portfolio-swiper-button svg {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 /* Focus outline */

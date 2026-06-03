@@ -17,12 +17,14 @@ export default function ThemeToggle() {
       aria-label="테마 전환"
     >
       <Sun
+        aria-hidden="true"
         className={`absolute w-4 h-4 transition-all duration-300 text-text-primary-light dark:text-text-primary-dark
           ${theme === 'dark' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-90 scale-0'}`}
         strokeWidth={1.5}
       />
       {/* Moon icon */}
       <Moon
+        aria-hidden="true"
         className={`absolute w-4 h-4 transition-all duration-300 text-text-primary-light dark:text-text-primary-dark
           ${theme === 'light' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'}`}
         strokeWidth={1.5}

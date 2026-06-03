@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Menus from './Menus';
 import { useAppContext } from '../../app/Context';
 import Image from 'next/image';
 import ThemeToggle from '../../app/ThemeToggle';
+import { Menu, X } from 'lucide-react';
 
 function Header() {
-  const { isStart, activeSlide, setActiveSlide, isScrolled, setPendingScrollIndex, reset } = useAppContext();
+  const { isStart, activeSlide, setActiveSlide, isScrolled, setPendingScrollIndex } = useAppContext();
   const [toggle, setToggle] = useState('');
-  const [menus , setMenus] = useState(false);
+  const [menus, setMenus] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -81,25 +82,37 @@ function Header() {
           : 'bg-transparent border-b border-transparent py-4'}
         ${isStart === 'ready' ? 'opacity-0 -translate-y-full' : 'opacity-100 translate-y-0'}
       `}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] btn-primary"
+        >
+          본문으로 건너뛰기
+        </a>
         <div className={`section-container flex items-center justify-between transition-all duration-500 ${isScrolled ? 'h-10 md:h-12' : 'h-14 md:h-16'}`}>
         
         {/* Left: Logo */}
         <div className="flex items-center">
-          <h1 
-            onClick={toMainTitle} 
-            className="cursor-pointer transition-opacity duration-300 hover:opacity-70 flex-shrink-0 flex items-center"
-          >
-            <Image src="/images/logo.svg" alt="로고" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="block dark:hidden transition-all duration-500" />
-            <Image src="/images/logo-dark.svg" alt="로고" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="hidden dark:block transition-all duration-500" />
+          <h1 className="flex items-center">
+            <button
+              type="button"
+              onClick={toMainTitle}
+              className="cursor-pointer transition-opacity duration-300 hover:opacity-70 flex-shrink-0 flex items-center"
+              aria-label="홈으로 이동"
+            >
+              <Image src="/images/logo.svg" alt="" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="block dark:hidden transition-all duration-500" />
+              <Image src="/images/logo-dark.svg" alt="" width={isScrolled ? 80 : 100} height={isScrolled ? 30 : 40} className="hidden dark:block transition-all duration-500" />
+            </button>
           </h1>
         </div>
 
         {/* Center: Desktop Inline Navigation */}
-        <nav className="hidden lg:flex items-center gap-0.5 relative">
+        <nav className="hidden lg:flex items-center gap-0.5 relative" aria-label="주요 섹션">
           {navItems.map((item) => (
             <button
+              type="button"
               key={item.name}
               onClick={() => handleNavClick(item.index)}
+              aria-current={activeSlide === item.index ? 'page' : undefined}
               className={`relative px-3 py-2 text-sm font-medium transition-colors duration-300 rounded-none
                 ${activeSlide === item.index 
                   ? 'text-lime' 
@@ -127,6 +140,7 @@ function Header() {
             href="https://github.com/LDH9276" 
             target="_blank" 
             rel="noopener noreferrer"
+            aria-label="GitHub 프로필 새 창으로 열기"
             className="hidden lg:inline-flex items-center justify-center px-4 py-2
               bg-text-primary-light dark:bg-text-primary-dark 
               text-surface-light dark:text-surface-dark 
@@ -139,19 +153,22 @@ function Header() {
 
           {/* Mobile Hamburger */}
             <button
+              type="button"
               className={`lg:hidden relative z-50 w-9 h-9 flex flex-col items-center justify-center gap-[5px]
                 border transition-all duration-300 hover:border-lime rounded-none
                 ${toggle === 'active'
                   ? 'border-lime bg-lime'
                   : 'border-border-light dark:border-border-dark bg-surface-card-light dark:bg-surface-card-dark'}`}
               onClick={menuEvent}
+              aria-controls="mobile-menu"
               aria-label={toggle === 'active' ? 'Close menu' : 'Open menu'}
               aria-expanded={toggle === 'active'}
             >
-              <span className={`block w-4 h-[1.5px] transition-all duration-300 origin-center
-                ${toggle === 'active' ? 'bg-surface-dark rotate-45 translate-y-[3.25px]' : 'bg-text-primary-light dark:bg-text-primary-dark'}`} />
-              <span className={`block w-4 h-[1.5px] transition-all duration-300 origin-center
-                ${toggle === 'active' ? 'bg-surface-dark -rotate-45 -translate-y-[3.25px]' : 'bg-text-primary-light dark:bg-text-primary-dark'}`} />
+              {toggle === 'active' ? (
+                <X size={18} aria-hidden="true" strokeWidth={1.75} className="text-surface-dark" />
+              ) : (
+                <Menu size={18} aria-hidden="true" strokeWidth={1.75} className="text-text-primary-light dark:text-text-primary-dark" />
+              )}
             </button>
           </div>
         </div>

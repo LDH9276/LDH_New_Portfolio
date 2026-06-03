@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import portfolio from './team'
-import Scroll from '../Header/Scroll';
 import Image from 'next/image';
 import { FileCode, Atom, Server, Code2 } from 'lucide-react';
+import { A11y, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import PortfolioSwiperNavigation from './PortfolioSwiperNavigation';
 
 const getFamilyIcon = (family) => {
   const f = family.toUpperCase();
@@ -29,9 +31,10 @@ function ProjectCard({ item, index, isVisible, reset }) {
     <Link
       ref={cardRef}
       href={`/portfolio/${item.id}`}
+      aria-label={`${item.name} 포트폴리오 상세 보기`}
       onClick={reset}
       onMouseMove={handleMouseMove}
-      className={`card group block relative overflow-hidden
+      className={`card group block relative h-full overflow-hidden
         transition-all duration-500
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       style={{ transitionDelay: isVisible ? `${index * 100}ms` : '0ms' }}
@@ -50,6 +53,7 @@ function ProjectCard({ item, index, isVisible, reset }) {
           src={`/images/${item.thumb}`}
           alt={item.name}
           fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 90vw"
           className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
         {/* Number overlay */}
@@ -104,17 +108,44 @@ function TeamProject({ activeSlide, reset }) {
           <div className="accent-line" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Swiper
+          modules={[A11y, Navigation, Pagination]}
+          navigation={{
+            prevEl: '.team-project-swiper-prev',
+            nextEl: '.team-project-swiper-next',
+          }}
+          pagination={{ clickable: true }}
+          a11y={{
+            prevSlideMessage: '이전 프로젝트',
+            nextSlideMessage: '다음 프로젝트',
+            paginationBulletMessage: '{{index}}번째 프로젝트 보기',
+          }}
+          spaceBetween={16}
+          slidesPerView={1.15}
+          watchOverflow={false}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 4 },
+          }}
+          className="portfolio-swiper"
+        >
           {items.map((item, index) => (
-            <ProjectCard
-              key={index}
-              item={item}
-              index={index}
-              isVisible={isVisible}
-              reset={reset}
-            />
+            <SwiperSlide key={item.id} className="h-auto">
+              <ProjectCard
+                item={item}
+                index={index}
+                isVisible={isVisible}
+                reset={reset}
+              />
+            </SwiperSlide>
           ))}
-        </div>
+          <PortfolioSwiperNavigation
+            prevClassName="team-project-swiper-prev"
+            nextClassName="team-project-swiper-next"
+            prevLabel="이전 팀 프로젝트"
+            nextLabel="다음 팀 프로젝트"
+          />
+        </Swiper>
       </div>
     </div>
   );

@@ -4,13 +4,19 @@ function Pos( {handleSlideNavigation, activeSlide} ) {
   const navItems = ['Introduce', 'About Me', 'Person Project', 'Team Project', 'Publishing Works', 'Contact'];
 
   return (
-    <nav className="hidden lg:flex fixed right-8 top-1/2 -translate-y-1/2 z-40
-      flex-col items-end gap-4">
+    <nav
+      className="hidden lg:flex fixed right-8 top-1/2 -translate-y-1/2 z-40
+      flex-col items-end gap-4"
+      aria-label="섹션 바로가기"
+    >
       {navItems.map((label, index) => (
         <button
+          type="button"
           key={index}
           className={`group flex items-center gap-3 transition-all duration-300`}
           onClick={() => handleSlideNavigation(index)}
+          aria-label={`${label} 섹션으로 이동`}
+          aria-current={activeSlide === index ? 'page' : undefined}
         >
           <span className={`text-[11px] font-medium uppercase tracking-wider
             transition-all duration-300
@@ -24,7 +30,7 @@ function Pos( {handleSlideNavigation, activeSlide} ) {
           {/* Dot with pulse ring on active */}
           <span className="relative flex-shrink-0">
             {activeSlide === index && (
-              <span className="absolute inset-0 w-full h-full rounded-full bg-lime/30 animate-ping" />
+              <span aria-hidden="true" className="absolute inset-0 w-full h-full rounded-full bg-lime/30 animate-ping" />
             )}
             <span className={`block relative z-10 rounded-full transition-all duration-300
               ${activeSlide === index 
