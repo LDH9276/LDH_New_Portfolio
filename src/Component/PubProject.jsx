@@ -82,7 +82,7 @@ function ProjectCard({ item, index, isVisible, reset }) {
           {item.name}
         </h3>
         <p className="text-xs text-text-muted-light dark:text-text-muted-dark">
-          {item.client}
+          {item.responsibility}
         </p>
       </div>
     </Link>
@@ -97,7 +97,7 @@ function PubProject({ activeSlide, reset }) {
   }, [activeSlide]);
 
   const isVisible = active === '';
-  const items = portfolio.portfolio.slice(0).reverse();
+  const items = portfolio.portfolio;
   const hasMultipleItems = items.length > 1;
 
   return (

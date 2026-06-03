@@ -75,8 +75,8 @@ function PortfolioPage() {
         {/* Slide 0: Intro */}
         <section data-index="0" className="scroll-section h-screen w-full relative">
           <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-            <Image src={`/portfolio/${portfolioItem.main_img}`} alt={portfolioItem.name} fill className="object-cover" />
-            <div className="absolute inset-0 bg-black/60" />
+            <Image src={`/portfolio/${portfolioItem.main_img}`} alt={portfolioItem.name} fill className="z-0 object-cover" />
+            <div className="pointer-events-none absolute inset-0 z-[1] bg-black/70" />
             <div className="relative z-10 section-container text-center space-y-4">
               <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.family}</span>
               <h1 className="text-display text-white">{portfolioItem.name}</h1>

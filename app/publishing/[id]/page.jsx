@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { Building2, Clock3, PanelsTopLeft } from 'lucide-react';
+import { Briefcase, Clock3, PanelsTopLeft } from 'lucide-react';
 import companydata from '../../../src/Component/companydata.json';
 import Scroll from '../../../src/Header/Scroll';
 import ScrollPf from '../../../src/Header/ScrollPf';
@@ -55,12 +55,12 @@ function PublishingPage() {
         {/* Slide 0: Intro */}
         <section data-index="0" className="scroll-section h-screen w-full relative">
           <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-            <Image src={portfolioItem.thumb} alt={portfolioItem.name} fill className="object-cover" priority />
-            <div className="absolute inset-0 bg-black/65" />
+            <Image src={portfolioItem.thumb} alt={portfolioItem.name} fill className="z-0 object-cover" priority />
+            <div className="pointer-events-none absolute inset-0 z-[1] bg-black/70" />
             <div className="relative z-10 section-container text-center space-y-4">
               <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.family}</span>
               <h1 className="text-display text-white">{portfolioItem.name}</h1>
-              <p className="text-sm text-white/50">{portfolioItem.client}</p>
+              <p className="text-sm text-white/50">{portfolioItem.responsibility}</p>
               <p className="text-xs text-white/35">{portfolioItem.duration}</p>
             </div>
             <ScrollPf />
@@ -76,12 +76,12 @@ function PublishingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="card p-6">
-                <Building2 size={20} className="text-lime mb-5" />
+                <Briefcase size={20} className="text-lime mb-5" />
                 <span className="block text-[11px] uppercase tracking-[0.2em] text-text-muted-light dark:text-text-muted-dark mb-2">
-                  Client
+                  담당 업무
                 </span>
                 <p className="text-base font-semibold text-text-primary-light dark:text-text-primary-dark">
-                  {portfolioItem.client}
+                  {portfolioItem.responsibility}
                 </p>
               </div>
 
