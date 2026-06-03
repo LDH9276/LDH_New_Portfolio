@@ -216,12 +216,19 @@
   --swiper-pagination-bullet-inactive-color: #888888;
   --swiper-pagination-bullet-inactive-opacity: 0.35;
   overflow: hidden;
-  padding: 0 4px 60px;
+  padding: 0 4px;
+}
+
+.portfolio-swiper .portfolio-swiper-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  min-height: 48px;
 }
 
 .portfolio-swiper .portfolio-swiper-button {
-  top: auto;
-  bottom: 0;
   width: 48px;
   height: 48px;
   margin-top: 0;
@@ -230,8 +237,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  z-index: 10;
+  flex: 0 0 48px;
   background: transparent;
   color: #A7C636;
   cursor: pointer;
@@ -247,14 +253,6 @@
   height: 18px;
 }
 
-.portfolio-swiper .portfolio-swiper-button-prev {
-  left: calc(50% - 112px);
-}
-
-.portfolio-swiper .portfolio-swiper-button-next {
-  right: calc(50% - 112px);
-}
-
 .portfolio-swiper .portfolio-swiper-button:hover {
   color: #c9e85a;
   transform: translateY(-1px);
@@ -265,16 +263,18 @@
   cursor: default;
 }
 
-.portfolio-swiper .swiper-pagination {
-  bottom: 19px;
-  left: 50%;
+.portfolio-swiper .portfolio-swiper-pagination {
+  position: static;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
   width: auto;
   gap: 6px;
-  transform: translateX(-50%);
+  transform: none;
 }
 
-.portfolio-swiper .swiper-pagination-bullet {
+.portfolio-swiper .portfolio-swiper-pagination .swiper-pagination-bullet {
   width: 6px;
   height: 6px;
   margin: 0;
@@ -282,7 +282,7 @@
   transition: width 0.3s, opacity 0.3s;
 }
 
-.portfolio-swiper .swiper-pagination-bullet-active {
+.portfolio-swiper .portfolio-swiper-pagination .swiper-pagination-bullet-active {
   width: 20px;
 }
 

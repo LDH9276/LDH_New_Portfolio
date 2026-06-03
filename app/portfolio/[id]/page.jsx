@@ -6,7 +6,16 @@ import Scroll from '../../../src/Header/Scroll';
 import ScrollPf from '../../../src/Header/ScrollPf';
 import { useAppContext } from '../../../app/Context';
 import Image from 'next/image';
-import Link from 'next/link';
+import PortfolioCodeBlock from '../../../src/Component/PortfolioCodeBlock';
+
+const getCodeLanguage = (item) => {
+  const source = `${item.project_program || ''} ${item.family || ''}`.toLowerCase();
+  if (source.includes('php')) return 'php';
+  if (source.includes('react') || source.includes('next')) return 'jsx';
+  if (source.includes('css')) return 'css';
+  if (source.includes('html')) return 'html';
+  return 'javascript';
+};
 
 function PortfolioPage() {
   const { p_slide, setP_slide, isStart, setActiveSlide } = useAppContext();
@@ -66,6 +75,12 @@ function PortfolioPage() {
     </div>
   );
 
+  const codeSnippets = [portfolioItem.code1, portfolioItem.code2, portfolioItem.code3, portfolioItem.code4];
+  const codeTitles = [portfolioItem.title01, portfolioItem.title02, portfolioItem.title03, portfolioItem.title04];
+  const codeDescriptions = [portfolioItem.text02_1, portfolioItem.text02_2, portfolioItem.text02_3, portfolioItem.text02_4];
+  const codeLanguage = getCodeLanguage(portfolioItem);
+  const hasRotatingImages = ['1', '2', '4', '7'].includes(id);
+
   return (
     <div className={`transition-opacity duration-[2.5s] ${isStart === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <div 
@@ -82,9 +97,11 @@ function PortfolioPage() {
               <h1 className="text-display text-white">{portfolioItem.name}</h1>
               <p className="text-sm text-white/40">{portfolioItem.project_date}</p>
               <p className="text-xs text-white/30">{portfolioItem.project_program}</p>
-              <a href={portfolioItem.homepage} target="_blank" rel="noopener noreferrer" className="btn-primary mt-6 inline-flex">
-                페이지 이동 →
-              </a>
+              {portfolioItem.homepage && (
+                <a href={portfolioItem.homepage} target="_blank" rel="noopener noreferrer" className="btn-primary mt-6 inline-flex">
+                  페이지 이동 →
+                </a>
+              )}
             </div>
             <ScrollPf />
           </div>
@@ -138,7 +155,7 @@ function PortfolioPage() {
               </div>
 
               {/* Images */}
-              {(id === '1' || id === '4' || id === '2' || id === '7') && (
+              {hasRotatingImages && (
                 <div className="relative aspect-video overflow-hidden">
                   {[portfolioItem.textimg02, portfolioItem.textimg03, portfolioItem.textimg04].map((imgSrc, i) => (
                     <Image key={i} src={`/images/${imgSrc}`} alt="" fill
@@ -146,7 +163,7 @@ function PortfolioPage() {
                   ))}
                 </div>
               )}
-              {(id === '3' || id === '6' || id === '5' || id === '8') && (
+              {!hasRotatingImages && portfolioItem.textimg02 && (
                 <div className="relative aspect-video overflow-hidden">
                   <Image src={`/images/${portfolioItem.textimg02}`} alt="" fill className="object-cover" />
                 </div>
@@ -176,17 +193,17 @@ function PortfolioPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="card p-6 bg-surface-muted-light dark:bg-surface-muted-dark border-none overflow-x-auto">
-                <pre className="text-xs leading-relaxed text-lime font-mono whitespace-pre-wrap">
-                  {[portfolioItem.code1, portfolioItem.code2, portfolioItem.code3, portfolioItem.code4][tab]}
-                </pre>
-              </div>
+              <PortfolioCodeBlock
+                code={codeSnippets[tab]}
+                language={codeLanguage}
+                fileName={`chapter-${String(tab + 1).padStart(2, '0')}`}
+              />
               <div>
                 <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">
-                  {[portfolioItem.title01, portfolioItem.title02, portfolioItem.title03, portfolioItem.title04][tab]}
+                  {codeTitles[tab]}
                 </h3>
                 <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
-                  {[portfolioItem.text02_1, portfolioItem.text02_2, portfolioItem.text02_3, portfolioItem.text02_4][tab]}
+                  {codeDescriptions[tab]}
                 </pre>
               </div>
             </div>

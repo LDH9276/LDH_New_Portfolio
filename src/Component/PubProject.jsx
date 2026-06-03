@@ -118,7 +118,10 @@ function PubProject({ activeSlide, reset }) {
             prevEl: '.publishing-project-swiper-prev',
             nextEl: '.publishing-project-swiper-next',
           } : false}
-          pagination={{ clickable: true }}
+          pagination={{
+            el: '.publishing-project-swiper-pagination',
+            clickable: true,
+          }}
           a11y={{
             prevSlideMessage: '이전 회사 포트폴리오',
             nextSlideMessage: '다음 회사 포트폴리오',
@@ -143,14 +146,14 @@ function PubProject({ activeSlide, reset }) {
               />
             </SwiperSlide>
           ))}
-          {hasMultipleItems && (
-            <PortfolioSwiperNavigation
-              prevClassName="publishing-project-swiper-prev"
-              nextClassName="publishing-project-swiper-next"
-              prevLabel="이전 회사 포트폴리오"
-              nextLabel="다음 회사 포트폴리오"
-            />
-          )}
+          <PortfolioSwiperNavigation
+            prevClassName="publishing-project-swiper-prev"
+            nextClassName="publishing-project-swiper-next"
+            paginationClassName="publishing-project-swiper-pagination"
+            prevLabel="이전 회사 포트폴리오"
+            nextLabel="다음 회사 포트폴리오"
+            showNavigation={hasMultipleItems}
+          />
         </Swiper>
       </div>
     </div>

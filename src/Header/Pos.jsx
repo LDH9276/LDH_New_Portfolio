@@ -1,7 +1,14 @@
 import React from 'react';
 
 function Pos( {handleSlideNavigation, activeSlide} ) {
-  const navItems = ['Introduce', 'About Me', 'Person Project', 'Team Project', 'Publishing Works', 'Contact'];
+  const navItems = [
+    { label: 'Introduce', index: 0 },
+    { label: 'About Me', index: 1 },
+    { label: 'Publishing Works', index: 4 },
+    { label: 'Team Project', index: 3 },
+    { label: 'Person Project', index: 2 },
+    { label: 'Contact', index: 5 },
+  ];
 
   return (
     <nav
@@ -9,10 +16,10 @@ function Pos( {handleSlideNavigation, activeSlide} ) {
       flex-col items-end gap-4"
       aria-label="섹션 바로가기"
     >
-      {navItems.map((label, index) => (
+      {navItems.map(({ label, index }) => (
         <button
           type="button"
-          key={index}
+          key={label}
           className={`group flex items-center gap-3 transition-all duration-300`}
           onClick={() => handleSlideNavigation(index)}
           aria-label={`${label} 섹션으로 이동`}

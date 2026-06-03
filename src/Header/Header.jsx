@@ -68,9 +68,9 @@ function Header() {
   const navItems = [
     { name: 'Introduce', index: 0 },
     { name: 'About Me', index: 1 },
-    { name: 'Person Project', index: 2 },
-    { name: 'Team Project', index: 3 },
     { name: 'Publishing Works', index: 4 },
+    { name: 'Team Project', index: 3 },
+    { name: 'Person Project', index: 2 },
     { name: 'Contact', index: 5 },
   ];
 

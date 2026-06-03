@@ -87,36 +87,16 @@ function Menus( {toggle, setToggle, menuEvent} ) {
             </button>
           </li>
 
-          {/* Person Project */}
+          {/* Publishing Works */}
           <li>
             <button
               type="button"
-              onClick={menuOpen01}
-              aria-expanded={menu01 === 'active'}
-              aria-controls="mobile-person-projects"
-              className="flex items-center justify-center gap-2 w-full py-3 px-8 
-                text-2xl md:text-4xl font-bold text-white/60
+              onClick={() => gnbHandleEvent(4)}
+              className="block w-full py-3 px-8 text-2xl md:text-4xl font-bold text-white/60
                 hover:text-lime transition-colors duration-300 tracking-tight"
             >
-              Person Project
-              <ChevronDown
-                size={18}
-                aria-hidden="true"
-                strokeWidth={1.75}
-                className={`transition-transform duration-300 ${menu01 === 'active' ? 'rotate-180' : ''}`}
-              />
+              Publishing Works
             </button>
-            <ul
-              id="mobile-person-projects"
-              aria-hidden={menu01 !== 'active'}
-              className={`overflow-hidden transition-all duration-500
-              ${menu01 === 'active' ? 'max-h-60 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
-              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => gnbHandleEvent(2)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">개인 프로젝트 한 눈에 보기</button></li>
-              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(4)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">무인양품 프로젝트</button></li>
-              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(3)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">나만의 가계부 프로젝트</button></li>
-              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(2)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">B&O 리뉴얼 프로젝트</button></li>
-              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(1)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">사세 적응형 프로젝트</button></li>
-            </ul>
           </li>
 
           {/* Team Project */}
@@ -126,7 +106,7 @@ function Menus( {toggle, setToggle, menuEvent} ) {
               onClick={menuOpen02}
               aria-expanded={menu02 === 'active'}
               aria-controls="mobile-team-projects"
-              className="flex items-center justify-center gap-2 w-full py-3 px-8 
+              className="flex items-center justify-center gap-2 w-full py-3 px-8
                 text-2xl md:text-4xl font-bold text-white/60
                 hover:text-lime transition-colors duration-300 tracking-tight"
             >
@@ -151,16 +131,36 @@ function Menus( {toggle, setToggle, menuEvent} ) {
             </ul>
           </li>
 
-          {/* Publishing Works */}
+          {/* Person Project */}
           <li>
             <button
               type="button"
-              onClick={() => gnbHandleEvent(4)}
-              className="block w-full py-3 px-8 text-2xl md:text-4xl font-bold text-white/60
+              onClick={menuOpen01}
+              aria-expanded={menu01 === 'active'}
+              aria-controls="mobile-person-projects"
+              className="flex items-center justify-center gap-2 w-full py-3 px-8
+                text-2xl md:text-4xl font-bold text-white/60
                 hover:text-lime transition-colors duration-300 tracking-tight"
             >
-              Publishing Works
+              Person Project
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                strokeWidth={1.75}
+                className={`transition-transform duration-300 ${menu01 === 'active' ? 'rotate-180' : ''}`}
+              />
             </button>
+            <ul
+              id="mobile-person-projects"
+              aria-hidden={menu01 !== 'active'}
+              className={`overflow-hidden transition-all duration-500
+              ${menu01 === 'active' ? 'max-h-60 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => gnbHandleEvent(2)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">개인 프로젝트 한 눈에 보기</button></li>
+              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(4)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">무인양품 프로젝트</button></li>
+              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(3)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">나만의 가계부 프로젝트</button></li>
+              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(2)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">B&O 리뉴얼 프로젝트</button></li>
+              <li><button type="button" tabIndex={personMenuTabIndex} onClick={() => toPortfolio(1)} className="block w-full py-2 text-sm text-white/40 hover:text-lime transition-colors">사세 적응형 프로젝트</button></li>
+            </ul>
           </li>
 
           {/* Contact */}

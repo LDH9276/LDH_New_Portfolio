@@ -114,7 +114,10 @@ function PersonProject({ activeSlide, reset }) {
             prevEl: '.person-project-swiper-prev',
             nextEl: '.person-project-swiper-next',
           }}
-          pagination={{ clickable: true }}
+          pagination={{
+            el: '.person-project-swiper-pagination',
+            clickable: true,
+          }}
           a11y={{
             prevSlideMessage: '이전 프로젝트',
             nextSlideMessage: '다음 프로젝트',
@@ -142,6 +145,7 @@ function PersonProject({ activeSlide, reset }) {
           <PortfolioSwiperNavigation
             prevClassName="person-project-swiper-prev"
             nextClassName="person-project-swiper-next"
+            paginationClassName="person-project-swiper-pagination"
             prevLabel="이전 개인 프로젝트"
             nextLabel="다음 개인 프로젝트"
           />

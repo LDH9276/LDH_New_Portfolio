@@ -54,6 +54,7 @@
       "thumb": "/portfolio/company/miraedsn.webp",
       "duration": "2024-05 ~ 2024-06",
       "pages": [
+        "메인페이지 유지보수",
         "사업안내",
         "단지안내",
         "분양안내(평면안내, 인테리어)",
@@ -106,9 +107,8 @@
       "thumb": "/portfolio/company/efete-bg.webp",
       "duration": "2025-05 ~ 2024-06",
       "pages": [
-        "사업안내",
-        "단지안내",
-        "분양안내(평면안내, 인테리어)",
+        "PC, 모바일 메인화면",
+        "서브페이지 전반",
         "관심고객등록"
       ],
       "samples": [
@@ -130,9 +130,8 @@
       "thumb": "/portfolio/company/103stay-logo.webp",
       "duration": "2025-04 ~ 2025-05",
       "pages": [
-        "사업안내",
-        "단지안내",
-        "분양안내(평면안내, 인테리어)",
+        "반응형 메인화면",
+        "서브페이지 전반",
         "관심고객등록"
       ],
       "samples": [
@@ -154,9 +153,8 @@
       "thumb": "/portfolio/company/ubora-logo.webp",
       "duration": "2025-01 ~ 2025-01",
       "pages": [
-        "사업안내",
-        "단지안내",
-        "분양안내(평면안내, 인테리어)",
+        "PC, 모바일 메인화면",
+        "서브페이지 전반",
         "관심고객등록"
       ],
       "samples": [
@@ -178,9 +176,8 @@
       "thumb": "/portfolio/company/glanz-logo.webp",
       "duration": "2024-08 ~ 2024-10",
       "pages": [
-        "사업안내",
-        "단지안내",
-        "분양안내(평면안내, 인테리어)",
+        "PC, 모바일 메인화면",
+        "서브페이지 전반",
         "관심고객등록"
       ],
       "samples": [
@@ -202,10 +199,8 @@
       "thumb": "/portfolio/company/lsems-logo.webp",
       "duration": "2023-12 ~ 2025-07",
       "pages": [
-        "사업안내",
-        "단지안내",
-        "분양안내(평면안내, 인테리어)",
-        "관심고객등록"
+        "PC, 모바일 메인화면",
+        "서브페이지 (BDU, EV릴레이)"
       ],
       "samples": [
         {

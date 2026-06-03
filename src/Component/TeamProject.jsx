@@ -114,7 +114,10 @@ function TeamProject({ activeSlide, reset }) {
             prevEl: '.team-project-swiper-prev',
             nextEl: '.team-project-swiper-next',
           }}
-          pagination={{ clickable: true }}
+          pagination={{
+            el: '.team-project-swiper-pagination',
+            clickable: true,
+          }}
           a11y={{
             prevSlideMessage: '이전 프로젝트',
             nextSlideMessage: '다음 프로젝트',
@@ -142,6 +145,7 @@ function TeamProject({ activeSlide, reset }) {
           <PortfolioSwiperNavigation
             prevClassName="team-project-swiper-prev"
             nextClassName="team-project-swiper-next"
+            paginationClassName="team-project-swiper-pagination"
             prevLabel="이전 팀 프로젝트"
             nextLabel="다음 팀 프로젝트"
           />
