@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Scroll from '../Header/Scroll';
 import Image from 'next/image';
-import { Paintbrush, Code2, Layers, Monitor, Briefcase, GraduationCap } from 'lucide-react';
+import { Briefcase, GraduationCap } from 'lucide-react';
 
 /* ── 3D Tilt Skill Card ── */
 function SkillCard({ skill, index, isVisible }) {
@@ -28,7 +27,7 @@ function SkillCard({ skill, index, isVisible }) {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`card p-4 group relative overflow-hidden cursor-default
+      className={`card p-5 min-h-[158px] group relative overflow-hidden cursor-default
         transition-all duration-500
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
       style={{
@@ -44,17 +43,18 @@ function SkillCard({ skill, index, isVisible }) {
           background: `radial-gradient(250px circle at ${glowPos.x}% ${glowPos.y}%, rgba(167,198,54,0.12), transparent 70%)`
         }}
       />
-      <div className="flex items-start gap-3 relative z-10">
+      <div className="flex items-start gap-3 relative z-10 h-full">
         <div className="w-8 h-8 flex items-center justify-center flex-shrink-0
           bg-surface-muted-light dark:bg-surface-muted-dark
           group-hover:bg-lime/10 transition-colors duration-300">
           <Image src={skill.icon} alt={skill.title} width={18} height={18} className="block dark:hidden" />
           <Image src={skill.darkIcon} alt={skill.title} width={18} height={18} className="hidden dark:block" />
         </div>
-        <div>
-          <h4 className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark mb-1
+        <div className="min-w-0">
+          <h4 className="text-[15px] font-bold leading-snug text-text-primary-light dark:text-text-primary-dark mb-2
             group-hover:text-lime transition-colors duration-300">{skill.title}</h4>
-          <p className="text-[11px] leading-relaxed text-text-muted-light dark:text-text-muted-dark">{skill.desc}</p>
+          <p className="text-[11px] font-semibold leading-relaxed text-lime mb-2">{skill.stack}</p>
+          <p className="text-[12px] leading-relaxed text-text-muted-light dark:text-text-muted-dark">{skill.desc}</p>
         </div>
       </div>
     </div>
@@ -105,10 +105,34 @@ function About({ activeSlide }) {
   const isVisible = active === '';
 
   const skills = [
-    { icon: '/images/item03.svg', darkIcon: '/images/item03-dark.svg', title: 'HTML / CSS', desc: '웹 표준 및 접근성을 준수하는 탄탄한 마크업 및 스타일링.' },
-    { icon: '/images/item04.svg', darkIcon: '/images/item04-dark.svg', title: 'JavaScript', desc: 'ES6+ 활용 동적 인터랙션 및 GSAP, Swiper 등 고도화된 UI 구현.' },
-    { icon: '/images/item01.svg', darkIcon: '/images/item01-dark.svg', title: 'React / Next.js', desc: '컴포넌트 기반 SPA 설계, 서버사이드 렌더링 및 상태 관리.' },
-    { icon: '/images/item02.svg', darkIcon: '/images/item02-dark.svg', title: 'Supabase / PHP', desc: 'API 통신, 데이터 CRUD 및 간소화된 백엔드 로직 연동.' },
+    {
+      icon: '/images/item03.svg',
+      darkIcon: '/images/item03-dark.svg',
+      title: '구조가 보이는 UI 설계',
+      stack: 'HTML5 · CSS3 · Tailwind CSS',
+      desc: '시맨틱 마크업, 반응형 그리드, 공통 스타일 규칙을 기준으로 오래 수정 가능한 화면을 만듭니다.'
+    },
+    {
+      icon: '/images/item04.svg',
+      darkIcon: '/images/item04-dark.svg',
+      title: '사용 흐름을 살리는 인터랙션',
+      stack: 'JavaScript ES6+ · GSAP · Swiper',
+      desc: '스크롤, 탭, 슬라이더, 모션을 상태와 이벤트 흐름으로 정리해 자연스럽게 작동하도록 구현합니다.'
+    },
+    {
+      icon: '/images/item01.svg',
+      darkIcon: '/images/item01-dark.svg',
+      title: '확장 가능한 프론트엔드 구현',
+      stack: 'React · Next.js · Component Design',
+      desc: '페이지를 컴포넌트와 데이터 흐름 단위로 나누고, CSR/SSR 특성에 맞춰 유지보수성을 높입니다.'
+    },
+    {
+      icon: '/images/item02.svg',
+      darkIcon: '/images/item02-dark.svg',
+      title: '데이터와 연결되는 서비스 화면',
+      stack: 'Supabase · PHP · MySQL · REST API',
+      desc: '인증, CRUD, 업로드, 게시판처럼 실제 서비스에 필요한 데이터 흐름을 화면까지 연결합니다.'
+    },
   ];
 
   const experiences = [
@@ -170,7 +194,7 @@ function About({ activeSlide }) {
   const currentList = tab === 'experience' ? experiences : educations;
 
   return (
-    <div className={`relative w-full flex items-start
+    <div className={`relative w-full flex items-start break-keep break-words
       transition-opacity duration-[1.5s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
 
       <div className="section-container w-full flex flex-col">
@@ -281,7 +305,16 @@ function About({ activeSlide }) {
                 className="object-contain scale-100 transition-transform duration-700 group-hover:scale-105" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 w-full">
+            <div className={`mt-4 transition-all duration-700
+              ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+              style={{ transitionDelay: isVisible ? '220ms' : '0ms' }}>
+              <span className="section-label">Core Stack</span>
+              <h3 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark">
+                실서비스 화면을 만드는 기술
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
               {skills.map((skill, i) => (
                 <SkillCard key={i} skill={skill} index={i} isVisible={isVisible} />
               ))}
