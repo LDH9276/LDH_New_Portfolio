@@ -170,10 +170,10 @@ function About({ activeSlide }) {
   const currentList = tab === 'experience' ? experiences : educations;
 
   return (
-    <div className={`relative w-full h-full flex items-center
+    <div className={`relative w-full flex items-start
       transition-opacity duration-[1.5s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
 
-      <div className="section-container w-full h-full flex flex-col justify-center">
+      <div className="section-container w-full flex flex-col">
 
         {/* Top Section: Intro & Profile/Skills */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 mb-16 lg:mb-24 mt-12 md:mt-0">
@@ -227,7 +227,7 @@ function About({ activeSlide }) {
               </div>
 
               {/* Timeline List (No forced scrolling, lets page handle it) */}
-              <div className="space-y-12">
+              <div className="space-y-8">
                 {currentList.map((item, i) => (
                   <div
                     key={`${tab}-${i}`}

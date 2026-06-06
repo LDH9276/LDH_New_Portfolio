@@ -74,15 +74,28 @@ export default function Page() {
         <section data-index="0" className="scroll-section h-screen w-full relative">
           <Banner activeSlide={activeSlide} />
         </section>
-        <section data-index="1" className="scroll-section py-[80px] md:py-[100px] lg:py-[150px] w-full relative">
+
+        {/* Section divider */}
+        <div className="section-divider" />
+
+        <section data-index="1" className="scroll-section py-[60px] md:py-[80px] lg:py-[100px] w-full relative">
           <About activeSlide={activeSlide} />
         </section>
+
+        <div className="section-divider" />
+
         <section data-index="4" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <PubProject activeSlide={activeSlide} reset={reset} />
         </section>
+
+        <div className="section-divider" />
+
         <section data-index="2" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <PersonProject activeSlide={activeSlide} reset={reset} />
         </section>
+
+        <div className="section-divider" />
+
         <section data-index="5" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <Contact activeSlide={activeSlide} />
         </section>
