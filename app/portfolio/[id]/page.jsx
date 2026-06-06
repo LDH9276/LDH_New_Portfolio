@@ -98,7 +98,7 @@ function PortfolioPage() {
               <p className="text-xs text-white/30">{portfolioItem.project_program}</p>
               {portfolioItem.homepage && (
                 <a href={portfolioItem.homepage} target="_blank" rel="noopener noreferrer" className="btn-primary mt-6 inline-flex">
-                  페이지 이동 →
+                  GitHub 이동 →
                 </a>
               )}
             </div>
