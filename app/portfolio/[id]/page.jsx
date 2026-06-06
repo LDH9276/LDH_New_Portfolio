@@ -67,7 +67,6 @@ function PortfolioPage() {
   }, []);
 
   const toList = () => { setActiveSlide(2); router.push('/'); }
-  const toList2 = () => { setActiveSlide(3); router.push('/'); }
 
   if (!portfolioItem) return (
     <div className="h-screen flex items-center justify-center">
@@ -231,10 +230,7 @@ function PortfolioPage() {
             </div>
 
             <div className="mt-12">
-              {productID < 5 
-                ? <button className="btn-outline" onClick={toList}>← 목록으로</button>
-                : <button className="btn-outline" onClick={toList2}>← 목록으로</button>
-              }
+              <button className="btn-outline" onClick={toList}>← 목록으로</button>
             </div>
           </div>
         </section>

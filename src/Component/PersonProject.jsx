@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import portfolio from './person'
+import projectdata from './projectdata.json';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FileCode, Atom, Server, Code2 } from 'lucide-react';
@@ -97,14 +97,14 @@ function PersonProject({ activeSlide, reset }) {
   }, [activeSlide]);
 
   const isVisible = active === '';
-  const items = portfolio.person.slice(0).reverse();
+  const items = projectdata.projects.slice(0).sort((a, b) => b.id - a.id);
 
   return (
     <div className={`relative w-full h-full flex items-center transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <div className="section-container">
         <div className="mb-10">
           <span className="section-label">The LDH</span>
-          <h2 className="section-title">Person Project</h2>
+          <h2 className="section-title">Projects</h2>
           <div className="accent-line" />
         </div>
 
@@ -146,8 +146,8 @@ function PersonProject({ activeSlide, reset }) {
             prevClassName="person-project-swiper-prev"
             nextClassName="person-project-swiper-next"
             paginationClassName="person-project-swiper-pagination"
-            prevLabel="이전 개인 프로젝트"
-            nextLabel="다음 개인 프로젝트"
+            prevLabel="이전 프로젝트"
+            nextLabel="다음 프로젝트"
           />
         </Swiper>
       </div>

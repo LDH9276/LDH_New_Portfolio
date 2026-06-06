@@ -69,8 +69,7 @@ function Header() {
     { name: 'Introduce', index: 0 },
     { name: 'About Me', index: 1 },
     { name: 'Publishing Works', index: 4 },
-    { name: 'Team Project', index: 3 },
-    { name: 'Person Project', index: 2 },
+    { name: 'Projects', index: 2 },
     { name: 'Contact', index: 5 },
   ];
 

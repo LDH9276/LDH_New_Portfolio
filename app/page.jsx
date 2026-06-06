@@ -3,7 +3,6 @@ import React, { useEffect, useRef } from "react";
 import Banner from '../src/Component/Banner';
 import About from '../src/Component/About';
 import PersonProject from '../src/Component/PersonProject';
-import TeamProject from '../src/Component/TeamProject';
 import PubProject from '../src/Component/PubProject';
 import Contact from "../src/Component/Contact";
 import Pos from '../src/Header/Pos';
@@ -80,9 +79,6 @@ export default function Page() {
         </section>
         <section data-index="4" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <PubProject activeSlide={activeSlide} reset={reset} />
-        </section>
-        <section data-index="3" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
-          <TeamProject activeSlide={activeSlide} reset={reset} />
         </section>
         <section data-index="2" className="scroll-section py-[40px] md:py-[50px] lg:py-[75px] w-full relative">
           <PersonProject activeSlide={activeSlide} reset={reset} />

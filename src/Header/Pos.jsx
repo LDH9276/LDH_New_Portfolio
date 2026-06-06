@@ -5,8 +5,7 @@ function Pos( {handleSlideNavigation, activeSlide} ) {
     { label: 'Introduce', index: 0 },
     { label: 'About Me', index: 1 },
     { label: 'Publishing Works', index: 4 },
-    { label: 'Team Project', index: 3 },
-    { label: 'Person Project', index: 2 },
+    { label: 'Projects', index: 2 },
     { label: 'Contact', index: 5 },
   ];
 
