@@ -60,8 +60,8 @@ function PublishingPage() {
             <div className="relative z-10 section-container text-center space-y-4">
               <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.family}</span>
               <h1 className="text-display text-white">{portfolioItem.name}</h1>
-              <p className="text-sm text-white/50">{portfolioItem.responsibility}</p>
-              <p className="text-xs text-white/35">{portfolioItem.duration}</p>
+              <p className="text-sm text-white/90">{portfolioItem.responsibility}</p>
+              <p className="text-xs text-white/50">{portfolioItem.duration}</p>
             </div>
             <ScrollPf />
           </div>
