@@ -114,27 +114,23 @@ function Contact({ activeSlide }) {
             </div>
           </div>
 
-          {/* Right: Profile */}
-          <div className={`w-full max-w-[280px] sm:max-w-[350px] lg:max-w-none lg:w-5/12 relative
-            aspect-[3/4] lg:aspect-[4/5] overflow-hidden bg-lime/20 dark:bg-lime/10 border border-lime group
-            transition-all duration-700
-            ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+          {/* Right: Profile — clean, frameless */}
+          <div className={`w-full max-w-[320px] sm:max-w-[400px] lg:max-w-none lg:w-6/12 relative
+            group transition-all duration-700
+            ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
             style={{ transitionDelay: isVisible ? '100ms' : '0ms' }}
           >
             <Image
               src="/images/profile02-2.png"
               alt="프로필"
-              fill
-              className="object-cover scale-105 group-hover:scale-110 transition-transform duration-700
-                mix-blend-luminosity group-hover:mix-blend-normal"
+              width={500}
+              height={667}
+              style={{ width: '100%', height: 'auto' }}
+              className="block mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700"
             />
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-lime/80 via-transparent to-transparent opacity-50 dark:opacity-40" />
-            {/* Corner decorations */}
-            <div className="absolute top-0 right-0 w-16 h-[2px] bg-lime" />
-            <div className="absolute bottom-0 left-0 w-[2px] h-16 bg-lime" />
-            <div className="absolute top-0 right-0 w-[2px] h-16 bg-lime" />
-            <div className="absolute bottom-0 left-0 w-16 h-[2px] bg-lime" />
+            {/* Bottom fade */}
+            <div className="absolute inset-x-0 bottom-0 h-28
+              bg-gradient-to-t from-surface-light dark:from-surface-dark to-transparent pointer-events-none" />
           </div>
 
         </div>
