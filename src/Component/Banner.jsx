@@ -36,7 +36,7 @@ function Banner({ activeSlide }) {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-light via-surface-light/65 to-transparent dark:from-surface-dark dark:via-surface-dark/55 lg:hidden" />
       </div>
 
-      <div className="section-container relative z-10 flex h-full flex-col items-start justify-between pb-14 pt-28 lg:pb-16 lg:pt-32">
+      <div className="section-container relative z-10 flex h-full flex-col items-start pb-14 pt-28 lg:pb-16 lg:pt-32">
         <div className="max-w-[820px]">
           <p
             className={`section-label transition-all duration-700 ${
@@ -76,29 +76,34 @@ function Banner({ activeSlide }) {
               </div>
             </div>
           </div>
-        </div>
-        <div className="mt-8 flex w-full flex-wrap justify-end gap-3">
-          <a
-            href="#about"
-            onClick={(e) => {
-              e.preventDefault();
-              document
-                .querySelector('[data-index="1"]')
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="btn-primary"
+
+          <div
+            className={`mt-8 flex flex-wrap gap-3 transition-all delay-300 duration-700 ${
+              visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
           >
-            Explore
-          </a>
-          <a
-            href="https://github.com/LDH9276"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-outline"
-          >
-            GitHub
-            <ArrowUpRight size={15} strokeWidth={1.8} aria-hidden="true" />
-          </a>
+            <a
+              href="#about"
+              onClick={(e) => {
+                e.preventDefault();
+                document
+                  .querySelector('[data-index="1"]')
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="btn-primary"
+            >
+              Explore
+            </a>
+            <a
+              href="https://github.com/LDH9276"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline"
+            >
+              GitHub
+              <ArrowUpRight size={15} strokeWidth={1.8} aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
