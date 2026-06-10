@@ -197,6 +197,7 @@ function About({ activeSlide }) {
                 <button
                   type="button"
                   onClick={() => setTab("experience")}
+                  aria-pressed={tab === "experience"}
                   className={`flex items-center gap-2 pb-4 text-sm font-black uppercase tracking-[0.15em] transition-colors duration-300 ${
                     tab === "experience"
                       ? "border-b-2 border-lime text-lime"
@@ -209,6 +210,7 @@ function About({ activeSlide }) {
                 <button
                   type="button"
                   onClick={() => setTab("education")}
+                  aria-pressed={tab === "education"}
                   className={`flex items-center gap-2 pb-4 text-sm font-black uppercase tracking-[0.15em] transition-colors duration-300 ${
                     tab === "education"
                       ? "border-b-2 border-lime text-lime"

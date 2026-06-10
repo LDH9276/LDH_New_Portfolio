@@ -38,28 +38,40 @@ function Banner({ activeSlide }) {
 
       <div className="section-container relative z-10 flex h-full flex-col items-start pb-14 pt-28 lg:pb-16 lg:pt-32">
         <div className="max-w-[820px]">
-          <p
-            className={`section-label transition-all duration-700 ${
-              visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-            }`}
-          >
-            Front-end Developer
-          </p>
+          <span className="mb-6 block border-l-2 border-lime pl-4 text-sm font-black uppercase tracking-[0.16em] text-text-primary-light dark:text-text-primary-dark sm:text-base">
+            Front-end <span className="text-lime">Developer</span>
+          </span>
 
-          <h2
+          <h1
+            aria-label="Lee Dong Heon"
             className={`text-[clamp(7.4rem,28vw,13.4rem)] font-black uppercase leading-[0.78] text-text-primary-light transition-all delay-100 duration-700 dark:text-text-primary-dark ${
               visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
           >
-            Lee
-            <br />
-            Dong
-            <br />
-            Heon
-          </h2>
+            <span className="block" aria-hidden="true">
+              Lee
+            </span>
+            <span
+              aria-hidden="true"
+              className="my-2 ml-2 flex max-w-[760px] flex-col gap-3 leading-none sm:my-2 sm:flex-row sm:items-center sm:gap-8 lg:ml-3"
+            >
+              <span className="flex max-w-[390px] flex-wrap gap-x-4 gap-y-1 text-[11px] font-black uppercase tracking-[0.12em] text-text-secondary-light dark:text-text-secondary-dark">
+                {meta.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </span>
+            </span>
+            <span className="block" aria-hidden="true">
+              Dong
+            </span>
+            <span className="block" aria-hidden="true">
+              Heon
+            </span>
+          </h1>
+          <p className="sr-only">Main skills: {meta.join(", ")}.</p>
 
           <div
-            className={`mt-8 grid gap-6 border-t pt-6 transition-all delay-200 duration-700 dark:border-border-dark md:grid-cols-[minmax(0,0.8fr)_minmax(280px,0.5fr)] ${
+            className={`mt-8 max-w-[620px] border-t border-border-light pt-6 transition-all delay-200 duration-700 dark:border-border-dark ${
               visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
             }`}
           >
@@ -67,14 +79,6 @@ function Banner({ activeSlide }) {
               디자인 실무와 웹 퍼블리싱 경험을 바탕으로 구조가 분명한
               프론트엔드 화면을 설계하고 구현합니다.
             </p>
-
-            <div className="grid content-start gap-5">
-              <div className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-black uppercase tracking-[0.14em] text-text-muted-light dark:text-text-muted-dark">
-                {meta.map((item) => (
-                  <span key={item}>{item}</span>
-                ))}
-              </div>
-            </div>
           </div>
 
           <div

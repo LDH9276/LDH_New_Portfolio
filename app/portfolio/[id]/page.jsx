@@ -139,8 +139,11 @@ function PortfolioPage() {
                 {/* Tabs */}
                 <div className="flex gap-0 mb-6">
                   {['UI / UX', 'Library'].map((label, i) => (
-                    <button key={i}
+                    <button
+                      key={i}
+                      type="button"
                       onClick={() => setTab01(i)}
+                      aria-pressed={tab01 === i}
                       className={`px-5 py-2 text-sm font-medium transition-all duration-300 border
                         ${tab01 === i 
                           ? 'bg-lime text-surface-dark border-lime' 
@@ -181,8 +184,11 @@ function PortfolioPage() {
 
             <div className="flex gap-0 mb-6 flex-wrap">
               {['Chapter01', 'Chapter02', 'Chapter03', 'Chapter04'].map((label, i) => (
-                <button key={i}
+                <button
+                  key={i}
+                  type="button"
                   onClick={() => setTab(i)}
+                  aria-pressed={tab === i}
                   className={`px-5 py-2 text-sm font-medium transition-all duration-300 border
                     ${tab === i 
                       ? 'bg-lime text-surface-dark border-lime' 
@@ -230,7 +236,7 @@ function PortfolioPage() {
             </div>
 
             <div className="mt-12">
-              <button className="btn-outline" onClick={toList}>← 목록으로</button>
+              <button type="button" className="btn-outline" onClick={toList}>← 목록으로</button>
             </div>
           </div>
         </section>

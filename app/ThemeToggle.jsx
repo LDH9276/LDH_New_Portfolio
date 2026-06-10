@@ -8,13 +8,15 @@ export default function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
       className="group relative w-9 h-9 flex items-center justify-center rounded-none
                  border border-border-light dark:border-border-dark
                  bg-surface-card-light dark:bg-surface-card-dark
                  transition-all duration-300
                  hover:border-lime"
-      aria-label="테마 전환"
+      aria-label={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
+      aria-pressed={theme === 'dark'}
     >
       <Sun
         aria-hidden="true"

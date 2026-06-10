@@ -99,7 +99,7 @@ function Header() {
             isScrolled ? "h-11" : "h-14 md:h-16"
           }`}
         >
-          <h1 className="flex items-center">
+          <div className="flex items-center">
             <button
               type="button"
               onClick={toMainTitle}
@@ -123,7 +123,7 @@ function Header() {
                 style={{ width: isScrolled ? 82 : 104, height: "auto" }}
               />
             </button>
-          </h1>
+          </div>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="주요 섹션">
             {navItems.map((item) => {
@@ -176,7 +176,7 @@ function Header() {
                 }`}
               onClick={menuEvent}
               aria-controls="mobile-menu"
-              aria-label={toggle === "active" ? "Close menu" : "Open menu"}
+              aria-label={toggle === "active" ? "메뉴 닫기" : "메뉴 열기"}
               aria-expanded={toggle === "active"}
             >
               {toggle === "active" ? (

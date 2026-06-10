@@ -8,7 +8,7 @@ export default function ClientLayout({ children }) {
   return (
     <AppProvider>
       <Header />
-      <main id="main-content" className="min-h-screen">
+      <main id="main-content" tabIndex={-1} className="min-h-screen focus:outline-none">
         {children}
       </main>
     </AppProvider>
