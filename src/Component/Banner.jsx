@@ -1,27 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import IDEBackground from "./IDEBackground";
 import ThreeBackground from "./ThreeBackground";
 
 function Banner({ activeSlide }) {
   const [active, setActive] = useState("ready");
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const visualRef = useRef(null);
 
   useEffect(() => {
     if (activeSlide === 0) setActive("");
   }, [activeSlide]);
-
-  const handleMouseMove = (e) => {
-    if (!visualRef.current) return;
-    const rect = visualRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
 
   const visible = active === "";
   const meta = ["React", "Next.js", "Publishing", "UI Design"];
@@ -32,23 +21,22 @@ function Banner({ activeSlide }) {
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.045)_1px,transparent_1px)] bg-[length:25%_100%] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]" />
+      <div className="pointer-events-none absolute inset-0" />
 
       <div
-        ref={visualRef}
-        onMouseMove={handleMouseMove}
-        className={`absolute inset-y-0 right-0 z-[1] hidden w-full overflow-hidden  bg-surface-muted-light transition-all delay-300 duration-700 dark:border-border-dark dark:bg-[#0d1117] lg:block ${
+        className={`absolute inset-y-0 right-0 z-[1] w-full overflow-hidden bg-surface-muted-light transition-all delay-300 duration-700 dark:border-border-dark dark:bg-[#0d1117] ${
           visible ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"
         }`}
       >
         <IDEBackground contentClassName="pt-20 lg:pt-24" />
-        <ThreeBackground mousePos={mousePos} containerRef={visualRef} />
+        <ThreeBackground />
 
         <div className="pointer-events-none absolute inset-0 border-l border-surface-light/60 dark:border-white/5" />
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-surface-light via-surface-light/70 to-transparent dark:from-surface-dark dark:via-surface-dark/65" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-4/5 bg-gradient-to-r from-surface-light via-surface-light/85 to-transparent dark:from-surface-dark dark:via-surface-dark/80 md:w-2/3 lg:w-1/3 lg:via-surface-light/70 lg:dark:via-surface-dark/65" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-light via-surface-light/65 to-transparent dark:from-surface-dark dark:via-surface-dark/55 lg:hidden" />
       </div>
 
-      <div className="section-container relative z-10 flex h-full flex-col items-start pb-14 pt-28 lg:pb-16 lg:pt-32 justify-between">
+      <div className="section-container relative z-10 flex h-full flex-col items-start justify-between pb-14 pt-28 lg:pb-16 lg:pt-32">
         <div className="max-w-[820px]">
           <p
             className={`section-label transition-all duration-700 ${
@@ -89,29 +77,29 @@ function Banner({ activeSlide }) {
             </div>
           </div>
         </div>
-          <div className="flex flex-wrap gap-3 mt-8 w-full justify-end">
-            <a
-              href="#about"
-              onClick={(e) => {
-                e.preventDefault();
-                document
-                  .querySelector('[data-index="1"]')
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="btn-primary"
-            >
-              Explore
-            </a>
-            <a
-              href="https://github.com/LDH9276"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-outline"
-            >
-              GitHub
-              <ArrowUpRight size={15} strokeWidth={1.8} aria-hidden="true" />
-            </a>
-          </div>
+        <div className="mt-8 flex w-full flex-wrap justify-end gap-3">
+          <a
+            href="#about"
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .querySelector('[data-index="1"]')
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="btn-primary"
+          >
+            Explore
+          </a>
+          <a
+            href="https://github.com/LDH9276"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline"
+          >
+            GitHub
+            <ArrowUpRight size={15} strokeWidth={1.8} aria-hidden="true" />
+          </a>
+        </div>
       </div>
     </div>
   );

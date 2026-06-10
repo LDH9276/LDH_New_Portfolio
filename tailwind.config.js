@@ -45,7 +45,7 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['"SUITE Variable"', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"D-DIN"', '"SUITE Variable"', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         'display': ['clamp(3rem, 8vw, 6rem)', { lineHeight: '1.05', fontWeight: '700' }],

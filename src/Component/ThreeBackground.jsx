@@ -3,10 +3,11 @@ import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-/* ── Floating Particles that react to mouse ── */
-function Particles({ mouse, count = 800 }) {
+/* ── Floating particles with ambient drift ── */
+function Particles({ count = 800 }) {
   const meshRef = useRef();
   const lightRef = useRef();
+  const bounds = useMemo(() => ({ centerX: 2.2, x: 6.4, y: 5.2, z: 4.4 }), []);
 
   const { positions, velocities, scales } = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -14,9 +15,9 @@ function Particles({ mouse, count = 800 }) {
     const scales = new Float32Array(count);
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3]     = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      positions[i * 3]     = bounds.centerX + (Math.random() - 0.5) * bounds.x * 2;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * bounds.y * 2;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * bounds.z * 2;
 
       velocities[i * 3]     = (Math.random() - 0.5) * 0.005;
       velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.005;
@@ -25,7 +26,7 @@ function Particles({ mouse, count = 800 }) {
       scales[i] = Math.random() * 0.5 + 0.2;
     }
     return { positions, velocities, scales };
-  }, [count]);
+  }, [bounds, count]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -43,25 +44,13 @@ function Particles({ mouse, count = 800 }) {
       y += velocities[i * 3 + 1] + Math.cos(time * 0.2 + i) * 0.001;
       z += velocities[i * 3 + 2];
 
-      // Mouse attraction
-      const mx = mouse.current.x * 6;
-      const my = mouse.current.y * 4;
-      const dx = mx - x;
-      const dy = my - y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 4) {
-        const force = (4 - dist) * 0.0008;
-        x += dx * force;
-        y += dy * force;
-      }
-
       // Boundaries wrap
-      if (x > 10) x = -10;
-      if (x < -10) x = 10;
-      if (y > 6) y = -6;
-      if (y < -6) y = 6;
-      if (z > 5) z = -5;
-      if (z < -5) z = 5;
+      if (x > bounds.centerX + bounds.x) x = bounds.centerX - bounds.x;
+      if (x < bounds.centerX - bounds.x) x = bounds.centerX + bounds.x;
+      if (y > bounds.y) y = -bounds.y;
+      if (y < -bounds.y) y = bounds.y;
+      if (z > bounds.z) z = -bounds.z;
+      if (z < -bounds.z) z = bounds.z;
 
       posAttr.array[i * 3] = x;
       posAttr.array[i * 3 + 1] = y;
@@ -69,10 +58,9 @@ function Particles({ mouse, count = 800 }) {
     }
     posAttr.needsUpdate = true;
 
-    // Light follows mouse
     if (lightRef.current) {
-      lightRef.current.position.x = mouse.current.x * 5;
-      lightRef.current.position.y = mouse.current.y * 3;
+      lightRef.current.position.x = 2.4;
+      lightRef.current.position.y = 0.2;
     }
   });
 
@@ -107,9 +95,8 @@ function Particles({ mouse, count = 800 }) {
 }
 
 /* ── Connected Lines between close particles ── */
-function ConnectionLines({ mouse, count = 800, maxDist = 2 }) {
+function ConnectionLines({ maxDist = 2 }) {
   const lineRef = useRef();
-  const particleRef = useRef();
 
   // We share particle positions with the Particles component via a shared buffer
   // Instead, we create our own smaller set of "anchor" points for lines
@@ -117,9 +104,9 @@ function ConnectionLines({ mouse, count = 800, maxDist = 2 }) {
     const pts = [];
     for (let i = 0; i < 60; i++) {
       pts.push(new THREE.Vector3(
-        (Math.random() - 0.5) * 16,
-        (Math.random() - 0.5) * 10,
-        (Math.random() - 0.5) * 6
+        2.2 + (Math.random() - 0.5) * 9.5,
+        (Math.random() - 0.5) * 8,
+        (Math.random() - 0.5) * 5
       ));
     }
     return pts;
@@ -128,8 +115,6 @@ function ConnectionLines({ mouse, count = 800, maxDist = 2 }) {
   useFrame((state) => {
     if (!lineRef.current) return;
     const time = state.clock.elapsedTime;
-    const mx = mouse.current.x * 6;
-    const my = mouse.current.y * 4;
     const positions = [];
 
     // Update anchor positions with slow drift
@@ -147,12 +132,6 @@ function ConnectionLines({ mouse, count = 800, maxDist = 2 }) {
           positions.push(anchors[j].x, anchors[j].y, anchors[j].z);
         }
       }
-      // Connect to mouse if close
-      const dMouse = Math.sqrt((anchors[i].x - mx) ** 2 + (anchors[i].y - my) ** 2);
-      if (dMouse < 3) {
-        positions.push(anchors[i].x, anchors[i].y, anchors[i].z);
-        positions.push(mx, my, 0);
-      }
     }
 
     const geo = lineRef.current.geometry;
@@ -169,18 +148,27 @@ function ConnectionLines({ mouse, count = 800, maxDist = 2 }) {
 }
 
 /* ── Central Floating Wireframe Shape ── */
-function FloatingShape({ mouse }) {
+function FloatingShape({ compact }) {
   const meshRef = useRef();
+  const { viewport } = useThree();
   const baseX = 3.35;
 
   useFrame((state) => {
     if (!meshRef.current) return;
     const t = state.clock.elapsedTime;
-    meshRef.current.rotation.x = Math.sin(t * 0.3) * 0.3 + mouse.current.y * 0.3;
-    meshRef.current.rotation.y = t * 0.15 + mouse.current.x * 0.3;
+    const compactRadius = viewport.width * 0.85;
+    const radius = compact ? compactRadius : 1.6;
+
+    meshRef.current.rotation.x = Math.sin(t * 0.3) * 0.3;
+    meshRef.current.rotation.y = t * 0.15;
     meshRef.current.rotation.z = Math.sin(t * 0.2) * 0.1;
-    meshRef.current.position.x = baseX + mouse.current.x * 0.2;
-    meshRef.current.position.y = Math.sin(t * 0.5) * 0.3;
+    meshRef.current.position.x = compact
+      ? viewport.width / 2 + radius * 0.12
+      : baseX;
+    meshRef.current.position.y = compact
+      ? -viewport.height / 2 + radius * 0.58
+      : Math.sin(t * 0.5) * 0.3;
+    meshRef.current.scale.setScalar(radius / 1.6);
   });
 
   return (
@@ -192,38 +180,39 @@ function FloatingShape({ mouse }) {
 }
 
 /* ── Scene Wrapper ── */
-function Scene({ mouse }) {
+function Scene({ compact }) {
   return (
     <>
       <ambientLight intensity={0.1} />
-      <Particles mouse={mouse} count={600} />
-      <ConnectionLines mouse={mouse} />
-      <FloatingShape mouse={mouse} />
+      <Particles count={600} />
+      <ConnectionLines />
+      <FloatingShape compact={compact} />
     </>
   );
 }
 
 /* ── Exported Canvas Component ── */
-export default function ThreeBackground({ mousePos, containerRef }) {
-  const mouse = useRef({ x: 0, y: 0 });
+export default function ThreeBackground() {
+  const [compact, setCompact] = useState(false);
 
   useEffect(() => {
-    if (!containerRef?.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    // Normalize mouse to -1..1
-    mouse.current.x = (mousePos.x / rect.width) * 2 - 1;
-    mouse.current.y = -((mousePos.y / rect.height) * 2 - 1);
-  }, [mousePos, containerRef]);
+    const media = window.matchMedia('(max-width: 1023px)');
+    const updateCompact = () => setCompact(media.matches);
+
+    updateCompact();
+    media.addEventListener('change', updateCompact);
+    return () => media.removeEventListener('change', updateCompact);
+  }, []);
 
   return (
     <div className="absolute inset-0 z-0 pointer-events-none">
       <Canvas
-        camera={{ position: [0, 0, 7], fov: 60 }}
+        camera={{ position: [0, 0, 10], fov: 35 }}
         dpr={[1, 1.5]}
         gl={{ antialias: false, alpha: true }}
         style={{ background: 'transparent' }}
       >
-        <Scene mouse={mouse} />
+        <Scene compact={compact} />
       </Canvas>
     </div>
   );
