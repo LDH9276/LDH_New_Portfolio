@@ -93,33 +93,11 @@ function Menus( {toggle, setToggle, menuEvent} ) {
           <li>
             <button
               type="button"
-              onClick={menuOpen}
-              aria-expanded={projectMenu === 'active'}
-              aria-controls="mobile-projects"
-              className="flex w-full items-center justify-between border-b border-border-light py-5 text-[clamp(2.2rem,12vw,5rem)] font-black uppercase leading-none tracking-normal transition-colors duration-300 hover:text-lime dark:border-border-dark"
+              onClick={() => gnbHandleEvent(2)}
+              className="block w-full border-b border-border-light py-5 text-[clamp(2.2rem,12vw,5rem)] font-black uppercase leading-none tracking-normal transition-colors duration-300 hover:text-lime dark:border-border-dark"
             >
               Projects
-              <ChevronDown
-                size={18}
-                aria-hidden="true"
-                strokeWidth={1.75}
-                className={`transition-transform duration-300 ${projectMenu === 'active' ? 'rotate-180' : ''}`}
-              />
             </button>
-            <ul
-              id="mobile-projects"
-              aria-hidden={projectMenu !== 'active'}
-              className={`overflow-hidden border-b border-border-light transition-all duration-500 dark:border-border-dark
-              ${projectMenu === 'active' ? 'max-h-[32rem] opacity-100 py-4' : 'max-h-0 opacity-0'}`}>
-              <li><button type="button" tabIndex={projectMenuTabIndex} onClick={() => gnbHandleEvent(2)} className="block w-full py-2 text-left text-sm font-bold uppercase tracking-[0.14em] text-text-muted-light transition-colors hover:text-lime dark:text-text-muted-dark">프로젝트 한 눈에 보기</button></li>
-              {projects.map((project) => (
-                <li key={project.id}>
-                  <button type="button" tabIndex={projectMenuTabIndex} onClick={() => toPortfolio(project.id)} className="block w-full py-2 text-left text-sm font-bold uppercase tracking-[0.14em] text-text-muted-light transition-colors hover:text-lime dark:text-text-muted-dark">
-                    {project.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
           </li>
 
           {/* Contact */}
