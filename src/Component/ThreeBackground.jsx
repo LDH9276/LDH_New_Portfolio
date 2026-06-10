@@ -171,6 +171,7 @@ function ConnectionLines({ mouse, count = 800, maxDist = 2 }) {
 /* ── Central Floating Wireframe Shape ── */
 function FloatingShape({ mouse }) {
   const meshRef = useRef();
+  const baseX = 3.35;
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -178,13 +179,14 @@ function FloatingShape({ mouse }) {
     meshRef.current.rotation.x = Math.sin(t * 0.3) * 0.3 + mouse.current.y * 0.3;
     meshRef.current.rotation.y = t * 0.15 + mouse.current.x * 0.3;
     meshRef.current.rotation.z = Math.sin(t * 0.2) * 0.1;
+    meshRef.current.position.x = baseX + mouse.current.x * 0.2;
     meshRef.current.position.y = Math.sin(t * 0.5) * 0.3;
   });
 
   return (
     <mesh ref={meshRef}>
       <icosahedronGeometry args={[1.6, 1]} />
-      <meshBasicMaterial color="#A7C636" wireframe transparent opacity={0.12} />
+      <meshBasicMaterial color="#A7C636" wireframe transparent opacity={0.32} />
     </mesh>
   );
 }

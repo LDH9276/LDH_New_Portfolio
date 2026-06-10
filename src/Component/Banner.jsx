@@ -1,98 +1,118 @@
-'use client';
-import React, { useEffect, useState, useRef } from 'react';
-import Scroll from '../Header/Scroll';
-import IDEBackground from './IDEBackground';
-import ThreeBackground from './ThreeBackground';
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
+import IDEBackground from "./IDEBackground";
+import ThreeBackground from "./ThreeBackground";
 
 function Banner({ activeSlide }) {
-  const [active, setActive] = useState('ready');
+  const [active, setActive] = useState("ready");
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const containerRef = useRef(null);
+  const visualRef = useRef(null);
 
   useEffect(() => {
-    if (activeSlide === 0) setActive('');
+    if (activeSlide === 0) setActive("");
   }, [activeSlide]);
 
   const handleMouseMove = (e) => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      setMousePos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-    }
+    if (!visualRef.current) return;
+    const rect = visualRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
   };
 
+  const visible = active === "";
+  const meta = ["React", "Next.js", "Publishing", "UI Design"];
+
   return (
-    <div 
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className={`relative w-full h-full flex items-center justify-center overflow-hidden bg-surface-light dark:bg-surface-dark
-        transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}
+    <div
+      className={`relative flex h-full w-full items-stretch overflow-hidden bg-surface-light transition-opacity duration-[1.4s] dark:bg-surface-dark ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
     >
-      <IDEBackground />
-      <ThreeBackground mousePos={mousePos} containerRef={containerRef} />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.045)_1px,transparent_1px)] bg-[length:25%_100%] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]" />
 
-      {/* Interactive Spotlight */}
-      <div 
-        className="pointer-events-none absolute inset-0 transition-opacity duration-300 opacity-0 md:opacity-100"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167, 198, 54, 0.15), transparent 80%)`
-        }}
-      />
-      
-      {/* Ambient static glow for mobile or fallback */}
-      <div className="absolute inset-0 md:hidden bg-[radial-gradient(circle_at_center,rgba(167,198,54,0.1)_0%,transparent_100%)]" />
+      <div
+        ref={visualRef}
+        onMouseMove={handleMouseMove}
+        className={`absolute inset-y-0 right-0 z-[1] hidden w-full overflow-hidden  bg-surface-muted-light transition-all delay-300 duration-700 dark:border-border-dark dark:bg-[#0d1117] lg:block ${
+          visible ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"
+        }`}
+      >
+        <IDEBackground contentClassName="pt-20 lg:pt-24" />
+        <ThreeBackground mousePos={mousePos} containerRef={visualRef} />
 
-      {/* Content */}
-      <div className="relative z-10 section-container flex flex-col items-center justify-center h-full py-20 text-center">
-        
-        {/* Animated Badge */}
-        <div className={`mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-lime/30 bg-lime/5 backdrop-blur-md
-          transform transition-all duration-[1s] delay-300
-          ${active === 'ready' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-          <span className="w-2 h-2 rounded-full bg-lime animate-pulse" />
-          <span className="text-xs font-medium text-lime tracking-wide">Available for Work</span>
-        </div>
-
-        <div className="space-y-4 md:space-y-6 max-w-4xl mx-auto flex flex-col items-center">
-          <p className={`text-xs md:text-sm font-medium uppercase tracking-[0.3em] text-text-secondary-light dark:text-text-secondary-dark
-            transform transition-all duration-[1s] delay-500
-            ${active === 'ready' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            Front-end Developer
-          </p>
-          
-          <h2 className={`text-[clamp(3.5rem,10vw,8rem)] font-bold leading-[1.1] tracking-tighter text-text-primary-light dark:text-text-primary-dark
-            transform transition-all duration-[1s] delay-700
-            ${active === 'ready' ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-            Build & <span className="text-gradient">Ship</span>
-          </h2>
-          
-          <p className={`text-base md:text-xl text-text-secondary-light dark:text-text-secondary-dark max-w-xl mx-auto font-medium
-            transform transition-all duration-[1s] delay-[900ms]
-            ${active === 'ready' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            디자인과 개발의 경계를 허무는 프론트엔드 포트폴리오. <br className="hidden sm:block" />
-            사용자 중심의 인터랙션과 최적화된 경험을 설계합니다.
-          </p>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className={`mt-10 flex flex-col sm:flex-row items-center gap-4
-          transform transition-all duration-[1s] delay-[1100ms]
-          ${active === 'ready' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-          <a href="#about" onClick={(e) => {
-            e.preventDefault();
-            document.querySelector('[data-index="1"]').scrollIntoView({ behavior: 'smooth' });
-          }} className="btn-primary w-full sm:w-auto rounded-none">
-            Explore Work
-          </a>
-          <a href="https://github.com/LDH9276" target="_blank" rel="noopener noreferrer" className="btn-outline w-full sm:w-auto rounded-none flex items-center gap-2">
-            View GitHub
-          </a>
-        </div>
+        <div className="pointer-events-none absolute inset-0 border-l border-surface-light/60 dark:border-white/5" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-surface-light via-surface-light/70 to-transparent dark:from-surface-dark dark:via-surface-dark/65" />
       </div>
 
-      <Scroll />
+      <div className="section-container relative z-10 flex h-full flex-col items-start pb-14 pt-28 lg:pb-16 lg:pt-32 justify-between">
+        <div className="max-w-[820px]">
+          <p
+            className={`section-label transition-all duration-700 ${
+              visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+          >
+            Front-end Developer
+          </p>
+
+          <h2
+            className={`text-[clamp(4.4rem,15vw,13.4rem)] font-black uppercase leading-[0.78] text-text-primary-light transition-all delay-100 duration-700 dark:text-text-primary-dark ${
+              visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+            }`}
+          >
+            Lee
+            <br />
+            Dong
+            <br />
+            Heon
+          </h2>
+
+          <div
+            className={`mt-8 grid gap-6 border-t pt-6 transition-all delay-200 duration-700 dark:border-border-dark md:grid-cols-[minmax(0,0.8fr)_minmax(280px,0.5fr)] ${
+              visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
+          >
+            <p className="section-copy">
+              디자인 실무와 웹 퍼블리싱 경험을 바탕으로 구조가 분명한
+              프론트엔드 화면을 설계하고 구현합니다.
+            </p>
+
+            <div className="grid content-start gap-5">
+              <div className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-black uppercase tracking-[0.14em] text-text-muted-light dark:text-text-muted-dark">
+                {meta.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+          <div className="flex flex-wrap gap-3 mt-8 w-full justify-end">
+            <a
+              href="#about"
+              onClick={(e) => {
+                e.preventDefault();
+                document
+                  .querySelector('[data-index="1"]')
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="btn-primary"
+            >
+              Explore
+            </a>
+            <a
+              href="https://github.com/LDH9276"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline"
+            >
+              GitHub
+              <ArrowUpRight size={15} strokeWidth={1.8} aria-hidden="true" />
+            </a>
+          </div>
+      </div>
     </div>
   );
 }

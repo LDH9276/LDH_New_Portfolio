@@ -1,138 +1,103 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import Image from 'next/image';
-import { Mail, MessageCircle, ExternalLink } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { ArrowUpRight, ExternalLink, Mail, MessageCircle } from "lucide-react";
 
 function Contact({ activeSlide }) {
-  const [active, setActive] = useState('ready');
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const containerRef = useRef(null);
+  const [active, setActive] = useState("ready");
 
   useEffect(() => {
-    if (activeSlide === 5) setActive('');
+    if (activeSlide === 5) setActive("");
   }, [activeSlide]);
 
-  const isVisible = active === '';
-
-  const handleMouseMove = useCallback((e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  }, []);
+  const isVisible = active === "";
 
   const contactItems = [
-    { label: 'Mail', value: 'leedh9276@naver.com', href: 'mailto:leedh9276@naver.com', icon: Mail },
-    { label: 'Kakao', value: 'dhlee9207@gmail.com', href: 'mailto:dhlee9207@gmail.com', icon: MessageCircle },
-    { label: 'Github', value: 'LDH9276', href: 'https://github.com/LDH9276', icon: ExternalLink },
+    {
+      label: "Mail",
+      value: "leedh9276@naver.com",
+      href: "mailto:leedh9276@naver.com",
+      icon: Mail,
+    },
+    {
+      label: "Kakao",
+      value: "dhlee9207@gmail.com",
+      href: "mailto:dhlee9207@gmail.com",
+      icon: MessageCircle,
+    },
+    {
+      label: "Github",
+      value: "LDH9276",
+      href: "https://github.com/LDH9276",
+      icon: ExternalLink,
+    },
   ];
 
   return (
     <div
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className={`relative w-full h-full flex items-center
-        transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}
+      className={`relative w-full py-8 transition-opacity duration-[1.3s] ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
     >
-      {/* Background mouse-tracking glow */}
-      <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-300 opacity-0 md:opacity-100"
-        style={{
-          background: `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167, 198, 54, 0.06), transparent 80%)`
-        }}
-      />
-
-      <div className="section-container relative z-10">
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
-
-          {/* Left: Contact info */}
-          <div className="w-full lg:w-1/2 space-y-8 lg:space-y-10 relative z-10 flex flex-col justify-center">
-            <div>
-              <span className="section-label">The LDH</span>
-              <h2 className="section-title text-3xl md:text-5xl">Contact</h2>
-              <div className="accent-line mb-6 md:mb-8" />
-            </div>
-
-            <p className={`text-sm md:text-base leading-relaxed text-text-secondary-light dark:text-text-secondary-dark
-              transition-all duration-700
-              ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-              style={{ transitionDelay: isVisible ? '200ms' : '0ms' }}
-            >
-              포트폴리오를 감상해주셔서 감사합니다.<br className="hidden sm:block" />
-              궁금하신 사항이 있으시면 언제든지 연락주세요.
+      <div className="section-container">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.48fr)] lg:items-end">
+          <div>
+            <span className="section-label">Contact</span>
+            <h2 className="section-title">
+              Let's
+              <br />
+              Connect
+            </h2>
+            <p className="section-copy mt-8">
+              프로젝트 협업, 프론트엔드 포지션, 포트폴리오 관련 문의를
+              편하게 보내주세요.
             </p>
-
-            <div className="space-y-3">
-              {contactItems.map((item, i) => {
-                const Icon = item.icon;
-                return (
-                  <a
-                    key={i}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`group flex items-center gap-4 p-4 -ml-4
-                      border border-transparent hover:border-border-light dark:hover:border-border-dark
-                      hover:bg-surface-muted-light/50 dark:hover:bg-surface-muted-dark/50
-                      transition-all duration-500
-                      ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`}
-                    style={{ transitionDelay: isVisible ? `${i * 120 + 300}ms` : '0ms' }}
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center flex-shrink-0
-                      border border-border-light dark:border-border-dark
-                      group-hover:border-lime group-hover:bg-lime/10 transition-all duration-300">
-                      <Icon size={18} className="text-text-muted-light dark:text-text-muted-dark
-                        group-hover:text-lime transition-colors duration-300" strokeWidth={1.5} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-text-muted-light dark:text-text-muted-dark font-medium">
-                        {item.label}
-                      </span>
-                      <p className="text-base md:text-xl font-semibold text-text-primary-light dark:text-text-primary-dark
-                        group-hover:text-lime transition-colors duration-300 mt-0.5 truncate">
-                        {item.value}
-                      </p>
-                    </div>
-                    <span className="text-lime opacity-0 -translate-x-2
-                      group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 flex-shrink-0">
-                      →
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-
-            <div className={`pt-6 md:pt-8 border-t border-border-light dark:border-border-dark mt-auto
-              transition-all duration-700
-              ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-              style={{ transitionDelay: isVisible ? '800ms' : '0ms' }}
-            >
-              <p className="text-[10px] md:text-xs text-text-muted-light dark:text-text-muted-dark">
-                해당 포트폴리오 사이트에 저장된 이미지의 저작권은 포트폴리오 사이트에 명기했습니다.
-              </p>
-              <p className="text-[10px] md:text-xs text-text-muted-light dark:text-text-muted-dark mt-1 font-mono">
-                COPYRIGHT © LDH 2023
-              </p>
-            </div>
           </div>
 
-          {/* Right: Profile — clean, frameless */}
-          <div className={`w-full max-w-[320px] sm:max-w-[400px] lg:max-w-none lg:w-6/12 relative
-            group transition-all duration-700
-            ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-            style={{ transitionDelay: isVisible ? '100ms' : '0ms' }}
+          <div
+            className={`relative border-l border-border-light pl-6 transition-all delay-150 duration-700 dark:border-border-dark ${
+              isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
           >
             <Image
               src="/images/profile02-2.png"
-              alt="프로필"
-              width={500}
-              height={667}
-              style={{ width: '100%', height: 'auto' }}
-              className="block mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700"
+              alt="이동헌 프로필 이미지"
+              width={620}
+              height={531}
+              className="w-full object-contain object-bottom"
             />
-            {/* Bottom fade */}
-            <div className="absolute inset-x-0 bottom-0 h-28
-              bg-gradient-to-t from-surface-light dark:from-surface-dark to-transparent pointer-events-none" />
           </div>
+        </div>
 
+        <div className="mt-12 border-t border-border-light dark:border-border-dark">
+          {contactItems.map((item, index) => {
+            const Icon = item.icon;
+
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group grid gap-4 border-b border-border-light py-6 transition-all duration-700 hover:bg-surface-muted-light dark:border-border-dark dark:hover:bg-surface-muted-dark sm:grid-cols-[52px_160px_minmax(0,1fr)_40px] sm:items-center ${
+                  isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+                }`}
+                style={{ transitionDelay: isVisible ? `${index * 90}ms` : "0ms" }}
+              >
+                <span className="flex h-10 w-10 items-center justify-center text-lime">
+                  <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-[0.16em] text-text-muted-light dark:text-text-muted-dark">
+                  {item.label}
+                </span>
+                <span className="min-w-0 text-[clamp(1.25rem,4vw,3.3rem)] font-black leading-none text-text-primary-light transition-colors duration-300 group-hover:text-lime dark:text-text-primary-dark">
+                  {item.value}
+                </span>
+                <span className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 group-hover:text-lime dark:text-text-muted-dark">
+                  <ArrowUpRight size={19} strokeWidth={1.8} aria-hidden="true" />
+                </span>
+              </a>
+            );
+          })}
         </div>
       </div>
     </div>
