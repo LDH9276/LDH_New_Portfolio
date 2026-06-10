@@ -47,7 +47,7 @@ function Banner({ activeSlide }) {
           </p>
 
           <h2
-            className={`text-[clamp(4.4rem,15vw,13.4rem)] font-black uppercase leading-[0.78] text-text-primary-light transition-all delay-100 duration-700 dark:text-text-primary-dark ${
+            className={`text-[clamp(7.4rem,28vw,13.4rem)] font-black uppercase leading-[0.78] text-text-primary-light transition-all delay-100 duration-700 dark:text-text-primary-dark ${
               visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
           >
