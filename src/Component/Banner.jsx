@@ -36,7 +36,7 @@ function Banner({ activeSlide }) {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-light via-surface-light/65 to-transparent dark:from-surface-dark dark:via-surface-dark/55 lg:hidden" />
       </div>
 
-      <div className="section-container relative z-10 flex h-full flex-col items-start pb-14 pt-28 lg:pb-16 lg:pt-32">
+      <div className="section-container relative z-10 flex h-full flex-col items-start pb-14 lg:pb-16 lg:pt-32 justify-center pt-20">
         <div className="max-w-[820px]">
           <span className="mb-6 block border-l-2 border-lime pl-4 text-sm font-black uppercase tracking-[0.16em] text-text-primary-light dark:text-text-primary-dark sm:text-base">
             Front-end <span className="text-lime">Developer</span>
@@ -44,7 +44,7 @@ function Banner({ activeSlide }) {
 
           <h1
             aria-label="Lee Dong Heon"
-            className={`text-[clamp(7.4rem,28vw,13.4rem)] font-black uppercase leading-[0.78] text-text-primary-light transition-all delay-100 duration-700 dark:text-text-primary-dark ${
+            className={`text-[clamp(7rem,28vw,13.4rem)] font-black uppercase leading-[0.78] text-text-primary-light transition-all delay-100 duration-700 dark:text-text-primary-dark ${
               visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
           >
