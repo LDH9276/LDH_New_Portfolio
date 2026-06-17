@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
@@ -18,23 +18,31 @@ function Header() {
   } = useAppContext();
   const [toggle, setToggle] = useState("");
   const [menus, setMenus] = useState(false);
+  const menuButtonRef = useRef(null);
   const router = useRouter();
+
+  const closeMobileMenu = (restoreFocus = true) => {
+    setToggle("");
+    setTimeout(() => {
+      setMenus(false);
+      if (restoreFocus) menuButtonRef.current?.focus();
+    }, 500);
+  };
 
   useEffect(() => {
     const desktopMedia = window.matchMedia("(min-width: 1024px)");
-    const closeMobileMenu = (event) => {
+    const closeMenuOnDesktop = (event) => {
       if (!event.matches) return;
       setToggle("");
       setMenus(false);
     };
 
-    desktopMedia.addEventListener("change", closeMobileMenu);
-    return () => desktopMedia.removeEventListener("change", closeMobileMenu);
+    desktopMedia.addEventListener("change", closeMenuOnDesktop);
+    return () => desktopMedia.removeEventListener("change", closeMenuOnDesktop);
   }, []);
 
   const toMainTitle = () => {
-    setToggle("");
-    setTimeout(() => setMenus(false), 500);
+    closeMobileMenu(false);
     setActiveSlide(0);
     document.querySelector('[data-index="0"]')?.scrollIntoView({ behavior: "smooth" });
     if (window.location.pathname !== "/") {
@@ -63,8 +71,7 @@ function Header() {
       return;
     }
 
-    setToggle("");
-    setTimeout(() => setMenus(false), 500);
+    closeMobileMenu();
   };
 
   const navItems = [
@@ -167,6 +174,7 @@ function Header() {
             </a>
 
             <button
+              ref={menuButtonRef}
               type="button"
               className={`flex h-10 w-10 items-center justify-center border transition-colors duration-300 lg:hidden
                 ${
@@ -190,7 +198,7 @@ function Header() {
       </header>
 
       {menus && (
-        <Menus setToggle={setToggle} toggle={toggle} menuEvent={menuEvent} />
+        <Menus toggle={toggle} onClose={closeMobileMenu} />
       )}
     </>
   );

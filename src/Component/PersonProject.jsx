@@ -35,14 +35,14 @@ function WorkRow({ item, index, isVisible, reset }) {
         />
       </span>
 
-      <span className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 group-hover:text-lime dark:text-text-muted-dark">
+      <span className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 group-hover:text-lime-hover dark:text-text-muted-dark dark:group-hover:text-lime">
         <ArrowUpRight size={19} strokeWidth={1.8} aria-hidden="true" />
       </span>
     </Link>
   );
 }
 
-function PersonProject({ activeSlide, reset }) {
+function PersonProject({ activeSlide, reset, titleId = "projects-title" }) {
   const [active, setActive] = useState("ready");
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function PersonProject({ activeSlide, reset }) {
         <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(360px,0.5fr)] lg:items-end">
           <div>
             <span className="section-label">Personal Projects</span>
-            <h2 className="section-title">Projects</h2>
+            <h2 id={titleId} className="section-title">Projects</h2>
           </div>
           <p className="section-copy lg:justify-self-end">
             학습 과정과 팀 프로젝트에서 만든 화면입니다. 구현 역할, 데이터

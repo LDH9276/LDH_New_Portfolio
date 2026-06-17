@@ -12,6 +12,8 @@ module.exports = {
           DEFAULT: '#A7C636',
           dark: '#8DA82B',
           light: '#C2DE5A',
+          contrast: '#667A18',
+          hover: '#78911C',
         },
         surface: {
           light: '#FAFAFA',
@@ -35,7 +37,7 @@ module.exports = {
             dark: '#9A9A9A',
           },
           muted: {
-            light: '#888888',
+            light: '#6B6B6B',
             dark: '#666666',
           }
         },

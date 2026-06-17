@@ -17,6 +17,22 @@ const getCodeLanguage = (item) => {
   return 'javascript';
 };
 
+const getNextTabIndex = (event, currentIndex, length) => {
+  const lastIndex = length - 1;
+
+  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+    return currentIndex === lastIndex ? 0 : currentIndex + 1;
+  }
+
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+    return currentIndex === 0 ? lastIndex : currentIndex - 1;
+  }
+
+  if (event.key === 'Home') return 0;
+  if (event.key === 'End') return lastIndex;
+  return null;
+};
+
 function PortfolioPage() {
   const { p_slide, setP_slide, isStart, setActiveSlide } = useAppContext();
   const containerRef = useRef(null);
@@ -79,6 +95,35 @@ function PortfolioPage() {
   const codeDescriptions = [portfolioItem.text02_1, portfolioItem.text02_2, portfolioItem.text02_3, portfolioItem.text02_4];
   const codeLanguage = getCodeLanguage(portfolioItem);
   const hasRotatingImages = ['1', '2', '4', '7'].includes(id);
+  const designTabs = [
+    {
+      label: 'UI / UX',
+      tabId: 'portfolio-design-ui-tab',
+      panelId: 'portfolio-design-ui-panel',
+      content: portfolioItem.design,
+    },
+    {
+      label: 'Library',
+      tabId: 'portfolio-design-library-tab',
+      panelId: 'portfolio-design-library-panel',
+      content: portfolioItem.text03,
+    },
+  ];
+  const developTabs = ['Chapter01', 'Chapter02', 'Chapter03', 'Chapter04'].map((label, index) => ({
+    label,
+    tabId: `portfolio-develop-${index + 1}-tab`,
+    panelId: `portfolio-develop-${index + 1}-panel`,
+  }));
+  const handleTabKeyDown = (event, currentIndex, tabs, setSelected) => {
+    const nextIndex = getNextTabIndex(event, currentIndex, tabs.length);
+    if (nextIndex === null) return;
+
+    event.preventDefault();
+    setSelected(nextIndex);
+    requestAnimationFrame(() => {
+      document.getElementById(tabs[nextIndex].tabId)?.focus();
+    });
+  };
 
   return (
     <div className={`transition-opacity duration-[2.5s] ${isStart === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
@@ -136,24 +181,38 @@ function PortfolioPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <div>
-                {/* Tabs */}
-                <div className="flex gap-0 mb-6">
-                  {['UI / UX', 'Library'].map((label, i) => (
+                <div className="flex gap-0 mb-6" role="tablist" aria-label="디자인 정보">
+                  {designTabs.map((item, i) => (
                     <button
-                      key={i}
+                      key={item.tabId}
+                      id={item.tabId}
                       type="button"
+                      role="tab"
                       onClick={() => setTab01(i)}
-                      aria-pressed={tab01 === i}
+                      onKeyDown={(event) => handleTabKeyDown(event, i, designTabs, setTab01)}
+                      aria-selected={tab01 === i}
+                      aria-controls={item.panelId}
+                      tabIndex={tab01 === i ? 0 : -1}
                       className={`px-5 py-2 text-sm font-medium transition-all duration-300 border
                         ${tab01 === i 
                           ? 'bg-lime text-surface-dark border-lime' 
                           : 'bg-transparent text-text-secondary-light dark:text-text-secondary-dark border-border-light dark:border-border-dark hover:border-lime'}`}
-                    >{label}</button>
+                    >{item.label}</button>
                   ))}
                 </div>
-                <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
-                  {tab01 === 0 ? portfolioItem.design : portfolioItem.text03}
-                </pre>
+                {designTabs.map((item, i) => (
+                  <div
+                    key={item.panelId}
+                    id={item.panelId}
+                    role="tabpanel"
+                    aria-labelledby={item.tabId}
+                    hidden={tab01 !== i}
+                  >
+                    <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
+                      {item.content}
+                    </pre>
+                  </div>
+                ))}
               </div>
 
               {/* Images */}
@@ -182,36 +241,53 @@ function PortfolioPage() {
             <h2 className="section-title">Develop</h2>
             <div className="accent-line mb-10" />
 
-            <div className="flex gap-0 mb-6 flex-wrap">
-              {['Chapter01', 'Chapter02', 'Chapter03', 'Chapter04'].map((label, i) => (
+            <div className="flex gap-0 mb-6 flex-wrap" role="tablist" aria-label="개발 챕터">
+              {developTabs.map((item, i) => (
                 <button
-                  key={i}
+                  key={item.tabId}
+                  id={item.tabId}
                   type="button"
+                  role="tab"
                   onClick={() => setTab(i)}
-                  aria-pressed={tab === i}
+                  onKeyDown={(event) => handleTabKeyDown(event, i, developTabs, setTab)}
+                  aria-selected={tab === i}
+                  aria-controls={item.panelId}
+                  tabIndex={tab === i ? 0 : -1}
                   className={`px-5 py-2 text-sm font-medium transition-all duration-300 border
                     ${tab === i 
                       ? 'bg-lime text-surface-dark border-lime' 
                       : 'bg-transparent text-text-secondary-light dark:text-text-secondary-dark border-border-light dark:border-border-dark hover:border-lime'}`}
-                >{label}</button>
+                >{item.label}</button>
               ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <PortfolioCodeBlock
-                code={codeSnippets[tab]}
-                language={codeLanguage}
-                fileName={`chapter-${String(tab + 1).padStart(2, '0')}`}
-              />
-              <div>
-                <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">
-                  {codeTitles[tab]}
-                </h3>
-                <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
-                  {codeDescriptions[tab]}
-                </pre>
+            {developTabs.map((item, i) => (
+              <div
+                key={item.panelId}
+                id={item.panelId}
+                role="tabpanel"
+                aria-labelledby={item.tabId}
+                hidden={tab !== i}
+              >
+                {tab === i && (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <PortfolioCodeBlock
+                      code={codeSnippets[i]}
+                      language={codeLanguage}
+                      fileName={`chapter-${String(i + 1).padStart(2, '0')}`}
+                    />
+                    <div>
+                      <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">
+                        {codeTitles[i]}
+                      </h3>
+                      <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
+                        {codeDescriptions[i]}
+                      </pre>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            ))}
           </div>
           <Scroll />
         </section>

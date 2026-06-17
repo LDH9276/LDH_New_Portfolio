@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { ArrowUpRight, ExternalLink, Mail, MessageCircle } from "lucide-react";
 
-function Contact({ activeSlide }) {
+function Contact({ activeSlide, titleId = "contact-title" }) {
   const [active, setActive] = useState("ready");
 
   useEffect(() => {
@@ -42,7 +42,7 @@ function Contact({ activeSlide }) {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.48fr)] lg:items-end">
           <div>
             <span className="section-label">Contact</span>
-            <h2 className="section-title">
+            <h2 id={titleId} className="section-title">
               Let's
               <br />
               Connect
@@ -83,16 +83,16 @@ function Contact({ activeSlide }) {
                 }`}
                 style={{ transitionDelay: isVisible ? `${index * 90}ms` : "0ms" }}
               >
-                <span className="flex h-10 w-10 items-center justify-center text-lime">
+                <span className="flex h-10 w-10 items-center justify-center text-lime-contrast dark:text-lime">
                   <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <span className="text-[11px] font-black uppercase tracking-[0.16em] text-text-muted-light dark:text-text-muted-dark">
                   {item.label}
                 </span>
-                <span className="min-w-0 text-[clamp(1.25rem,4vw,3.3rem)] font-black leading-none text-text-primary-light transition-colors duration-300 group-hover:text-lime dark:text-text-primary-dark">
+                <span className="min-w-0 text-[clamp(1.25rem,4vw,3.3rem)] font-black leading-none text-text-primary-light transition-colors duration-300 group-hover:text-lime-contrast dark:text-text-primary-dark dark:group-hover:text-lime">
                   {item.value}
                 </span>
-                <span className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 group-hover:text-lime dark:text-text-muted-dark">
+                <span className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 group-hover:text-lime-contrast dark:text-text-muted-dark dark:group-hover:text-lime">
                   <ArrowUpRight size={19} strokeWidth={1.8} aria-hidden="true" />
                 </span>
               </a>

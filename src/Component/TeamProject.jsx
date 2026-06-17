@@ -9,10 +9,10 @@ import PortfolioSwiperNavigation from './PortfolioSwiperNavigation';
 
 const getFamilyIcon = (family) => {
   const f = family.toUpperCase();
-  if (f.includes('REACT')) return <Atom size={16} className="text-lime" />;
-  if (f.includes('PHP')) return <Server size={16} className="text-lime" />;
-  if (f.includes('JQUERY') || f.includes('JAVASCRIPT')) return <FileCode size={16} className="text-lime" />;
-  return <Code2 size={16} className="text-lime" />;
+  if (f.includes('REACT')) return <Atom size={16} className="text-lime-contrast dark:text-lime" />;
+  if (f.includes('PHP')) return <Server size={16} className="text-lime-contrast dark:text-lime" />;
+  if (f.includes('JQUERY') || f.includes('JAVASCRIPT')) return <FileCode size={16} className="text-lime-contrast dark:text-lime" />;
+  return <Code2 size={16} className="text-lime-contrast dark:text-lime" />;
 };
 
 function ProjectCard({ item, index, isVisible, reset }) {
@@ -81,7 +81,7 @@ function ProjectCard({ item, index, isVisible, reset }) {
           </span>
         </div>
         <h3 className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark
-          group-hover:text-lime transition-colors duration-300">
+          group-hover:text-lime-hover transition-colors duration-300 dark:group-hover:text-lime">
           {item.name}
         </h3>
       </div>

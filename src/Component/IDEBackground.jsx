@@ -104,7 +104,10 @@ export default function IDEBackground({ contentClassName = "" }) {
   }, [currentLineIdx, currentCharIdx]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden bg-surface-light dark:bg-[#0d1117] transition-colors duration-500 pointer-events-none select-none opacity-100 z-0">
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 overflow-hidden bg-surface-light dark:bg-[#0d1117] transition-colors duration-500 pointer-events-none select-none opacity-100 z-0"
+    >
       <div className={`w-full h-full p-4 md:p-8 font-mono text-[10px] md:text-xs lg:text-sm leading-loose md:leading-loose opacity-50 dark:opacity-80 lg:opacity-70 lg:dark:opacity-100 ${contentClassName}`}>
         {lines.map((line, idx) => (
           <div key={idx} className="flex">

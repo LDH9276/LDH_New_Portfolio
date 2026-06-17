@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import IDEBackground from "./IDEBackground";
 import ThreeBackground from "./ThreeBackground";
 
-function Banner({ activeSlide }) {
+function Banner({ activeSlide, titleId = "intro-title" }) {
   const [active, setActive] = useState("ready");
 
   useEffect(() => {
@@ -39,10 +39,11 @@ function Banner({ activeSlide }) {
       <div className="section-container relative z-10 flex h-full flex-col items-start pb-14 lg:pb-16 lg:pt-32 justify-center pt-20">
         <div className="max-w-[820px]">
           <span className="mb-6 block border-l-2 border-lime pl-4 text-sm font-black uppercase tracking-[0.16em] text-text-primary-light dark:text-text-primary-dark sm:text-base">
-            Front-end <span className="text-lime">Developer</span>
+            Front-end <span className="text-lime-contrast dark:text-lime">Developer</span>
           </span>
 
           <h1
+            id={titleId}
             aria-label="Lee Dong Heon"
             className={`text-[clamp(7rem,28vw,13.4rem)] font-black uppercase leading-[0.78] text-text-primary-light transition-all delay-100 duration-700 dark:text-text-primary-dark ${
               visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"

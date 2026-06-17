@@ -71,33 +71,58 @@ export default function Page() {
         }}
         className="h-screen w-full overflow-y-auto scroll-smooth"
       >
-        <section data-index="0" className="scroll-section h-screen w-full relative">
-          <Banner activeSlide={activeSlide} />
+        <section
+          id="intro"
+          data-index="0"
+          aria-labelledby="intro-title"
+          className="scroll-section h-screen w-full relative"
+        >
+          <Banner activeSlide={activeSlide} titleId="intro-title" />
         </section>
 
         {/* Section divider */}
         <div className="section-divider" />
 
-        <section data-index="1" className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative">
-          <About activeSlide={activeSlide} />
+        <section
+          id="about"
+          data-index="1"
+          aria-labelledby="about-title"
+          className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative"
+        >
+          <About activeSlide={activeSlide} titleId="about-title" />
         </section>
 
         <div className="section-divider" />
 
-        <section data-index="4" className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative">
-          <PubProject activeSlide={activeSlide} reset={reset} />
+        <section
+          id="publishing"
+          data-index="4"
+          aria-labelledby="publishing-title"
+          className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative"
+        >
+          <PubProject activeSlide={activeSlide} reset={reset} titleId="publishing-title" />
         </section>
 
         <div className="section-divider" />
 
-        <section data-index="2" className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative">
-          <PersonProject activeSlide={activeSlide} reset={reset} />
+        <section
+          id="projects"
+          data-index="2"
+          aria-labelledby="projects-title"
+          className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative"
+        >
+          <PersonProject activeSlide={activeSlide} reset={reset} titleId="projects-title" />
         </section>
 
         <div className="section-divider" />
 
-        <section data-index="5" className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative">
-          <Contact activeSlide={activeSlide} />
+        <section
+          id="contact"
+          data-index="5"
+          aria-labelledby="contact-title"
+          className="scroll-section min-h-screen py-24 md:py-28 lg:py-32 w-full relative"
+        >
+          <Contact activeSlide={activeSlide} titleId="contact-title" />
         </section>
       </div>
     </div>

@@ -76,7 +76,7 @@ function PublishingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="card p-6">
-                <Briefcase size={20} className="text-lime mb-5" />
+                <Briefcase size={20} className="text-lime-contrast mb-5 dark:text-lime" />
                 <span className="block text-[11px] uppercase tracking-[0.2em] text-text-muted-light dark:text-text-muted-dark mb-2">
                   담당 업무
                 </span>
@@ -86,7 +86,7 @@ function PublishingPage() {
               </div>
 
               <div className="card p-6">
-                <Clock3 size={20} className="text-lime mb-5" />
+                <Clock3 size={20} className="text-lime-contrast mb-5 dark:text-lime" />
                 <span className="block text-[11px] uppercase tracking-[0.2em] text-text-muted-light dark:text-text-muted-dark mb-2">
                   Duration
                 </span>
@@ -96,7 +96,7 @@ function PublishingPage() {
               </div>
 
               <div className="card p-6">
-                <PanelsTopLeft size={20} className="text-lime mb-5" />
+                <PanelsTopLeft size={20} className="text-lime-contrast mb-5 dark:text-lime" />
                 <span className="block text-[11px] uppercase tracking-[0.2em] text-text-muted-light dark:text-text-muted-dark mb-2">
                   Stack
                 </span>
@@ -128,7 +128,7 @@ function PublishingPage() {
               <ul className="space-y-3">
                 {portfolioItem.pages.map((page, index) => (
                   <li key={page} className="card flex items-center gap-4 p-5">
-                    <span className="text-xs font-mono text-lime">
+                    <span className="text-xs font-mono text-lime-contrast dark:text-lime">
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <span className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">

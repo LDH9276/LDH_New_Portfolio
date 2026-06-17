@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Briefcase, GraduationCap } from "lucide-react";
 
-function About({ activeSlide }) {
+function About({ activeSlide, titleId = "about-title" }) {
   const [active, setActive] = useState("ready");
   const [tab, setTab] = useState("experience");
 
@@ -91,7 +91,44 @@ function About({ activeSlide }) {
     },
   ];
 
-  const currentList = tab === "experience" ? experiences : educations;
+  const careerTabs = [
+    {
+      id: "experience",
+      label: "Experience",
+      icon: Briefcase,
+      items: experiences,
+    },
+    {
+      id: "education",
+      label: "Education",
+      icon: GraduationCap,
+      items: educations,
+    },
+  ];
+
+  const handleCareerTabKeyDown = (event, currentIndex) => {
+    const lastIndex = careerTabs.length - 1;
+    let nextIndex = currentIndex;
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      nextIndex = currentIndex === lastIndex ? 0 : currentIndex + 1;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      nextIndex = currentIndex === 0 ? lastIndex : currentIndex - 1;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = lastIndex;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    const nextTab = careerTabs[nextIndex].id;
+    setTab(nextTab);
+    requestAnimationFrame(() => {
+      document.getElementById(`about-${nextTab}-tab`)?.focus();
+    });
+  };
 
   return (
     <div
@@ -107,7 +144,7 @@ function About({ activeSlide }) {
             }`}
           >
             <span className="section-label">About</span>
-            <h2 className="section-title">
+            <h2 id={titleId} className="section-title">
               Design
               <br />
               to Code
@@ -181,7 +218,7 @@ function About({ activeSlide }) {
                         {String(index + 1).padStart(2, "0")}
                       </span>
                     </div>
-                    <span className="block text-[11px] font-black uppercase tracking-[0.13em] text-lime">
+                    <span className="block text-[11px] font-black uppercase tracking-[0.13em] text-lime-contrast dark:text-lime">
                       {skill.stack}
                     </span>
                     <p className="mt-5 text-[15px] leading-[1.9] text-text-secondary-light dark:text-text-secondary-dark">
@@ -193,70 +230,79 @@ function About({ activeSlide }) {
             </section>
 
             <section className="mt-20">
-              <div className="flex gap-8">
-                <button
-                  type="button"
-                  onClick={() => setTab("experience")}
-                  aria-pressed={tab === "experience"}
-                  className={`flex items-center gap-2 pb-4 text-sm font-black uppercase tracking-[0.15em] transition-colors duration-300 ${
-                    tab === "experience"
-                      ? "border-b-2 border-lime text-lime"
-                      : "text-text-muted-light hover:text-text-primary-light dark:text-text-muted-dark dark:hover:text-text-primary-dark"
-                  }`}
-                >
-                  <Briefcase size={15} strokeWidth={1.8} aria-hidden="true" />
-                  Experience
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTab("education")}
-                  aria-pressed={tab === "education"}
-                  className={`flex items-center gap-2 pb-4 text-sm font-black uppercase tracking-[0.15em] transition-colors duration-300 ${
-                    tab === "education"
-                      ? "border-b-2 border-lime text-lime"
-                      : "text-text-muted-light hover:text-text-primary-light dark:text-text-muted-dark dark:hover:text-text-primary-dark"
-                  }`}
-                >
-                  <GraduationCap size={15} strokeWidth={1.8} aria-hidden="true" />
-                  Education
-                </button>
+              <div className="flex gap-8" role="tablist" aria-label="경력 및 교육 정보">
+                {careerTabs.map(({ id, label, icon: Icon }, index) => {
+                  const selected = tab === id;
+
+                  return (
+                    <button
+                      key={id}
+                      id={`about-${id}-tab`}
+                      type="button"
+                      role="tab"
+                      onClick={() => setTab(id)}
+                      onKeyDown={(event) => handleCareerTabKeyDown(event, index)}
+                      aria-selected={selected}
+                      aria-controls={`about-${id}-panel`}
+                      tabIndex={selected ? 0 : -1}
+                      className={`flex items-center gap-2 pb-4 text-sm font-black uppercase tracking-[0.15em] transition-colors duration-300 ${
+                        selected
+                          ? "border-b-2 border-lime-contrast text-lime-contrast dark:border-lime dark:text-lime"
+                          : "text-text-muted-light hover:text-text-primary-light dark:text-text-muted-dark dark:hover:text-text-primary-dark"
+                      }`}
+                    >
+                      <Icon size={15} strokeWidth={1.8} aria-hidden="true" />
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
 
-              <ol className="border-t border-border-light dark:border-border-dark">
-                {currentList.map((item) => (
-                  <li
-                    key={`${tab}-${item.company}`}
-                    className="border-b border-border-light py-9 dark:border-border-dark"
-                  >
-                    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <h4 className="text-2xl font-black text-text-primary-light dark:text-text-primary-dark">
-                          {item.company}
-                        </h4>
-                        <p className="mt-2 text-base font-bold text-text-secondary-light dark:text-text-secondary-dark">
-                          {item.role}
+              {careerTabs.map(({ id, items }) => (
+                <div
+                  key={id}
+                  id={`about-${id}-panel`}
+                  role="tabpanel"
+                  aria-labelledby={`about-${id}-tab`}
+                  hidden={tab !== id}
+                >
+                  <ol className="border-t border-border-light dark:border-border-dark">
+                    {items.map((item) => (
+                      <li
+                        key={`${id}-${item.company}`}
+                        className="border-b border-border-light py-9 dark:border-border-dark"
+                      >
+                        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <h4 className="text-2xl font-black text-text-primary-light dark:text-text-primary-dark">
+                              {item.company}
+                            </h4>
+                            <p className="mt-2 text-base font-bold text-text-secondary-light dark:text-text-secondary-dark">
+                              {item.role}
+                            </p>
+                          </div>
+                          <span className="shrink-0 pt-1 text-xs font-black uppercase tracking-[0.14em] text-text-muted-light dark:text-text-muted-dark">
+                            {item.period}
+                          </span>
+                        </div>
+                        <p className="max-w-3xl text-[15px] leading-[1.95] text-text-secondary-light dark:text-text-secondary-dark">
+                          {item.desc}
                         </p>
-                      </div>
-                      <span className="shrink-0 pt-1 text-xs font-black uppercase tracking-[0.14em] text-text-muted-light dark:text-text-muted-dark">
-                        {item.period}
-                      </span>
-                    </div>
-                    <p className="max-w-3xl text-[15px] leading-[1.95] text-text-secondary-light dark:text-text-secondary-dark">
-                      {item.desc}
-                    </p>
-                    <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
-                      {item.points.map((point) => (
-                        <li
-                          key={point}
-                          className="border-l border-border-light pl-3 text-[12px] font-bold uppercase tracking-[0.08em] text-text-muted-light dark:border-border-dark dark:text-text-muted-dark"
-                        >
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ol>
+                        <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+                          {item.points.map((point) => (
+                            <li
+                              key={point}
+                              className="border-l border-border-light pl-3 text-[12px] font-bold uppercase tracking-[0.08em] text-text-muted-light dark:border-border-dark dark:text-text-muted-dark"
+                            >
+                              {point}
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ))}
             </section>
           </div>
         </div>

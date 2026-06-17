@@ -23,13 +23,13 @@ function PortPesronPos( {act, dis, id, reset} ) {
         >
           <span className={`block transition-all duration-300
             ${Number(id) === item.id 
-              ? 'w-8 h-[2px] bg-lime' 
-              : 'w-4 h-[1px] bg-text-muted-light dark:bg-text-muted-dark group-hover:w-6 group-hover:bg-lime'}`} 
+              ? 'w-8 h-[2px] bg-lime-contrast dark:bg-lime'
+              : 'w-4 h-[1px] bg-text-muted-light dark:bg-text-muted-dark group-hover:w-6 group-hover:bg-lime-contrast dark:group-hover:bg-lime'}`}
           />
           <span className={`text-[11px] font-medium tracking-wider
             transition-all duration-300
             ${Number(id) === item.id 
-              ? 'opacity-100 text-lime' 
+              ? 'opacity-100 text-lime-contrast dark:text-lime'
               : 'opacity-0 text-text-secondary-light dark:text-text-secondary-dark group-hover:opacity-100'}`}
           >
             {item.name}

@@ -30,7 +30,7 @@ function Pos({ handleSlideNavigation, activeSlide }) {
                 <span
                   className={`justify-self-end text-right text-[10px] font-black uppercase tracking-[0.16em] transition-all duration-300 ${
                     isActive
-                      ? "text-lime"
+                      ? "text-lime-contrast dark:text-lime"
                       : "translate-x-2 text-text-muted-light opacity-0 group-hover:translate-x-0 group-hover:opacity-100 dark:text-text-muted-dark"
                   }`}
                 >
@@ -39,7 +39,7 @@ function Pos({ handleSlideNavigation, activeSlide }) {
                 <span
                   className={`block h-px justify-self-end transition-all duration-300 ${
                     isActive
-                      ? "w-10 bg-lime"
+                      ? "w-10 bg-lime-contrast dark:bg-lime"
                       : "w-5 bg-border-light group-hover:w-8 group-hover:bg-text-primary-light dark:bg-border-dark dark:group-hover:bg-text-primary-dark"
                   }`}
                 />

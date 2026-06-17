@@ -52,7 +52,7 @@
   }
 
   .section-label {
-    @apply mb-3 block text-[11px] font-bold uppercase tracking-[0.22em] text-lime;
+    @apply mb-3 block text-[11px] font-bold uppercase tracking-[0.22em] text-lime-contrast dark:text-lime;
   }
 
   .section-title {
@@ -109,7 +109,7 @@
   }
 
   .line-link {
-    @apply inline-flex items-center gap-2 border-b border-current pb-1 text-xs font-black uppercase tracking-[0.16em] transition-colors duration-300 hover:text-lime;
+    @apply inline-flex items-center gap-2 border-b border-current pb-1 text-xs font-black uppercase tracking-[0.16em] transition-colors duration-300 hover:text-lime-contrast dark:hover:text-lime;
   }
 
   .meta-row {
@@ -145,11 +145,19 @@
   }
 
   .work-title {
-    @apply text-[clamp(1.35rem,3vw,3.2rem)] font-black uppercase leading-none text-text-primary-light transition-colors duration-300 group-hover:text-lime;
+    @apply text-[clamp(1.35rem,3vw,3.2rem)] font-black uppercase leading-none text-text-primary-light transition-colors duration-300;
+  }
+
+  .group:hover .work-title {
+    @apply text-lime-hover;
   }
 
   .dark .work-title {
     @apply text-text-primary-dark;
+  }
+
+  .dark .group:hover .work-title {
+    @apply text-lime;
   }
 
   .work-meta {
