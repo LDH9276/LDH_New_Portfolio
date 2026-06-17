@@ -1,15 +1,15 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import portfoliodata from '../../../src/Component/portfoliodata.json';
 import Scroll from '../../../src/Header/Scroll';
 import ScrollPf from '../../../src/Header/ScrollPf';
 import { useAppContext } from '../../../app/Context';
 import Image from 'next/image';
 import PortfolioCodeBlock from '../../../src/Component/PortfolioCodeBlock';
+import { getPersonalProjectByLegacyId } from '../../../src/data/portfolio';
 
 const getCodeLanguage = (item) => {
-  const source = `${item.project_program || ''} ${item.family || ''}`.toLowerCase();
+  const source = `${item.programLabel || ''} ${item.stackLabel || ''}`.toLowerCase();
   if (source.includes('php')) return 'php';
   if (source.includes('react') || source.includes('next')) return 'jsx';
   if (source.includes('css')) return 'css';
@@ -45,11 +45,7 @@ function PortfolioPage() {
   const params = useParams();
   const id = params.id;
   const productID = Number(id);
-
-  const data = JSON.stringify(portfoliodata.portfolio);
-  const totaldata = data.replace(/\n/g, "<br>");
-  const portfolio = JSON.parse(totaldata);
-  const portfolioItem = portfolio.find(item => item.id === productID);
+  const portfolioItem = getPersonalProjectByLegacyId(productID);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -76,41 +72,46 @@ function PortfolioPage() {
   }
 
   useEffect(() => {
+    const galleryLength = portfolioItem?.assets.gallery.length || 0;
+    if (galleryLength <= 1) return undefined;
+
     const interval = setInterval(() => {
-      setImg((prev) => (prev + 1) % 3);
+      setImg((prev) => (prev + 1) % galleryLength);
     }, 4500);
     return () => clearInterval(interval);
-  }, []);
+  }, [portfolioItem]);
 
   const toList = () => { setActiveSlide(2); router.push('/'); }
 
   if (!portfolioItem) return (
     <div className="h-screen flex items-center justify-center">
-      <p className="text-text-muted-light dark:text-text-muted-dark">Loading...</p>
+      <p className="text-text-muted-light dark:text-text-muted-dark">해당 프로젝트를 찾을 수 없습니다.</p>
     </div>
   );
 
-  const codeSnippets = [portfolioItem.code1, portfolioItem.code2, portfolioItem.code3, portfolioItem.code4];
-  const codeTitles = [portfolioItem.title01, portfolioItem.title02, portfolioItem.title03, portfolioItem.title04];
-  const codeDescriptions = [portfolioItem.text02_1, portfolioItem.text02_2, portfolioItem.text02_3, portfolioItem.text02_4];
+  const galleryImages = portfolioItem.assets.gallery;
+  const chapters = portfolioItem.detail.chapters;
+  const codeSnippets = chapters.map((chapter) => chapter.code);
+  const codeTitles = chapters.map((chapter) => chapter.title);
+  const codeDescriptions = chapters.map((chapter) => chapter.description);
   const codeLanguage = getCodeLanguage(portfolioItem);
-  const hasRotatingImages = ['1', '2', '4', '7'].includes(id);
+  const hasRotatingImages = portfolioItem.detail.rotateGallery && galleryImages.length > 0;
   const designTabs = [
     {
       label: 'UI / UX',
       tabId: 'portfolio-design-ui-tab',
       panelId: 'portfolio-design-ui-panel',
-      content: portfolioItem.design,
+      content: portfolioItem.detail.design,
     },
     {
       label: 'Library',
       tabId: 'portfolio-design-library-tab',
       panelId: 'portfolio-design-library-panel',
-      content: portfolioItem.text03,
+      content: portfolioItem.detail.library,
     },
   ];
-  const developTabs = ['Chapter01', 'Chapter02', 'Chapter03', 'Chapter04'].map((label, index) => ({
-    label,
+  const developTabs = chapters.map((chapter, index) => ({
+    label: `Chapter${String(index + 1).padStart(2, '0')}`,
     tabId: `portfolio-develop-${index + 1}-tab`,
     panelId: `portfolio-develop-${index + 1}-panel`,
   }));
@@ -134,15 +135,15 @@ function PortfolioPage() {
         {/* Slide 0: Intro */}
         <section data-index="0" className="scroll-section h-screen w-full relative">
           <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-            <Image src={`/portfolio/${portfolioItem.main_img}`} alt={portfolioItem.name} fill className="z-0 object-cover" />
+            <Image src={portfolioItem.assets.hero} alt={portfolioItem.title} fill className="z-0 object-cover" />
             <div className="pointer-events-none absolute inset-0 z-[1] bg-black/70" />
             <div className="relative z-10 section-container text-center space-y-4">
-              <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.family}</span>
-              <h1 className="text-display text-white">{portfolioItem.name}</h1>
-              <p className="text-sm text-white/40">{portfolioItem.project_date}</p>
-              <p className="text-xs text-white/30">{portfolioItem.project_program}</p>
-              {portfolioItem.homepage && (
-                <a href={portfolioItem.homepage} target="_blank" rel="noopener noreferrer" className="btn-primary mt-6 inline-flex">
+              <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.stackLabel}</span>
+              <h1 className="text-display text-white">{portfolioItem.title}</h1>
+              <p className="text-sm text-white/40">{portfolioItem.period}</p>
+              <p className="text-xs text-white/30">{portfolioItem.programLabel}</p>
+              {portfolioItem.links.homepage && (
+                <a href={portfolioItem.links.homepage} target="_blank" rel="noopener noreferrer" className="btn-primary mt-6 inline-flex">
                   GitHub 이동 →
                 </a>
               )}
@@ -154,17 +155,17 @@ function PortfolioPage() {
         {/* Slide 1: Introduce */}
         <section data-index="1" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
-            <span className="section-label">{portfolioItem.name}</span>
+            <span className="section-label">{portfolioItem.title}</span>
             <h2 className="section-title">Introduce</h2>
             <div className="accent-line mb-10" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <div className="relative aspect-video overflow-hidden">
-                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name} fill className="object-cover" />
+                <Image src={portfolioItem.assets.intro} alt={portfolioItem.title} fill className="object-cover" />
               </div>
               <div>
-                <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">{portfolioItem.Headtitle}</h3>
+                <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">{portfolioItem.detail.headline}</h3>
                 <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
-                  {portfolioItem.text01}
+                  {portfolioItem.detail.intro}
                 </pre>
               </div>
             </div>
@@ -175,7 +176,7 @@ function PortfolioPage() {
         {/* Slide 2: Design */}
         <section data-index="2" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
-            <span className="section-label">{portfolioItem.name}</span>
+            <span className="section-label">{portfolioItem.title}</span>
             <h2 className="section-title">개발환경 및 디자인</h2>
             <div className="accent-line mb-10" />
 
@@ -218,15 +219,15 @@ function PortfolioPage() {
               {/* Images */}
               {hasRotatingImages && (
                 <div className="relative aspect-video overflow-hidden">
-                  {[portfolioItem.textimg02, portfolioItem.textimg03, portfolioItem.textimg04].map((imgSrc, i) => (
-                    <Image key={i} src={`/images/${imgSrc}`} alt="" fill
+                  {galleryImages.map((imgSrc, i) => (
+                    <Image key={imgSrc} src={imgSrc} alt="" fill
                       className={`object-cover transition-opacity duration-700 ${img === i ? 'opacity-100' : 'opacity-0'}`} />
                   ))}
                 </div>
               )}
-              {!hasRotatingImages && portfolioItem.textimg02 && (
+              {!hasRotatingImages && galleryImages[0] && (
                 <div className="relative aspect-video overflow-hidden">
-                  <Image src={`/images/${portfolioItem.textimg02}`} alt="" fill className="object-cover" />
+                  <Image src={galleryImages[0]} alt="" fill className="object-cover" />
                 </div>
               )}
             </div>
@@ -237,7 +238,7 @@ function PortfolioPage() {
         {/* Slide 3: Develop */}
         <section data-index="3" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
-            <span className="section-label">{portfolioItem.name}</span>
+            <span className="section-label">{portfolioItem.title}</span>
             <h2 className="section-title">Develop</h2>
             <div className="accent-line mb-10" />
 
@@ -295,7 +296,7 @@ function PortfolioPage() {
         {/* Slide 4: Review */}
         <section data-index="4" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
-            <span className="section-label">{portfolioItem.name}</span>
+            <span className="section-label">{portfolioItem.title}</span>
             <h2 className="section-title">후기 및 느낀점</h2>
             <div className="accent-line mb-10" />
 
@@ -303,11 +304,11 @@ function PortfolioPage() {
               <div>
                 <h3 className="text-subheading text-text-primary-light dark:text-text-primary-dark mb-4">총평 및 후기</h3>
                 <pre className="text-sm leading-relaxed text-text-secondary-light dark:text-text-secondary-dark whitespace-pre-wrap font-sans">
-                  {portfolioItem.text04}
+                  {portfolioItem.detail.review}
                 </pre>
               </div>
               <div className="relative aspect-video overflow-hidden">
-                <Image src={`/images/${portfolioItem.textimg01}`} alt={portfolioItem.name} fill className="object-cover" />
+                <Image src={portfolioItem.assets.intro} alt={portfolioItem.title} fill className="object-cover" />
               </div>
             </div>
 

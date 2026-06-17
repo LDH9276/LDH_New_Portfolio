@@ -4,9 +4,9 @@ import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { Briefcase, Clock3, PanelsTopLeft } from 'lucide-react';
-import companydata from '../../../src/Component/companydata.json';
 import Scroll from '../../../src/Header/Scroll';
 import ScrollPf from '../../../src/Header/ScrollPf';
+import { getCompanyWorkByLegacyId } from '../../../src/data/portfolio';
 import { useAppContext } from '../../Context';
 
 function PublishingPage() {
@@ -14,7 +14,7 @@ function PublishingPage() {
   const containerRef = useRef(null);
   const params = useParams();
   const router = useRouter();
-  const portfolioItem = companydata.portfolio.find((item) => item.id === Number(params.id));
+  const portfolioItem = getCompanyWorkByLegacyId(params.id);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -55,13 +55,13 @@ function PublishingPage() {
         {/* Slide 0: Intro */}
         <section data-index="0" className="scroll-section h-screen w-full relative">
           <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-            <Image src={portfolioItem.thumb} alt={portfolioItem.name} fill className="z-0 object-cover" priority />
+            <Image src={portfolioItem.assets.hero} alt={portfolioItem.title} fill className="z-0 object-cover" priority />
             <div className="pointer-events-none absolute inset-0 z-[1] bg-black/70" />
             <div className="relative z-10 section-container text-center space-y-4">
-              <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.family}</span>
-              <h1 className="text-display text-white">{portfolioItem.name}</h1>
-              <p className="text-sm text-white/90">{portfolioItem.responsibility}</p>
-              <p className="text-xs text-white/50">{portfolioItem.duration}</p>
+              <span className="text-xs uppercase tracking-[0.3em] text-white/50">{portfolioItem.stackLabel}</span>
+              <h1 className="text-display text-white">{portfolioItem.title}</h1>
+              <p className="text-sm text-white/90">{portfolioItem.role}</p>
+              <p className="text-xs text-white/50">{portfolioItem.period}</p>
             </div>
             <ScrollPf />
           </div>
@@ -70,7 +70,7 @@ function PublishingPage() {
         {/* Slide 1: Overview */}
         <section data-index="1" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
-            <span className="section-label">{portfolioItem.name}</span>
+            <span className="section-label">{portfolioItem.title}</span>
             <h2 className="section-title">작업 정보</h2>
             <div className="accent-line mb-10" />
 
@@ -81,7 +81,7 @@ function PublishingPage() {
                   담당 업무
                 </span>
                 <p className="text-base font-semibold text-text-primary-light dark:text-text-primary-dark">
-                  {portfolioItem.responsibility}
+                  {portfolioItem.role}
                 </p>
               </div>
 
@@ -91,7 +91,7 @@ function PublishingPage() {
                   Duration
                 </span>
                 <p className="text-base font-semibold text-text-primary-light dark:text-text-primary-dark">
-                  {portfolioItem.duration}
+                  {portfolioItem.period}
                 </p>
               </div>
 
@@ -101,7 +101,7 @@ function PublishingPage() {
                   Stack
                 </span>
                 <p className="text-base font-semibold text-text-primary-light dark:text-text-primary-dark">
-                  {portfolioItem.family}
+                  {portfolioItem.stackLabel}
                 </p>
               </div>
             </div>
@@ -111,7 +111,7 @@ function PublishingPage() {
         {/* Slide 2: Pages */}
         <section data-index="2" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
-            <span className="section-label">{portfolioItem.name}</span>
+            <span className="section-label">{portfolioItem.title}</span>
             <h2 className="section-title">담당 페이지</h2>
             <div className="accent-line mb-10" />
 
@@ -126,7 +126,7 @@ function PublishingPage() {
               </div>
 
               <ul className="space-y-3">
-                {portfolioItem.pages.map((page, index) => (
+                {portfolioItem.detail.pages.map((page, index) => (
                   <li key={page} className="card flex items-center gap-4 p-5">
                     <span className="text-xs font-mono text-lime-contrast dark:text-lime">
                       {String(index + 1).padStart(2, '0')}
@@ -144,12 +144,12 @@ function PublishingPage() {
         {/* Slide 3: Samples */}
         <section data-index="3" className="scroll-section w-full relative flex items-center">
           <div className="section-container py-20">
-            <span className="section-label">{portfolioItem.name}</span>
+            <span className="section-label">{portfolioItem.title}</span>
             <h2 className="section-title">이미지 샘플</h2>
             <div className="accent-line mb-10" />
 
             <div className="space-y-6">
-              {portfolioItem.samples.map((sample) => (
+              {portfolioItem.detail.samples.map((sample) => (
                 <div key={sample.src} className="card p-2">
                   <Image
                     src={sample.src}

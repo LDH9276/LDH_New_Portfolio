@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import portfolio from './team'
 import Image from 'next/image';
 import { FileCode, Atom, Server, Code2 } from 'lucide-react';
 import { A11y, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import PortfolioSwiperNavigation from './PortfolioSwiperNavigation';
+import { getPersonalProjects } from '../data/portfolio';
 
 const getFamilyIcon = (family) => {
   const f = family.toUpperCase();
@@ -30,8 +30,8 @@ function ProjectCard({ item, index, isVisible, reset }) {
   return (
     <Link
       ref={cardRef}
-      href={`/portfolio/${item.id}`}
-      aria-label={`${item.name} 포트폴리오 상세 보기`}
+      href={item.route}
+      aria-label={`${item.title} 포트폴리오 상세 보기`}
       onClick={reset}
       onMouseMove={handleMouseMove}
       className={`card group block relative h-full overflow-hidden
@@ -50,8 +50,8 @@ function ProjectCard({ item, index, isVisible, reset }) {
       {/* Thumbnail */}
       <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted-light dark:bg-surface-muted-dark">
         <Image
-          src={`/images/${item.thumb}`}
-          alt={item.name}
+          src={item.assets.thumb}
+          alt={item.title}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 90vw"
           className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -75,14 +75,14 @@ function ProjectCard({ item, index, isVisible, reset }) {
       {/* Info */}
       <div className="p-4 space-y-2 relative z-10">
         <div className="flex items-center gap-2">
-          {getFamilyIcon(item.family)}
+          {getFamilyIcon(item.stackLabel)}
           <span className="text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted-dark">
-            {item.family}
+            {item.stackLabel}
           </span>
         </div>
         <h3 className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark
           group-hover:text-lime-hover transition-colors duration-300 dark:group-hover:text-lime">
-          {item.name}
+          {item.title}
         </h3>
       </div>
     </Link>
@@ -97,7 +97,7 @@ function TeamProject({ activeSlide, reset }) {
   }, [activeSlide]);
 
   const isVisible = active === '';
-  const items = portfolio.person.slice(0).reverse();
+  const items = getPersonalProjects();
 
   return (
     <div className={`relative w-full h-full flex items-center transition-opacity duration-[1.8s] ${active === 'ready' ? 'opacity-0' : 'opacity-100'}`}>

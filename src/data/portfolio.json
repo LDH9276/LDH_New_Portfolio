@@ -1,0 +1,1013 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "personal-10",
+      "legacyId": 10,
+      "type": "personal",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "행쇼 쇼핑몰",
+      "stack": [
+        "NEXT.JS",
+        "supabase"
+      ],
+      "stackLabel": "NEXT.JS, supabase",
+      "programLabel": "Next.js, Supabase",
+      "programIcon": "php-logo.svg",
+      "period": "",
+      "summary": "next.js를 통해 SSR의 캐싱 전략, supabase의 간편한 auth와 DB를 통하여 최신 트랜드에 맞는 쇼핑몰 예제를 만들 수 있었습니다.",
+      "listDescription": "제가 맡은 부분은 게시판 작성 CRUD와 장바구니 CRUD, 그리고 결제 CRUD 로직을 작성했습니다.",
+      "route": "/portfolio/10",
+      "links": {
+        "github": "https://github.com/FRONTENDBOOTCAMP-16th/final-project-team2",
+        "homepage": "https://final-project-team2.vercel.app/"
+      },
+      "assets": {
+        "thumb": "/images/id010_thumb.webp",
+        "hero": "/portfolio/id010_000.webp",
+        "intro": "/images/id010-001.webp",
+        "gallery": [
+          "/images/id010-002.webp",
+          "/images/id010-003.webp",
+          "/images/id010-004.webp"
+        ]
+      },
+      "detail": {
+        "headline": "Next.js와 Supabase 기반 쇼핑몰",
+        "intro": "Next.js를 통해 SSR 캐싱 전략을 학습하고, Supabase의 Auth와 DB를 활용해 최신 트렌드에 맞는 쇼핑몰 예제를 만든 프로젝트입니다.\n\n제가 맡은 부분은 게시판 작성 CRUD, 장바구니 CRUD, 결제 CRUD 로직입니다. 글 작성에는 React Quill을 사용해 WYSIWYG 작성폼을 추가했습니다.",
+        "design": "상세 내용은 추후 추가 예정입니다.",
+        "library": "Next.js의 SSR 캐싱 전략과 Supabase의 Auth, DB를 활용한 쇼핑몰 예제 프로젝트입니다.",
+        "chapters": [
+          {
+            "title": "게시판 Server Action",
+            "description": "기본적인 게시판입니다. Zod를 미리 선언해 잘못된 값이 들어가지 않도록 검증하며, 이를 통해 supabase를 통해 데이터를 보내도록 했습니다..",
+            "code": "// 작성 시 조드 검증\nconst InquireFormSchema = z.object({\n  title: z\n    .string()\n    .trim()\n    .min(1, { message: '제목을 입력해주세요.' })\n    .max(100, { message: '제목은 100자 이내로 작성해주세요.' }),\n  content: z.string().trim().min(1, { message: '질문 내용을 입력해주세요.' }),\n  product: z.string().nullable().optional(), // 상품 ID는 없을 수도 있음\n  updateId: z.string().nullable().optional(),\n})\n/**\n * 게시판에서의 조회 액션 (Static Action)\n *\n * @param pages 조회하는 페이지 (?page= number)\n * @returns data 배열로 조회결과 생성, 필독 / 일반 공지사항\n */\nexport const getInquires = async (pages: number) => {\n  'use cache'\n  cacheTag('inquire')\n\n  // 페이지 당 게시물은 env로 제어하므로 이렇게 합니다.\n  const ITEMS_PER_PAGE = Number(process.env.NEXT_PUBLIC_ITEMS_PER_PAGE) || 10\n  const supabase = createStaticClient()\n\n  // 우선 페이지 번호를 위해 총 개수만 검색한다.\n  const { count: totalCount, error: countError } = await supabase\n    .from('qnas')\n    .select('*', { count: 'exact', head: true })\n  if (countError) throw new Error(countError.message)\n\n  // 페이지네이션 로직 (유효하지 않은 페이지 접근 방지)\n  const normalCount = totalCount || 0\n  const totalPages = Math.max(1, Math.ceil(normalCount / ITEMS_PER_PAGE))\n  const safePage = Math.max(1, Math.min(pages, totalPages))\n  const from = (safePage - 1) * ITEMS_PER_PAGE\n  const to = from + ITEMS_PER_PAGE - 1\n  // 페이지에 맞는 목록 조회\n  const { data, error } = await supabase\n    .from('qnas')\n    .select(\n      `\n  *,\n  writer:writer_id (\n    id,\n    nickname,\n    profile_image\n  ),\nproduct:product_id (\n  id,\n  name,\n  thumbnail_image,\n  price\n)\n`,\n    )\n    .order('created_at', { ascending: false })\n    .range(from, to)\n\n  if (error) throw new Error(error.message)\n\n  return {\n    normalData: (data as unknown as BoardCard[]) || [],\n    normalCount: normalCount,\n  }\n}"
+          },
+          {
+            "title": "React Quill과 Zustand",
+            "description": "작성폼입니다. React Quill과 Zustand를 통해 Store를 통해서 서로 상태를 공유하도록 했습니다. Zustand는 1:1 문의 시 해당 제품의 State를 다른 컴포넌트끼리 주고 받아 프롭스 드릴링이 없어서 간단하게 쓸 수 있었습니다.",
+            "code": "'use client'\n\nimport Link from 'next/link'\nimport dynamic from 'next/dynamic'\nimport { useState, useActionState } from 'react'\nimport { LoaderCircle } from 'lucide-react'\nimport { useInquireStore } from '@/store/useInquireStore'\nimport 'react-quill-new/dist/quill.snow.css'\n\nconst ReactQuill = dynamic(() => import('react-quill-new'), {\n  ssr: false,\n  loading: () => (\n    <div className=\"p-4 text-gray-500\">에디터를 불러오는 중입니다...</div>\n  ),\n})\n\nexport type FormState = {\n  success: boolean\n  message: string\n}\n\nexport type WriteInitialData = {\n  id?: string\n  reply_id?: string\n  title: string\n  content: string\n  important: boolean\n}\n\ninterface FormProps {\n  type?: string\n  board?: string\n  initialData?: WriteInitialData\n  action: (prevState: FormState, formData: FormData) => Promise<FormState>\n  showImportantCheckbox?: boolean\n  link?: string\n}\n\nexport default function WriteForm({\n  type,\n  board,\n  initialData,\n  action,\n  showImportantCheckbox = false,\n  link,\n}: FormProps) {\n  const [state, formAction, isPending] = useActionState(action, {\n    success: true,\n    message: '',\n  })\n  const [title, setTitle] = useState(initialData?.title || '')\n  const [content, setContent] = useState(initialData?.content || '')\n  const [isImportant, setIsImportant] = useState(initialData?.important || false)\n  const [clientError, setClientError] = useState('')\n  const updateID = initialData?.id || null\n  const replyID = initialData?.reply_id || null\n  const { selectedProduct } = useInquireStore()\n\n  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {\n    const hasMedia = /<img[^>]*>|<iframe[^>]*>/i.test(content)\n    const plainText = content\n      .replace(/<[^>]*>?/gm, '')\n      .replace(/&nbsp/g, '')\n      .trim()\n\n    if (!title.trim()) {\n      e.preventDefault()\n      setClientError('제목을 입력해주세요.')\n      return\n    }\n\n    if (!hasMedia && !plainText) {\n      e.preventDefault()\n      setClientError('본문 내용을 작성해주세요.')\n      return\n    }\n\n    setClientError('')\n  }\n\n  return (\n    <form\n      action={formAction}\n      onSubmit={handleSubmit}\n      className=\"mx-auto flex w-full max-w-6xl flex-col gap-6\"\n    >\n      {type === 'inquire' && (\n        <input\n          type=\"hidden\"\n          name=\"product\"\n          id=\"product\"\n          value={selectedProduct?.id || ''}\n        />\n      )}\n\n      {updateID && <input type=\"hidden\" name=\"updateId\" value={updateID} />}\n      {replyID && <input type=\"hidden\" name=\"replyId\" value={replyID} />}\n\n      <h2 className=\"mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200\">\n        {board}\n      </h2>\n\n      {(clientError || (!state.success && state.message)) && (\n        <div className=\"animate-pulse rounded-md border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600\">\n          {clientError || state.message}\n        </div>\n      )}\n\n      {showImportantCheckbox && (\n        <div className=\"flex items-center gap-2 px-1\">\n          <input\n            type=\"checkbox\"\n            name=\"important\"\n            id=\"important\"\n            checked={isImportant}\n            onChange={(e) => setIsImportant(e.target.checked)}\n            className=\"h-5 w-5 cursor-pointer rounded border-gray-300 text-orange-600 focus:ring-orange-500 disabled:opacity-50 dark:border-gray-700 dark:text-orange-500 dark:focus:ring-orange-500\"\n            disabled={isPending}\n          />\n          <label\n            htmlFor=\"important\"\n            className=\"cursor-pointer text-sm font-bold text-gray-800 dark:text-gray-200\"\n          >\n            긴급 공지사항으로 등록\n          </label>\n        </div>\n      )}\n\n      {!replyID && (\n        <div className=\"flex flex-col gap-2\">\n          <label\n            htmlFor=\"title\"\n            className=\"text-sm font-bold text-gray-800 dark:text-gray-200\"\n          >\n            제목 <span className=\"text-red-500\">*</span>\n          </label>\n          <input\n            type=\"text\"\n            name=\"title\"\n            id=\"title\"\n            value={title}\n            onChange={(e) => setTitle(e.target.value)}\n            placeholder={`${board} 제목을 입력하세요`}\n            className=\"w-full rounded-md border border-gray-300 p-3 transition-shadow focus:ring-2 focus:ring-orange-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500\"\n            disabled={isPending}\n          />\n        </div>\n      )}\n\n      <div className=\"flex flex-col gap-2\">\n        <p\n          id=\"content-editor\"\n          className=\"text-sm font-bold text-gray-800 dark:text-gray-200\"\n        >\n          본문 <span className=\"text-red-500\">*</span>\n        </p>\n        <ReactQuill\n          aria-labelledby=\"content-editor\"\n          value={content}\n          onChange={setContent}\n          theme=\"snow\"\n          className=\"h-100 pb-10\"\n        />\n        <input type=\"hidden\" name=\"content\" value={content} />\n      </div>\n\n      <div className=\"mt-4 flex justify-end gap-2\">\n        <Link\n          className=\"flex min-w-40 items-center justify-center rounded-md bg-gray-400 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-400\"\n          href={`/${link}`}\n        >\n          취소\n        </Link>\n        <button\n          type=\"submit\"\n          disabled={isPending}\n          className=\"flex min-w-40 items-center justify-center rounded-md bg-orange-600 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-400\"\n        >\n          {isPending ? (\n            <p className=\"flex items-center gap-2\">\n              <span className=\"animate-spin\">\n                <LoaderCircle />\n              </span>\n              처리 중...\n            </p>\n          ) : updateID ? (\n            '수정 완료'\n          ) : (\n            '등록 완료'\n          )}\n        </button>\n      </div>\n    </form>\n  )\n}"
+          },
+          {
+            "title": "장바구니 Server Action",
+            "description": "장바구니 방식입니다. 해당 방식은 Zod를 통해 유효한 값 타입인지 확인하며, 이를 통해 옵션이 중복되지 않도록 각각 옵션을 따로 DB에 담도록 수정을 했습니다.",
+            "code": "'use server'\n\nimport { createClient } from '@/utils/supabase/server'\nimport { z } from 'zod'\nimport { getAuthUserInfo } from './getUser'\nimport { SelectedOption } from '@/app/lib/cart.types'\n\ntype AddCartParams = {\n  productId: string\n  optionData: SelectedOption\n  quantity: number\n}\n\nconst productSchema = z.object({\n  name: z.string(),\n  price: z.number(),\n  thumbnail_image: z.string().nullable().optional(),\n  options: z.any().nullable().optional(),\n  discount_rate: z.number().nullable().optional(),\n})\n\nexport async function addCartItem({\n  productId,\n  optionData,\n  quantity,\n}: AddCartParams) {\n  const auth = await getAuthUserInfo()\n\n  if (!auth?.id) {\n    throw new Error('로그인이 필요합니다.')\n  }\n\n  const supabase = await createClient()\n\n  const { data: existingItems, error: selectError } = await supabase\n    .from('cart_items')\n    .select('id, quantity, selected_options')\n    .eq('user_id', auth.id)\n    .eq('product_id', productId)\n\n  if (selectError) {\n    throw new Error(selectError.message)\n  }\n  // JS에서 옵션 검증 (객체 키 순서 등의 문제 방지를 위해 문자열 비교 혹은 깊은 비교)\n  const existingItem = existingItems?.find(\n    (item) =>\n      JSON.stringify(item.selected_options) === JSON.stringify(optionData),\n  )\n\n  // 제품이 이미 있으면 갯수 추가\n  if (existingItem) {\n    const { error: updateError } = await supabase\n      .from('cart_items')\n      .update({\n        quantity: existingItem.quantity + quantity,\n      })\n      .eq('id', existingItem.id)\n\n    if (updateError) {\n      throw new Error(updateError.message)\n    }\n\n    return\n  }\n\n  const { error } = await supabase.from('cart_items').insert({\n    user_id: auth.id,\n    product_id: productId,\n    selected_options: optionData,\n    quantity,\n  })\n\n  if (error) {\n    throw new Error(error.message)\n  }\n}"
+          },
+          {
+            "title": "어드민 검증 로직",
+            "description": "관리자 검증은 supabase에서 해당 getUser를 통해 토큰 검증 후 database에 들어간 user 테이블로 점검해서 따로 admin인지 확인하는 로직도 추가했습니다..",
+            "code": "'use server'\n\nimport { createClient } from '@/utils/supabase/server'\nimport { redirect } from 'next/navigation'\n\nexport default async function checkAdmin(fallbackPath: string = '/notice') {\n  const supabase = await createClient()\n  const {\n    data: { user },\n  } = await supabase.auth.getUser()\n\n  if (!user) {\n    redirect(fallbackPath)\n  }\n\n  const { data: userData, error: dbError } = await supabase\n    .from('users')\n    .select('role, nickname')\n    .eq('id', user.id)\n    .single()\n\n  if (dbError || !userData || userData.role !== 'ADMIN') {\n    redirect(fallbackPath)\n  }\n\n  return { user, userData }\n}"
+          }
+        ],
+        "review": "고등화 과정과 가장 복잡한 부분을 각자 맡은 컴포넌트로 주기적으로 작업하다보니 커밋 버전도 꼬이고 pull 시 계속해서 충돌이 나는 경우가 많았습니다. 이는 나중에 고민할 거리가 많고, 또한 자주 pull, push 전략과 추후에 컨벤션을 자주 지키는 버릇을 들어야 되겠구나 싶었습니다. 또한 팀원들끼리 코드리뷰와 PR시 승인 댓글 등 대화를 나눌 수 있던 좋은 프로젝트였습니다.",
+        "rotateGallery": false
+      }
+    },
+    {
+      "id": "personal-9",
+      "legacyId": 9,
+      "type": "personal",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "사자들의 공부방",
+      "stack": [
+        "PHP"
+      ],
+      "stackLabel": "PHP",
+      "programLabel": "Javascript, PHP",
+      "programIcon": "php-logo.svg",
+      "period": "",
+      "summary": "부트캠프 첫 프로젝트로 Javascript의 바닐라 ES2025와 PHP의 백엔드로 구현하도록 했습니다.",
+      "listDescription": "제가 맡은 부분은 JWT 부분입니다. 이는 앞으로 supabase, react등 프론트엔드에서 자주 쓰이는 로그인 확인을 위한 토큰 시스템으로 그것을 구현했다는 것에 큰 의의가 있습니다.",
+      "route": "/portfolio/9",
+      "links": {
+        "github": "https://github.com/FRONTENDBOOTCAMP-16th/vanilla-project-team2",
+        "homepage": "https://github.com/FRONTENDBOOTCAMP-16th/vanilla-project-team2"
+      },
+      "assets": {
+        "thumb": "/images/id009_thumb.webp",
+        "hero": "/portfolio/id009_000.webp",
+        "intro": "/images/id009-001.webp",
+        "gallery": [
+          "/images/id009-002.webp",
+          "/images/id009-003.webp",
+          "/images/id008-004.webp"
+        ]
+      },
+      "detail": {
+        "headline": "Javascript와 PHP로 구현한 팀 프로젝트",
+        "intro": "부트캠프 첫 프로젝트로 Javascript와 PHP 백엔드를 기반으로 구현한 팀 프로젝트입니다.\n\n제가 맡은 부분은 JWT 부분입니다. 앞으로 Supabase, React 등 프론트엔드에서 자주 쓰이는 로그인 확인용 토큰 시스템을 직접 구현했다는 점에 의의가 있습니다.\n\n회원 상태에 따라 다른 화면과 로직을 API 서버로 설계하고 서비스 흐름을 구성한 경험이었습니다.",
+        "design": "순수한 HTML과 CSS를 사용했습니다. 이 때는 Tailwind CSS의 경험이 적기도 하고 팀원과의 협업을 위해 순수한 CSS를 사용하기로 했습니다.",
+        "library": "부트캠프 첫 프로젝트로 Javascript와 PHP 백엔드를 기반으로 구현한 팀 프로젝트입니다. 프론트 - 백엔드 로직에서 저는 API 서버 설계와 DB 설계 그리고 회원 관리 로직은 전담했습니다.",
+        "chapters": [
+          {
+            "title": "JWT 토큰 검증",
+            "description": "JWT토큰 검증입니다. 글을 쓰거나 마이페이지, 게시판의 글을 조회할때마다 토큰 검증을 하도록 하고 재귀 호출을 사용하여 토큰 만료 시 리프래시 토큰을 갱신하도록 했습니다.",
+            "code": "//\nconst AUTH_ENDPOINT = import.meta.env.VITE_API_AUTH_ENDPOINT\nconst REFRESH_ENDPOINT = import.meta.env.VITE_API_REFRESH_ENDPOINT\nconst MAX_RETRIES = 3\n\nexport async function checkToken(retryCount = 0) {\n  const accessToken = localStorage.getItem('access_token')\n\n  if (!accessToken) {\n    console.warn('액세스 토큰이 없습니다.')\n    return false\n  }\n\n  try {\n    const response = await fetch(AUTH_ENDPOINT, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: `Bearer ${accessToken}`,\n      },\n    })\n\n    // HTTP 상태 코드 확인 (네트워크는 성공했으나 응답이 에러인 경우)\n    if (!response.ok) {\n      const errorText = await response.text()\n      console.error('서버 응답 오류:', errorText)\n      return false\n    }\n\n    const data = await response.json()\n\n    // 1. 인증 성공: 유저 데이터 반환\n    if (data.status === 'success') {\n      console.log('인증 및 데이터 로드 성공!')\n      return data.data\n    }\n    // 2. 토큰 만료 시: 재시도 로직 수행\n    if (data.status === 'expired') {\n      if (retryCount >= MAX_RETRIES) {\n        console.error('최대 재시도 횟수를 초과했습니다. 다시 로그인해 주세요.')\n        localStorage.clear()\n        return false\n      }\n\n      console.warn(`토큰 만료 감지 (시도 ${retryCount + 1}). 갱신 시도 중...`)\n      const refreshSuccess = await refreshAccessToken()\n\n      if (refreshSuccess) {\n        // 성공 시 횟수를 증가시켜 재귀 호출\n        return await checkToken(retryCount + 1)\n      }\n    }\n    // 3. 기타 실패 (invalid 등)\n    console.error('인증 실패:', data.message)\n    return false\n  } catch (err) {\n    console.error('네트워크 또는 데이터 파싱 에러:', err)\n    return false\n  }\n}\n\nasync function refreshAccessToken() {\n  const refreshToken = localStorage.getItem('refresh_token')\n\n  if (!refreshToken) {\n    console.error('리프레시 토큰이 없습니다. 다시 로그인하세요.')\n    return false\n  }\n\n  try {\n    const response = await fetch(REFRESH_ENDPOINT, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({ refresh_token: refreshToken }),\n    })\n\n    const data = await response.json()\n\n    if (data.status === 'success') {\n      console.log('토큰 갱신 성공!')\n      localStorage.setItem('access_token', data.access_token)\n\n      // 리프레시 토큰도 갱신된다면 저장 (백엔드 로직에 따라 다름)\n      if (data.refresh_token) {\n        localStorage.setItem('refresh_token', data.refresh_token)\n      }\n\n      return true\n    } else {\n      console.error('토큰 갱신 실패:', data.message)\n      localStorage.clear()\n      return false\n    }\n  } catch (err) {\n    console.error('Refresh Fetch 에러:', err)\n    return false\n  }\n}"
+          },
+          {
+            "title": "로그아웃 처리",
+            "description": "로컬 스토리지에 토큰을 저장하기에 로그아웃 처리와, 비검증일때 로그아웃 처리를 하는 함수입니다. PHP라면 세션을 쓰겠지만 앞으로 리액트나 next.js 등 프론트엔드 라이브러리의 호환성이 높은 JWT를 사용할 수 있도록 했습니다.",
+            "code": "const logoutButton = document.querySelector('.logout-button')\n\nlogoutButton.addEventListener('click', () => {\n  logout()\n})\n\nfunction logout() {\n  const refreshToken = localStorage.getItem('refresh_token')\n  fetch('http://leedh9276.dothome.co.kr/likelion-vanilla/users/logout.php', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      Authorization: `Bearer ${refreshToken}`,\n    },\n  })\n    .then((data) => {\n      console.log(data)\n      if (data.status === 200) {\n        localStorage.removeItem('access_token')\n        localStorage.removeItem('refresh_token')\n        alert('로그아웃 되셨습니다.')\n      }\n    })\n    .catch((error) => console.warn(error))\n}"
+          },
+          {
+            "title": "회원가입 검증",
+            "description": "회원가입 로직입니다. fetch API를 사용하여 form data를 보냅니다. 하지만, 검증로직은 빈약하기에 추후 다음 프로젝트에 쓰던 Zod를 사용해 타입을 검증하거나 타입스크립트로 변경할 예정입니다..",
+            "code": "// 로그인 상황 확인\nimport { checkToken } from '../../../api/JWT.js'\nconst fetchedData = await checkToken()\nif (fetchedData) {\n  alert('이미 로그인 되어 있습니다.')\n  window.location.href = '/index.html'\n}\n// 로그인\nconst URLS = 'http://leedh9276.dothome.co.kr/likelion-vanilla/users/sign_up.php'\nconst form = document.getElementById('signup')\n\nform.addEventListener('click', (e) => {\n  if (e.target.matches('.form__button')) {\n    e.preventDefault()\n\n    // 에러 텍스트 초기화\n    const errorTexts = document.querySelectorAll('.error__text')\n    errorTexts.forEach((el) => (el.textContent = ''))\n\n    // 모든 input을 변수에 담아두기\n    const nickname = document.getElementById('user_nickname')\n    const id = document.getElementById('user_id')\n    const password = document.getElementById('user_password')\n    const passwordCheck = document.getElementById('user_password_check')\n    const phone = document.getElementById('user_phone')\n\n    // 애러 메시지가 떴다면 해당 내용으로 출력하도록\n    const showError = (inputElement, message) => {\n      const container = inputElement.closest('.user__input')\n      const errorEl = container.querySelector('.error__text')\n      errorEl.textContent = message\n    }\n\n    switch (true) {\n      // 1) 닉네임 공백 체크\n      case nickname.value.trim() === '':\n        showError(nickname, '해당 값이 비었습니다.')\n        break\n\n      // 2) 아이디 공백 체크\n      case id.value.trim() === '':\n        showError(id, '해당 값이 비었습니다.')\n        break\n\n      // 3) 비밀번호 공백 체크\n      case password.value.trim() === '':\n        showError(password, '해당 값이 비었습니다.')\n        break\n\n      // 4) 비밀번호 확인 공백 체크\n      case passwordCheck.value.trim() === '':\n        showError(passwordCheck, '해당 값이 비었습니다.')\n        break\n\n      // 5) 전화번호 공백 체크\n      case phone.value.trim() === '':\n        showError(phone, '해당 값이 비었습니다.')\n        break\n\n      // 6) 비밀번호 불일치 체크\n      case password.value !== passwordCheck.value:\n        showError(passwordCheck, '비밀번호가 일치하지 않습니다.')\n        break\n\n      // 7) 모든 검사를 통과했을 때 (default)\n      default:\n        const formData = new FormData(form)\n\n        fetch(URLS, {\n          method: 'POST',\n          body: formData,\n        })\n          .then((response) => response.text())\n          .then((text) => {\n            // try, catch 사용\n            try {\n              const data = JSON.parse(text)\n              if (data.status === 'success') {\n                alert('가입 완료!')\n                window.location.href = '/src/pages/users/login/index.html'\n              } else {\n                if (data.message === '이미 존재하는 아이디입니다.') {\n                  showError(id, '이미 존재하는 아이디입니다.')\n                } else if (data.message === '탈퇴한 회원입니다.') {\n                  showError(id, '탈퇴한 회원입니다.')\n                } else if (\n                  data.message === '이미 존재하는 휴대폰 번호입니다.'\n                ) {\n                  showError(phone, '이미 존재하는 휴대폰 번호입니다.')\n                } else {\n                  console.warn(data.message)\n                }\n              }\n            } catch (e) {\n              console.error('JSON 변환 실패. PHP 에러일 가능성 높음')\n            }\n          })\n          .catch((error) => console.error('통신 에러:', error))\n        break\n    }\n  }\n})"
+          },
+          {
+            "title": "마이페이지 프로필",
+            "description": "마이페이지 로직입니다. 실시간으로 변경 기능도 추가했고 로그인 검증도 추가한 샘플 예시입니다..",
+            "code": "import { checkToken } from '../../../api/JWT.js'\nconst URLS =\n  'http://leedh9276.dothome.co.kr/likelion-vanilla/users/update_user.php'\n\nlet userData = null\n\nasync function fetchUserData(forceRefresh = false) {\n  if (userData && !forceRefresh) return userData\n\n  const fetchedData = await checkToken()\n  if (fetchedData) {\n    userData = fetchedData\n    return userData\n  } else {\n    alert('유효하지 않은 접근입니다.')\n    window.location.href = '/index.html'\n    return\n  }\n}\n\nfunction renderMyPage(data) {\n  if (!data) return\n\n  const USER_NAME = document.querySelector('.user')\n  const USER_PROFILE = document.querySelector('.profile_thumb')\n  const USER_GRADE = document.querySelector('.expert')\n  const USER_CREATE_DATE = document.querySelector('.create-date span')\n\n  USER_NAME.textContent = data.user_nickname\n  USER_CREATE_DATE.textContent = data.create_date.split(' ')[0]\n  // 프로필 이미지\n  if (data.user_profile) {\n    USER_PROFILE.innerHTML = `<img src=\"http://leedh9276.dothome.co.kr/likelion-vanilla/users/uploads/profile/${data.user_profile}\">`\n  } else {\n    const thumbName = data.user_nickname.substring(0, 1)\n    USER_PROFILE.innerHTML = `<p>${thumbName}</p>`\n  }\n\n  const grades = ['초급 개발자', '중급 개발자', '고급 개발자']\n  USER_GRADE.textContent = grades[data.user_grade] ?? '???'\n}\n\nfunction renderProfileForm(data) {\n  if (!data) return\n\n  document.getElementById('user_nickname').value = data.user_nickname\n  document.getElementById('user_intro').value = data.user_intro\n}\n// --- 이벤트 리스너 및 UI 제어 ---\nconst profileBox = document.querySelector('.user_profile__box')\nconst modifyWrap = document.querySelector('.user__modify-button')\nconst profileInputs = profileBox.querySelectorAll('input')\nconst profileIntro = document.getElementById('user_intro')\nconst userProfile = document.querySelector('.user__thumbnail')\n\nfunction toggleEditMode(isEdit) {\n  if (isEdit) {\n    modifyWrap.classList.add('is-modify')\n    profileBox.classList.add('is-modify')\n    userProfile.classList.add('is-modify')\n  } else {\n    modifyWrap.classList.remove('is-modify')\n    profileBox.classList.remove('is-modify')\n    userProfile.classList.remove('is-modify')\n  }\n\n  profileInputs.forEach((element) => {\n    if (element.id !== 'user_id') element.readOnly = !isEdit\n  })\n  profileIntro.readOnly = !isEdit\n}\n\nmodifyWrap.addEventListener('click', (e) => {\n  const targetBtn = e.target.closest('.js-button')\n  if (!targetBtn) return\n\n  if (targetBtn.id === 'btn_modify') {\n    toggleEditMode(true)\n  } else if (targetBtn.id === 'btn_submit') {\n    toggleEditMode(false)\n    updateProfileInfo()\n  } else if (targetBtn.id === 'btn_cancel') {\n    toggleEditMode(false)\n    // 나중에 안 사실이지만, 되돌리기는 저장된 데이터로 불러온다.\n    renderProfileForm(userData)\n  }\n})\n\n// 데이터 전송 로직\nasync function updateProfileInfo() {\n  const form = document.getElementById('user_profiles')\n  if (!form) return\n\n  const formData = new FormData(form)\n\n  // userData.UID 또는 userData.user_id (가지고 계신 데이터 구조에 맞게 작성)\n  formData.append('user_id', userData.user_id)\n\n  try {\n    const response = await fetch(URLS, {\n      method: 'POST',\n      body: formData,\n    })\n\n    await fetchUserData(true)\n    renderProfileForm(userData)\n    renderMyPage(userData)\n    alert('프로필이 성공적으로 수정되었습니다.') // 성공 알림 추가\n  } catch (error) {\n    console.error('업데이트 중 에러 발생:', error)\n  }\n}\n\nasync function initPage() {\n  await fetchUserData() // 데이터 1번 요청\n  renderMyPage(userData) // 화면 그림\n  renderProfileForm(userData) // 폼 그림\n  userWriteInfo(userData)\n}\n\ninitPage()\n\nconst thumb = document.getElementById('thumb')\n\nthumb.addEventListener('change', (e) => {\n  const file = e.target.files[0]\n  if (!file) return\n  uploadProfileImage(file)\n})\n\nasync function uploadProfileImage(file) {\n  const formData = new FormData()\n  formData.append('profile_image', file)\n\n  const accessToken = localStorage.getItem('access_token')\n\n  try {\n    const response = await fetch(\n      'http://leedh9276.dothome.co.kr/likelion-vanilla/users/upload_profile.php',\n      {\n        method: 'POST',\n        headers: {\n          Authorization: `Bearer ${accessToken}`,\n        },\n        body: formData,\n      },\n    )\n\n    const data = await response.json()\n\n    if (data.status === 'success') {\n      alert('프로필 이미지가 성공적으로 변경되었습니다.')\n\n      // 화면 업데이트: 서버에서 데이터를 다시 가져와서 이미지 경로를 갱신합니다.\n      await fetchUserData(true)\n      renderMyPage(userData)\n    } else {\n      console.error('업로드 실패:', data.message)\n      alert(`업로드 실패: ${data.message}`)\n    }\n  } catch (error) {\n    console.error('파일 업로드 통신 에러:', error)\n  }\n}\n\nasync function userWriteInfo(userData) {\n  const user = userData.UID\n  const formData = new FormData()\n  formData.append('user_id', user) // PHP의 $_POST['user_id']로 들어감\n\n  try {\n    const response = await fetch(\n      `http://leedh9276.dothome.co.kr/likelion-vanilla/users/user_posts.php`,\n      {\n        method: 'POST',\n        body: formData,\n      },\n    )\n\n    // 1. 봉투(response)를 뜯어서 내용물(data)을 가져옵니다.\n    const result = await response.json()\n\n    const totalPostForm = document.querySelector('.write .write__count')\n    const totalCommentForm = document.querySelector('.comment .write__count')\n    const totalPostNumber = result.post_count\n    const totalCommentNumber = result.comment_count\n    totalPostForm.textContent = totalPostNumber\n    totalCommentForm.textContent = totalCommentNumber\n  } catch (error) {\n    console.error('데이터를 가져오는 중 에러 발생:', error)\n  }\n}"
+          }
+        ],
+        "review": "비전공자와 이전 경험자 반반이다보니 조금 힘든 프로젝트이지 않나 싶었습니다. 추후에도 이런 경험으로 부트캠프 다음 프로젝트의 유산이 된 프로젝트인 것 같았습니다. 또한 제한된 2주라는 시간 안에 최대한 구현할 수 있어서 가장 자신있는 프로젝트라 할 수 있겠습니다.",
+        "rotateGallery": false
+      }
+    },
+    {
+      "id": "personal-8",
+      "legacyId": 8,
+      "type": "personal",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "LMS프로젝트 - 유저",
+      "stack": [
+        "REACT"
+      ],
+      "stackLabel": "REACT",
+      "programLabel": "HTML, CSS, PHP, JQuery, figma",
+      "programIcon": "php-logo.svg",
+      "period": "23.4.14 - 5.19",
+      "summary": "가장 처음으로 본격적으로 프론트엔드를 배워서 만든 첫 프로젝트입니다. 제이쿼리를 중점적으로 사용하다보니 애착이 가지만 한편으로는 많은 아쉬움을 가지고 있기도 한 프로젝트입니다.",
+      "listDescription": "반응형으로 구현했으며, 개인적으로 사세 제품을 좋아하다보니(버팔로윙을 좋아합니다 :p ) 자연스럽게 사세를 택했고 사세제품 위주의 반응형 퍼블리싱을 하였습니다.",
+      "route": "/portfolio/8",
+      "links": {
+        "github": "https://github.com/LDH9276/LMS_project",
+        "homepage": "https://github.com/LDH9276/LMS_project"
+      },
+      "assets": {
+        "thumb": "/images/id008_thumb.webp",
+        "hero": "/portfolio/id008_000.webp",
+        "intro": "/images/id008_001.webp",
+        "gallery": [
+          "/images/id008_002.webp",
+          "/images/id008_003.webp",
+          "/images/id008_004.webp"
+        ]
+      },
+      "detail": {
+        "headline": "PC와 동일한 사용자경험을 이끌어내기 위해서",
+        "intro": "프론트엔드 개발자과성의 마지막 팀 프로젝트였습니다. 해당 프로젝트는 이전의 LMS에서 관리를 다뤘다면 이 프로젝트는 사용자 관점으로 제작하는 것이기 때문에 더욱 신경을 써야 했습니다. \n \n디자인은 팀원들과 함께 진행하였고, 디자인을 기반으로 퍼블리싱 작업을 진행하였습니다. 제가 맡은 구역은 강의 상세페이지 부분입니다.",
+        "design": "디자인은 반응형을 기반으로 하단에 바로가기 퀵메뉴 4개를 추가했습니다. 마찬가지로 대학교의 CI에 맞춰서 색상을 배정하였으며, 심플하고 깔끔한 스타일로 디자인을 진행하였습니다.",
+        "library": "개발 라이브러리는 우선적으로 HTML과 CSS로 퍼블리싱을 진행한 후에 DB가 필요한 부분은 PHP모듈을 부착하는 식으로 개발하였습니다.",
+        "chapters": [
+          {
+            "title": "강의 테이블의 데이터 가져오기",
+            "description": "강의 자료를 받아오는 것부터 받아온 주차별로 표시되며, 가장 첫번째 강의는 펼친 상태로 보여지도록 했습니다. 또한 강의를 클릭하면 해당 강의의 자료가 펼쳐지도록 하였습니다. 이렇게 하면 사용자가 원하는 강의를 빠르게 찾을 수 있도록 하였고 영상 샘플을 추가로 넣었습니다. 다만 영상은 제작시간상 샘플 영상으로 대체하였습니다. 이 부분은 추후 수정할 예정입니다.",
+            "code": "<?php\n$id = $_GET['id'];\n$sql = 'SELECT * FROM learn_table WHERE learn_num = $id';\n$result = mysqli_query($conn, $sql);\n$row = mysqli_fetch_array($result);\n$learn_about = $row['learn_about'];\n$learn_about = explode(',', $learn_about);\n\nforeach($learn_about as $key => $value) {\n  if ($key == 0) {\n    echo '<li class='learn_class-menubar-toggle'>';\n    echo '<p class='learn-class-title list01 act'>';\n    echo '<span>' . ($key + 1) . '주차</span>';\n    echo '<span class='learn-btn'><img src='../img/icon5.svg' alt='toggle'></span>';\n    echo '</p>';\n    echo '<div class='learn-class-info list01 act'> ';\n    echo '<video src='./img/sample.mp4' class='learn-class-videos'></video>';\n    echo '<p class='video-progress'><span class='video-progressbar'></span></p>';\n    echo '<ul class='learn-class-video_ctrl-wrap'>';\n    echo '<li class='btn01'><i class='fa-solid fa-play'></i></li>';\n    echo '<li class='btn02'><i class='fa-solid fa-pause'></i></li>';\n    echo '<li class='btn03'><i class='fa-solid fa-stop'></i></li>';\n    echo '<li class='btn04'>1X</li>';\n    echo '<li class='btn05'>2X</li>';\n    echo '</ul>';\n    echo $learn_about[$key] . '</div>';\n    echo '</li>';\n  } else {\n  echo '<li class='learn_class-menubar-toggle'>';\n  echo '<p class='learn-class-title list01'>';\n  echo '<span>' . ($key + 1) . '주차</span>';\n  echo '<span class='learn-btn'><img src='../img/icon5.svg' alt='toggle'></span>';\n  echo '</p>';\n  echo '<div class='learn-class-info list01'> ';\n  echo '<video src='./img/sample.mp4' class='learn-class-videos'></video>';\n  echo '<p class='video-progress'><span class='video-progressbar'></span></p>';\n  echo '<ul class='learn-class-video_ctrl-wrap'>';\n  echo '<li class='btn01'><i class='fa-solid fa-play'></i></li>';\n  echo '<li class='btn02'><i class='fa-solid fa-pause'></i></li>';\n  echo '<li class='btn03'><i class='fa-solid fa-stop'></i></li>';\n  echo '<li class='btn04'>1X</li>';\n  echo '<li class='btn05'>2X</li>';\n  echo '</ul>';\n  echo $learn_about[$key] . '</div>';\n  echo '</li>';\n}\n}\n?>"
+          },
+          {
+            "title": "강의자료실 구현",
+            "description": "다음은 해당 주차별 강의자료실입니다. 주차별로 해당 자료의 이름 파일명을 표시하여 사용자가 원하는 자료를 빠르게 찾을 수 있도록 하였습니다. 또한 강의자료실에서는 강의자료를 다운로드 받을 수 있도록 하였습니다.",
+            "code": "<?php\n$id = $_GET['id'];\n$sql = 'SELECT * FROM learn_table WHERE learn_num = $id';\n$result = mysqli_query($conn, $sql);\n$row = mysqli_fetch_array($result);\n$learn_about = $row['learn_file'];\n$learn_about = explode(',', $learn_about);\n\nforeach($learn_about as $key => $value) {\n  if ($key == 0) {\n    echo '<li class='learn_class-menubar-toggle'>';\n    echo '<p class='learn-class-title list02 act'>';\n    echo '<span>' . ($key + 1) . '주차</span>';\n    echo '<span class='learn-btn'>';\n    echo '<img src='../img/icon5.svg' alt='toggle'>';\n    echo '</span>';\n    echo '</p>';\n    echo '<p class='learn-class-info list02 act'>';\n    echo '<a href='./files/learn/' . $value . ''>$value</a>';\n    echo '</p></li>';\n  } else {\n  echo '<li class='learn_class-menubar-toggle'>';\n  echo '<p class='learn-class-title list02'>';\n  echo '<span>' . ($key + 1) . '주차</span>';\n  echo '<span class='learn-btn'><img src='../img/icon5.svg' alt='toggle'></span>';\n  echo '</p>';\n  echo '<p class='learn-class-info list02'>';\n  echo '<a href='./files/learn/' . $value . ''>$value</a>';\n  echo '</p></li>';\n}\n}\n?>"
+          },
+          {
+            "title": "강의별 공지사항 구현",
+            "description": "notice_table의 추가 컬럼을 만들어 강의ID와 공지카테고리를 넣어 해당 강의별로 휴강이나 다른 학습관련한 사항에 대한 공지사항을 볼 수 있도록 추가하였습니다. 또한 공지사항을 클릭하면 해당 공지사항의 내용을 볼 수 있도록 하였습니다.",
+            "code": "<?php\n$learnID = $_GET['id'];\n$start = $_GET['page'] ?? 1; // 현재 페이지\nif (!$start) $start = 1; // 페이지 번호가 지정이 안되었을 경우\n$start = ($start - 1) * 5; // 한 페이지에 표시할 글 수\n$scale = 5; // 한 페이지에 표시할 글 수\n$sql = 'SELECT * FROM notice_list where learn_num = $learnID  ORDER BY num DESC LIMIT $start, $scale'; // DESC 내림차순, ASC 오름차순\n$result = mysqli_query($conn, $sql); // 쿼리문 실행\n\nwhile ($row = mysqli_fetch_array($result)) {\n  $nl_num = $row['num'];\n  $nl_title = $row['notice_title'];\n  $nl_file = $row['notice_file'];\n  $nl_date = explode('-', $row['notice_date']);\n  $nl_date = $nl_date[0].'.'.$nl_date[1].'.'.$nl_date[2];\n  $nl_view = $row['notice_views'];\n  echo '<ul class='notice-item-wrap'>';\n  echo '<li class='notice-num'>'.$nl_num.'</li>';\n  echo '<li class='notice-title'><a href='notice.php?id='.$nl_num.''>'.$nl_title.'</a></li>';\n  if ($nl_file == NULL) {\n    echo '<li class='notice-file'>없음</li>';\n  } else {\n  echo '<li class='notice-file'><i class='fa-solid fa-paperclip'></i></li>';\n}\necho '<li class='notice-date'>'.$nl_date.'</li>';\necho '<li class='notice-view'>'.$nl_view.'</li>';\necho '</ul>';\n}\n?>"
+          },
+          {
+            "title": "과제제출 구현",
+            "description": "주차별로 foreach문을 사용하여 해야할 과제의 내용과 파일첨부 기능을 만들었습니다. 비록 DB에 연동하지 못했지만 파일을 업로드하면 파일명까지 표시되도록 하였습니다. 또한 과제 재출을 하여 기존의 알림만 가능했던 LMS 시스템의 사용성을 높히는 것에 성공했습니다.",
+            "code": "<?php\n$id = $_GET['id'];\n$sql = 'SELECT * FROM learn_table WHERE learn_num = $id';\n$result = mysqli_query($conn, $sql);\n$row = mysqli_fetch_array($result);\n$learn_assignment = $row['learn_assignment'];\n$learn_assignment = explode(',', $learn_assignment);\n$learn_about = $row['learn_file'];\n$learn_about = explode(',', $learn_about);\n\nforeach($learn_about as $key => $value) {\n  if ($key == 0) {\n    echo '<form name='learn_upload' . $key . '' action='./module/learn_module_upload.php' method='post' enctype='multipart/form-data'>';\n    echo '<input type='hidden' name='learn_upload_id' value='$id'>';\n    echo '<input type='hidden' name='learn_upload_week' value='$key'>';\n    echo '<div class='learn_class-menubar-toggle act'><p class='learn-class-title list03 act'><span>' . ($key + 1) . '주차</span><span class='learn-btn'><img src='../img/icon5.svg' alt='toggle'></span></p>';\n    echo '<p class='learn-class-info list03 act'> <span class='learn-upload-info'>' . $learn_assignment[$key] . '</span>';\n    echo '<span class='learn_upload-input-wrap'>';\n    echo '<label for='learn_upload_file' class='learn_upload-upload_btn'>파일 업로드</label>';        echo '<span class='upload_info'></span>';\n    echo '<input type='file' name='learn_upload_file' id='learn_upload_file'><input type='submit' value='제출하기'></span></p></div>';\n    echo '</form>';\n  } else {\n  echo '<form name='learn_upload' . $key . '' action='./module/learn_module_upload.php' method='post' enctype='multipart/form-data'>';\n  echo '<input type='hidden' name='learn_upload_id' value='$id'>';\n  echo '<input type='hidden' name='learn_upload_week' value='$key'>';\n  echo '<div class='learn_class-menubar-toggle act'><p class='learn-class-title list03'><span>' . ($key + 1) . '주차</span><span class='learn-btn'><img src='../img/icon5.svg' alt='toggle'></span></p>';\n  echo '<p class='learn-class-info list03'> <span class='learn-upload-info'>' . $learn_assignment[$key] . '</span>';\n  echo '<span class='learn_upload-input-wrap'>';\n  echo '<label for='learn_upload_file' class='learn_upload-upload_btn'>파일 업로드</label>';        echo '<span class='upload_info'></span>';\n  echo '<input type='file' name='learn_upload_file' id='learn_upload_file'><input type='submit' value='제출하기'></span></p></div>';\n  echo '</form>';\n}\n}\n?>"
+          }
+        ],
+        "review": "처음 조별 프로젝트에 형상관리를 안하다 보니 작업 중 충돌이 일어날 여지가 많았습니다. 다행히도 각 맡은 부분을 담당하기에 큰 충돌은 없었지만, 향후 git과 같은 형상관리 툴의 도입을 하는 것으로 프로젝트를 마쳤습니다.",
+        "rotateGallery": false
+      }
+    },
+    {
+      "id": "personal-7",
+      "legacyId": 7,
+      "type": "personal",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "LMS프로젝트 - 관리자",
+      "stack": [
+        "REACT"
+      ],
+      "stackLabel": "REACT",
+      "programLabel": "HTML, CSS, PHP, JQuery, figma",
+      "programIcon": "php-logo.svg",
+      "period": "23.3.2 - 4.14",
+      "summary": "기존사이트에서는 리액트로 제작된 사이트가 아니다보ㄴ 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+      "listDescription": "우선적으로 구현하는 방식은 PHP에서 데이터를 주고받는 방식이었습니다. 그러기 위해 AXIOS를 사용했고, 그래서 로그인과 로그인 상태 유지까지 만들었습니다. 또한 DB에 담긴 상품 리스트를 받아와서 출력하는 방식도 구현했습니다.",
+      "route": "/portfolio/7",
+      "links": {
+        "github": "https://github.com/LDH9276/LMS_project",
+        "homepage": "https://github.com/LDH9276/LMS_project"
+      },
+      "assets": {
+        "thumb": "/images/id007_thumb.webp",
+        "hero": "/portfolio/id007_000.webp",
+        "intro": "/images/id007_001.webp",
+        "gallery": [
+          "/images/id007_002.webp",
+          "/images/id007_003.webp",
+          "/images/id007_004.webp"
+        ]
+      },
+      "detail": {
+        "headline": "기존의 복/붙 스타일에서 전용 LMS로",
+        "intro": "기존의 명지대학교의 LMS는 헬로 LMS로서 외부 프로그램을 받아 사용했습니다. 그렇기 때문에 학교의 특징이 없는 탬플릿 사이트다 보니 이러한 점을 피드백 삼아 명지대학교의 특징을 담은 LMS를 만들어보자는 아이디어가 나왔습니다. 그래서 저희는 명지대학교의 특징을 담은 LMS를 만들기로 하였습니다.\n\n해당프로젝트는 기존의 프로젝트와 다르게 모듈식으로 구성하였기 때문에 새로운 방식으로 접근했어야 했습니다. 그렇기 때문에 조별로 모듈을 만들고 합치는 과정으로 PHP 사이트를 만들었습니다. \n\n개인의 개발범위 : 관리자페이지, 인덱스페이지, DB테이블 설계, 공지사항모듈, 수강신청모듈",
+        "design": "모듈식 디자인이기 때문에 각각 파트별로 나누어서 디자인을 해야 했습니다. 우선적으로 헤더, 푸터, 모듈, 모듈2로 나누어 세부적인 디자인을 작업해야 했고 총 담당으로서 디자인을 완성해야 했습니다. 모듈식으로 나누어 디자인하다보니 구현해야 할 페이지 대비 디자인시간이 대폭 줄었습니다. 또한 디자인을 하면서 모듈식으로 나누어 디자인을 하다보니 디자인을 수정할 때도 편리했습니다.",
+        "library": "관리자 화면은 DB를 중점적으로 관리해야 하기 때문에 PHP를 이용하였습니다. 리액트로도 가능하지만, 팀 프로젝트이기 때문에 개발난이도가 높아 부득이하게 PHP를 사용할 수 밖에 없었습니다. PHP를 사용하면서 DB를 연동하여 관리자 페이지에서 DB를 관리할 수 있도록 하였습니다. 또한 관리자 페이지에서는 유저의 정보를 확인할 수 있도록 하였고, 유저의 전공과 수강신청을 확인할 수 있으며 허가 및 삭제할 수 있도록 하였습니다.",
+        "chapters": [
+          {
+            "title": "모듈로 제작 가능한 PHP",
+            "description": "PHP의 장점은 모듈화가 가능하다는 점입니다. 리액트 컴포넌트보다는 뒤떨어지지만 include_once()로 각 모듈을 불러와 하나의 페이지를 만들 수 있다는 것은 상당히 인상적이었고 제작시간을 상당히 줄일 수 있었습니다. \n\n 하지만 PHP는 서버에서 돌아가는 언어이기 때문에 서버를 구축해야만 테스트가 가능하다는 점이 단점이었습니다. 그래서 저희는 XAMPP를 이용하여 로컬서버를 구축하였고 이를 통해 테스트를 진행하였습니다.",
+            "code": "include_once '../db/db_conn.php'; //DB연결\ninclude_once '../db/config.php'; //DB세션\ninclude_once '../header.php'; //메뉴\ninclude_once './right/master_btn-user.php'; //우측메뉴"
+          },
+          {
+            "title": "수강신청페이지 제작",
+            "description": "유저 테이블과 수강신청 테이블 코드입니다. 유저가 신청을 하면 관리자는 올바른 수강인지 확인하고 처리하는 식으로 하였습니다. 이전의 LMS에는 자동처리를 해주지만, DB의 이해도를 위해서 더 복잡한 절차와 확실한 확인 방법을 채택하였습니다.",
+            "code": "//유저관리용 php\n\n<?php\nwhile ($rows = mysqli_fetch_array($result)) {\n  echo '<tr>';\n  echo '<td>'.$rows['apply_ID'].'</td>';\n  echo '<td>'.$rows['learn_title'].'</td>';\n  echo '<td>'.$rows['user_name'].'</td>';\n  echo '<td>'.$rows['apply_date'].'</td>';\n  if ($rows['apply'] == 0){ ?>\n    <td>\n    <form action='./master_apply_confirm.php' method='post'>\n    <input type='hidden' name='apply_ID' value='<?=$rows['apply_ID']?>'>\n    <input type='hidden' name='verify' value='ok'>\n    <button type='submit' name='approve' class='btn btn-confirm1'>승인</button>\n  </form>\n</td>\n<?php }\nelse {\n  echo '<td> <span  class='btn btn-apply'>승인됨</span></td>';\n}\necho '</tr>';\n}\n}\n?>\n\n//관리용 php\n\n// 승인\nif (!$id == '' && !$verify == '') {\n  $sql = 'UPDATE learn_apply SET apply = 1 WHERE apply_id = '$id'';\n  $result = mysqli_query($conn, $sql);\n\n  // 다시 불러와서 아래 작업을 위해 변수에 저장\n  $sql = 'SELECT * FROM learn_apply WHERE apply_id = '$id'';\n  $result = mysqli_query($conn, $sql);\n  $row = mysqli_fetch_array($result);\n\n  // 학생 테이블의 learn_list에 해당 과목 추가\n  $user_insert = 'UPDATE user_table\n  SET learn_list = (\n    SELECT GROUP_CONCAT(learn_title)\n    FROM learn_apply\n    WHERE user_table.user_id = learn_apply.user_id\n  )';\n$result = mysqli_query($conn, $user_insert);\n$learn_title = $row['learn_title'];\n\n// 정원 한명 추가\n$sql = 'UPDATE learn_table\nSET student_person = student_person + 1\nWHERE learn_title = '$learn_title'';\n$result = mysqli_query($conn, $sql);"
+          },
+          {
+            "title": "공지사항 페이지네이션",
+            "description": "가장 많은 애를 먹었던 부분이었습니다. 해당 부분을 맡았던 조원과 협업해서 게시물의 페이지네이션을 구현하였습니다. 또한 게시물의 제목을 클릭하면 해당 게시물의 내용을 볼 수 있도록 하였습니다. 구현 원리는 게시물의 총량을 나누어 최대표시수만큼 게시물을 출력하고 페이지네이션을 구현하였습니다. 또한 5개씩 블록으로나누어 다음 이전 버튼을 누를 시 +5 -5를 해주어 페이지네이션을 구현하였습니다. 또한 1일경우나 끝일 경우에는 비활성화 되도록 처리하였습니다.",
+            "code": "<?php\n$sql = 'SELECT * FROM notice_list';\n$result = mysqli_query($conn, $sql);\n$total_record = mysqli_num_rows($result); // 전체 글 수\n$total_page = ceil($total_record / $scale); // 전체 페이지 수\n$current_page = $_GET['page'] ?? 1; // 현재 페이지\nif (!$current_page) $current_page = 1; // 페이지 번호가 지정이 안되었을 경우\n$block_pages = 5; // 한 화면에 표시할 페이지 수\n$block_total = ceil($total_page / $block_pages); // 전체 블록 수\n$current_block = ceil($current_page / $block_pages); // 현재 블록\n\n$prev_page = $current_page - 5; // <i class='fa-solid fa-chevron-left'></i> 페이지\n$next_page = $current_page + 5; // <i class='fa-solid fa-chevron-right'></i> 페이지\nif ($prev_page < 0){ // 페이지 번호가 지정이 안되었을 경우\n  $prev_page = 1;\n}\nelse if ($next_page > $total_page) {// 마지막 페이지를 넘어갔을 경우\n  $next_page = $total_page;\n}\nif ($current_page < 6) {\n  echo '<span class='prev disable'><i class='fa-solid fa-chevron-left'></i></span>';\n} else {\necho '\n<a href='notice_list.php?page=' . $prev_page . '' class='prev'>\n<i class='fa-solid fa-chevron-left'></i>\n</a>\n';\n};\nfor ($i = $current_block * $block_pages - $block_pages + 1; $i <= $current_block * $block_pages; $i++) {\n  if ($i > $total_page) break;\n  if ($i == $current_page) {\n    echo '<a href='notice_list.php?page=' . $i . '' class='active'>' . $i . '</a>';\n  } else {\n  echo '<a href='notice_list.php?page=' . $i . ''>' . $i . '</a>';\n}\n}\nif ($total_page < 6) {\n  echo '<span class='next disable'><i class='fa-solid fa-chevron-right'></i></span>';\n} else if ($current_page > $total_page - 3) {\necho '<span class='next disable'><i class='fa-solid fa-chevron-right'></i></span>';\n} else {\necho '\n<a href='notice_list.php?page=' . $next_page . '' class='next'><i class='fa-solid fa-chevron-right'></i></a>\n';\n};\n?>"
+          },
+          {
+            "title": "CURD가 가능한 공지사항 게시판",
+            "description": "공지사항 모듈은 관리자가 입력, 수정, 읽기, 삭제가 가능하도록 만들었습니다. 또한 게시물의 제목을 클릭하면 해당 게시물의 내용을 볼 수 있도록 하였습니다. 그렇기 때문에 더욱 더 충분한 공지사항 게시판을 구현할 수 있었고 외부엔진을 사용하는 것이 아니라 순수한 PHP로 구현하는 것에 성공했습니다.",
+            "code": "if ($mod == 'mod') {\n  if ($files == null) {\n    $files = $prev_file;\n  }\n$update_sql = 'update notice_list set\nnotice_title='$notice_title',\nnotice_text='$notice_text',\nnotice_file='$files',\nnotice_date='$notice_date',\nlearn_num='$learn_num',\nnotice_detail='$notice_cate'\nwhere num=$num';\n$result = mysqli_query($conn, $update_sql); // sql에 저장된 명령 실행\n} else {\n$sql = 'insert into notice_list set\nnotice_title='$notice_title',\nnotice_text='$notice_text',\nnotice_file='$files',\nnotice_date='$notice_date',\nlearn_num='$learn_num',\nnotice_detail='$notice_cate'';\n$result = mysqli_query($conn, $sql); // sql에 저장된 명령 실행\n}"
+          }
+        ],
+        "review": "종합적인 PHP를 이용한 사이트 제작 프로젝트이었습니다. 특히 수강신청과 유저페이지, 강의 과목간의 관계형 데이터베이스에 대한 이해도를 높혔으며 PHP의 모듈화를 통해 사이트를 구축하는 방법을 배울 수 있었습니다. 또한 PHP의 장점과 단점을 알 수 있었고, PHP를 이용한 사이트 제작의 기본적인 틀을 익힐 수 있었습니다.",
+        "rotateGallery": true
+      }
+    },
+    {
+      "id": "personal-6",
+      "legacyId": 6,
+      "type": "personal",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "넷마블 리뉴얼 프로젝트",
+      "stack": [
+        "PHP"
+      ],
+      "stackLabel": "PHP",
+      "programLabel": "HTML, CSS, PHP, JQuery, figma",
+      "programIcon": "php-logo.svg",
+      "period": "23.1.20 - 2.24",
+      "summary": "기존사이트에서는 리액트로 제작된 사이트가 아니다보ㄴ 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+      "listDescription": "우선적으로 구현하는 방식은 PHP에서 데이터를 주고받는 방식이었습니다. 그러기 위해 AXIOS를 사용했고, 그래서 로그인과 로그인 상태 유지까지 만들었습니다. 또한 DB에 담긴 상품 리스트를 받아와서 출력하는 방식도 구현했습니다.",
+      "route": "/portfolio/6",
+      "links": {
+        "github": "https://github.com/ysy95/Undefined",
+        "homepage": "https://github.com/ysy95/Undefined"
+      },
+      "assets": {
+        "thumb": "/images/id006_thumb.webp",
+        "hero": "/portfolio/id006_000.webp",
+        "intro": "/images/id006_002.webp",
+        "gallery": [
+          "/images/id006_003.webp",
+          "/images/id001_003.webp",
+          "/images/id001_004.webp"
+        ]
+      },
+      "detail": {
+        "headline": "다양한 기능을 한 페이지에",
+        "intro": "기존 넷마블 사이트는 두 개로 나뉘어져 있었습니다. 하지만 게임사이트와 브랜드 컴퍼니를 하나로 합쳐 사용자 경험을 이끌어내는 프로젝트를 진행하였고 저희 조원은 각자 부분을 맡아서 개발을 했습니다. 넷마블 브랜드 사이트를 기획하면서 가장 중점인 것은 DB를 활용한 프로젝트였으며, 이는 가장 처음으로 PHP를 적극적으로 활용한 두 번째 프로젝트이기도 합니다.\n\n개인의 개발범위 : 인재채용 페이지 / PHP연동 / DB연동 / 적응형 및 메인, 게임페이지 슬라이드 JS 개발",
+        "design": "디자인은 넷마블의 CI 색상을 따와서 디자인을 하였습니다. 전체적인 색상은 넷마블의 메인컬러인 노란색을 많이 사용하여 따뜻한 느낌을 주었으며, 동적이고 재미있는 느낌을 주기 위해 각진 사각형의 디자인이 아닌 라운드를 넣어 보다 더 친숙하고 부드러운 느낌을 주었습니다.",
+        "library": "개발 라이브러리는 HTML과 CSS, 그리고 제이쿼리를 이용하여 개발하였습니다. 추가적으로 인재채용 부분은 본격적으로 데이터베이스가 들어가는 영역이다보니 PHP언어를 적극적으로 사용하였습니다. 최대한 Swiper를 사용하지 않으면서 슬라이드를 만들려고자 제이쿼리를 중점으로 사용했습니다.",
+        "chapters": [
+          {
+            "title": "DB테이블 제작",
+            "description": "먼저 DB를 작업해야 했습니다. XAMPP를 이용하여 로컬호스트로 개발환경을 구성하고 다음과 같이 SQL로 테이블을 만들었습니다. \n\n우선 채용정보 테이블인 job_data 테이블을 만들어 job_id로 각 채용마다 고유의 id를 만들어 채용지원시에 어느 채용에 지원했는지 알기 쉽도록 했습니다. 그리고 user_data 테이블을 만들어 지원자의 정보를 저장할 수 있도록 하였습니다. 그런다음에 유저테이블에 job_id를 만들어 관계형으로 엮은 뒤에 각 하나의 채용만을 하도록 의도하였습니다. \n\n이렇게 DB를 구성하고 PHP를 이용하여 DB와 연동하였습니다.",
+            "code": "CREATE TABLE `job_data` (\n  `job_id` int(80) NOT NULL,\n  `job_company` varchar(80) DEFAULT NULL,\n  `job_type` varchar(80) DEFAULT NULL,\n  `job_title` varchar(255) DEFAULT NULL,\n  `job_info` varchar(80) DEFAULT NULL,\n  `job_Date` varchar(40) DEFAULT NULL,\n  `job_about` text DEFAULT NULL)\n\nCREATE TABLE `user_data` (\n  `user_no` int(255) NOT NULL,\n  `user_id` varchar(40) NOT NULL,\n  `user_password` varchar(255) NOT NULL,\n  `user_name` varchar(80) DEFAULT NULL,\n  `user_profile` varchar(255) DEFAULT NULL,\n  `user_location` varchar(255) DEFAULT NULL,\n  `user_phone` varchar(18) DEFAULT NULL,\n  `user_email` varchar(255) DEFAULT NULL,\n  `user_opt1` varchar(8) DEFAULT NULL,\n  `user_opt2` varchar(8) DEFAULT NULL,\n  `user_opt` varchar(20) DEFAULT NULL,\n  `user_intro` varchar(8000) DEFAULT NULL,\n  `user_emdate` date DEFAULT NULL,\n  `master` int(2) NOT NULL DEFAULT 0,\n  `job_id` int(20) DEFAULT NULL,\n  `marketing` varchar(20) DEFAULT NULL,\n  `user_defaultEmail` varchar(255) DEFAULT NULL)"
+          },
+          {
+            "title": "PHP로 DB 작업하기",
+            "description": "PHP는 기존의 html과 자바스크립트와 달리 서버와의 통신으로 데이터 처리를 할 수 있다는 점이 가장 큰 장점이었습니다. 서버로 정보를 저장하고 그 정보를 입력, 수정도 할 수 있기 때문에 저희는 이를 활용하여 회원가입, 로그인, 지원정보, 지원하기 등의 기능을 구현하였습니다. \n\n또한 PHP는 데이터베이스 연동이 가능하기 때문에 저희는 이를 활용하여 지원하기 페이지에서 지원자의 정보를 DB에 저장하고, 관리자 페이지에서 지원자의 정보를 확인할 수 있도록 하였습니다.",
+            "code": "$stmt = $conn->prepare('UPDATE user_data SET\n  user_name = ?,\n  user_profile = ?,\n  user_email = ?,\n  user_phone = ?,\n  user_location = ?,\n  user_opt1 = ?, user_opt2 = ?,\n  user_opt = ?,\n  User_Intro = ?,\n  user_emdate = ?,\n  job_id = ? WHERE user_id = ?');\n\nif ($stmt === false) {\n  die('Prepare failed: ' . $conn->error);\n}\n$stmt->bind_param('ssssssssssss', $name, $img, $email, $phone, $address,\n  $opt01, $opt02, $opt03, $intro, $now ,$job_id, $ID);\n$stmt->execute();\n$result = $stmt->get_result();\necho '<script> alert('지원이 완료되었습니다.');"
+          },
+          {
+            "title": "파일 업로드하기",
+            "description": "파일 업로드 구조는 Form에서 POST로 데이터를 전송하고, PHP에서 $_FILES를 통해 파일을 받아서 저장하는 방식으로 구현하였습니다. 이렇게 임시로 저장된 파일을 원하는 경로로 이동시키는 방식으로 파일 업로드를 구현하였습니다. 이 방식을 통해 지원을 하였을 시 이력서 사진을 업로드할 수 있도록 하였고 관리자 페이지에서는 지원자의 이력서 사진을 확인할 수 있도록 하였습니다. 또한 유저도 이력서 사진을 볼 수 있도록 지원확인 페이지를 만들었습니다.",
+            "code": "if (isset($_FILES['userimg'])) {\n  $file_name = $_FILES['userimg']['name'];\n  $file_size = $_FILES['userimg']['size'];\n  $file_tmp = $_FILES['userimg']['tmp_name'];\n  $file_type = $_FILES['userimg']['type'];\n  $file_ext = strtolower(end(explode('.', $_FILES['userimg']['name'])));\n  $expensions = array('jpeg', 'jpg', 'png', null);\n\n  if (in_array($file_ext, $expensions) === false) {\n    $errors[] = '올바른 사진 확장자가 아닙니다. 파일을 확인해주세요.';\n  }\nif ($file_size > 2097152) {\n  $errors[] = 'File size must be excately 2 MB';\n}\n\nif (empty($errors) == true) {\n  move_uploaded_file($file_tmp, '../user/profileimg/'.$file_name);\n  $img = $file_name;\n} else {\nprint_r($errors);\n}\n} else {\n$img = null;\n};"
+          },
+          {
+            "title": "AJAX를 통한 로그인 정보 확인",
+            "description": "풀 PHP 사이트였다면 세션만 포함하면 되지만 이번 프로젝트에서는 인재채용 depth만이 PHP였기 때문에 세션을 항상 받고있는지 확인이 필요했습니다. 그렇기 때문에 ajax를 이용하여 세션을 받아오는 PHP파일을 호출하여 세션을 받아오는 방식으로 구현하였습니다.",
+            "code": "<?php\nsession_start();\n$data = $_SESSION['UserID'];\nif ($data == null) {\n  echo '';\n} else {\necho $data;\n}\n?>\n\n// AJAX로 PHP파일 호출\n$.ajax( {\n    type : 'GET',\n    url : 'http://leedh9276.dothome.co.kr/employment/script/session.php',\n    dataType : 'html',\n    error : function () {\n    },\n  success : function (data) {\n    if (data == '') {\n      $('.lnb').html('<li><a href=''>로그인</a></li>\n        <li><a href='' title='회원가입하기'>회원가입</a></li>');\n    } else {\n    $('.lnb').html('<li><a href='' title='로그아웃하기'>로그아웃</a></li>');\n  }\n}\n\n})"
+          }
+        ],
+        "review": "해당 프로젝트는 제가 담당한 구역한 DB로 다뤄야 했기 때문에 저 혼자의 힘으로 진행했습니다. 다만 DB연동 작업이 상당부분 진척되어 제 시간 안으로 개발이 끝나 다른 조원들의 어려운 부분을 같이 협업하는 시간을 만들어내어 만족스러웠습니다. 향후 이러한 PHP의 경험을 쌓아 다음의 3, 4차 프로젝트때에 큰 성과로 이어졌습니다.",
+        "rotateGallery": false
+      }
+    },
+    {
+      "id": "personal-4",
+      "legacyId": 4,
+      "type": "personal",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "무인양품 리뉴얼 프로젝트",
+      "stack": [
+        "REACT"
+      ],
+      "stackLabel": "REACT",
+      "programLabel": "React, Swiper, PHP, Javascript, figma",
+      "programIcon": "react-logo.svg",
+      "period": "23.5.2 - 5.14",
+      "summary": "데이터베이스를 적극적으로 활용하는 것은 쇼핑몰일것입니다. 상품정보, 유저관리, 구매테이블… 그렇기 때문에 데이터베이스와 리액트를 사용한 프로젝트는 당연히 쇼핑몰이 가장 적합했습니다. 다만 아쉽게도 이전의 프로젝트에서는 리액트와 데이터베이스 접근하는 방식을 쓰는 것에 비해 제작시간이 촉박했기 때문에 순수 PHP로만 작업해야 했습니다. <br /> <br /> 심플한 디자인에 잘 어울리는 사이트는 찾다가 무인양품을 찾았습니다. 기존사이트에서는 리액트로 제작된 사이트 아니기에 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+      "listDescription": "우선적으로 구현하는 방식은 PHP에서 데이터를 주고받는 방식이었습니다. 그러기 위해 AXIOS를 사용했고, 그래서 로그인과 로그인 상태 유지까지 만들었습니다. 또한 DB에 담긴 상품 리스트를 받아와서 출력하는 방식도 구현했습니다.",
+      "route": "/portfolio/4",
+      "links": {
+        "github": "https://github.com/LDH9276/muji_sample",
+        "homepage": "https://github.com/LDH9276/muji_sample"
+      },
+      "assets": {
+        "thumb": "/images/id001_thumb.jpg",
+        "hero": "/portfolio/id001_000.webp",
+        "intro": "/images/id001_001.webp",
+        "gallery": [
+          "/images/id001_002.webp",
+          "/images/id001_003.webp",
+          "/images/id001_004.webp"
+        ]
+      },
+      "detail": {
+        "headline": "리액트로 만드는 쇼핑몰 프로젝트",
+        "intro": "데이터베이스를 적극적으로 활용하는 것은 쇼핑몰일것입니다. 상품정보, 유저관리, 구매테이블… 그렇기 때문에 데이터베이스와 리액트를 사용한 프로젝트는 당연히 쇼핑몰이 가장 적합했습니다. \n \n다만 아쉽게도 이전의 프로젝트에서는 리액트와 데이터베이스 접근하는 방식을 쓰는 것에 비해 제작시간이 촉박했기 때문에 순수 PHP로만 작업해야 했습니다. 추후 완전한 서버사이드 스크립트인 next.js를 도입할 예정입니다.\n심플한 디자인에 잘 어울리는 사이트는 찾다가 무인양품을 찾았습니다. 기존사이트에서는 리액트로 제작된 사이트 아니기에 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+        "design": "디자인은 무인양품의 심플함을 기초로 디자인했습니다. 기존 디자인에서 상품 위주의 슬라이드 레이아웃을 채택하였고, 반응형이 아니었던 기존 사이트에서 반응형 디자인으로 변경하였습니다. ",
+        "library": "개발 라이브러리는 React와 각 컴포넌트별로 연결할 'React-Router-Dom', 슬라이드 구현을 위한 'Swiper', PHP에 요청을 보내고 데이터를 받아오는 'AXIOS', 마지막으로 서버구현을 'PHP'로 하였습니다. 해당프로젝트에서의 중점은 PHP에서 어떻게 데이터 처리를 할 것이냐와 AXIOS를 통해 어떻게 데이터를 요청하고 받아올 것이냐에 있었습니다.",
+        "chapters": [
+          {
+            "title": "PHP 쿼리 결과 JSON으로 전달하기",
+            "description": "가장 먼저 해야 했던 것은 PHP를 만드는 것이었습니다. echo JSON_encode()메서드로 각각 결과물을 도출하는 식으로 하였습니다. 그 다음에는 JWT를 통해 로그인을 하면 토큰을 만들고 로컬스토리지에 저장하는 식으로 구현했습니다. 리액트로는 프론트엔드를 담당하기 때문에 JSON을 처리하는 방식에 대해 고민해야 했습니다. 그렇기 때문에 map()함수를 더욱 더 적극적으로 사용해야 했고, 결과론적으로는 JSON을 다루는 방식에 대해 많이 이해하게 되었습니다.\n\n ",
+            "code": "// JSON으로 다음 형식으로 전달한다. \"list\" : {\"no\" ,\"name\", \"img\", \"price\"}\n$data = array();\n\nwhile ($row = mysqli_fetch_assoc($result)) {\n  $data[] = array(\n    'no' => $row['no'],\n    'name' => $row['name'],\n    'img' => $row['img'],\n    'price' => $row['price'],\n    'cate' => $row['cate'],\n  );\n}\n\n// 해당 결과를 JSON에 담아 전송한다.\necho json_encode(array('list' => $data));\n}"
+          },
+          {
+            "title": "리액트와 PHP를 연동하기",
+            "description": "다음 문제는 기획과는 다르게 각 컴포넌트별로 Axios를 불러오기 때문에 리소스 낭비가 심했습니다. ex : mujisale.php / mujieven.php / mujiweather.php 하지만 상품에서 json으로 일괄 출력 후 해당 카테고리만 filter()메서드로 추출하는 방식으로 해결했습니다.\n \n 쇼핑몰이다보니 구현 영역이 점점 늘어나게 되었습니다. 장바구니 기능을 로컬스토리지로 구현했고, 그 다음에는 장바구니의 양을 reduce로 나누어 state에 담았습니다. \n \n",
+            "code": "const fetchList = async () => {\n  try {\n    // 응답 성공\n    const response = await axios.get(productListPHP)\n    setList(response.data.list)\n  } catch (e) {\n    // 응답 실패\n    setError(e)\n    console.log(e + error)\n  }\n}\n\nuseEffect(() => {\n  fetchList()\n}, [])\n\n//filter()메서드로 분리해서 컴포넌트에 담기\n\nconst categoryNewList = list.filter((item) => item.cate === '생활용품')\nconst categoryWalkerList = list.filter((item) => item.cate === 'MUJI WALKER')"
+          },
+          {
+            "title": "장바구니 State",
+            "description": "쇼핑몰이다보니 구현 영역이 점점 늘어나게 되었습니다. 장바구니 기능을 로컬스토리지로 구현했습니다. 이는 이전 프로젝트인 ‘나만의 가계부’에서 다뤘던 경험과 스택오버플로우에서 찾았었고, 그 다음에는 장바구니의 양을 reduce로 나누어 state에 담았습니다.",
+            "code": "const cartlist = localStorage.getItem('cart') // 로컬스토리지에 저장된 값을 가져온다.\nconst cartArray = JSON.parse(cartlist)\n// 로컬스토리지의 값은 JSON 문자열을 객체로 변환해야한다.\n\nconst cart = cartArray.map((item) => {\n  // 장바구니에 담긴 상품의 id와 수량을 가져온다.\n  return {\n    img: item.img,\n    name: item.name,\n    price: item.price,\n    quantity: item.quantity,\n  }\n})\n\nconst newCartValue = updatedCart.reduce((acc, item) => acc + item.quantity, 0)\n// 장바구니에 담긴 수량을 계산한다.\nsetCartValue(newCartValue)\n// 장바구니에 담긴 수량을 업데이트한다."
+          },
+          {
+            "title": "AXIOS POST 전송하기",
+            "description": "가장 구현이 어려웠던건 회원가입과 구매버튼이었습니다. PHP 자체에 처리하기에 PHP난이도는 적었지만 Javascript에서 AXIOS로 보낼 때 클래스 문법으로 post에 보낼 키를 정하고 값을 보내는 방식을 찾아내 만들었습니다. 반대로 PHP에서는 결과를 JSON으로 처리하도록 수정해야했습니다. 특히 JSON을 처리할때는 JSON.stringify를 반드시 써야하는 점을 배울 수 있었습니다.",
+            "code": "const addToBuy = () => {\n\n  const cartlist = localStorage.getItem('cart'); // 로컬스토리지에 저장된 값을 가져온다.\n  const cartArray = JSON.parse(cartlist);\n  // 로컬스토리지는 먼저 JSON 문자열을 객체로 변환해야한다.\n  const cart = cartArray.map((item) => { // 장바구니에 담긴 상품의 id와 수량을 가져온다.\n      return {\n        ...\n      }\n  });\n\nconst formData = new FormData();\nformData.append('id', userId);\nformData.append('cart', JSON.stringify(cart));\n// 알아야 할 것 : 배열을 넘길때 무조건 JSON.stringify를 할 것!!\n\naxios.post(BuyPHP, formData)\n.then((response) => {\n    if (response.data.success === true) {\n      alert('구매가 완료되었습니다.');\n      setCartValue(0);\n      localStorage.setItem('cart', JSON.stringify([]));\n      navigate('/orderlist');\n    }\n})\n}\n}"
+          }
+        ],
+        "review": "해당 프로젝트는 일주일동안 최대한 만드는 것에서 의의를 두고 있습니다. 아직 미구현되고 퍼블리싱을 못한 부분이 군대군대 보이지만, 향후 추가로 구현한다면 상업적으로 손색없을 사이트로 만들 수 있을 것 같습니다. 또한 리액트의 데이터를 주고받는 방식에 대해 많이 배웠습니다.",
+        "rotateGallery": true
+      }
+    },
+    {
+      "id": "personal-2",
+      "legacyId": 2,
+      "type": "personal",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "B&O 리뉴얼 프로젝트",
+      "stack": [
+        "PHP"
+      ],
+      "stackLabel": "PHP",
+      "programLabel": "PHP, JQuery, figma",
+      "programIcon": "php-logo.svg",
+      "period": "23.2.13 - 3.3",
+      "summary": "기존사이트에서는 리액트로 제작된 사이트가 아니다보ㄴ 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+      "listDescription": "우선적으로 구현하는 방식은 PHP에서 데이터를 주고받는 방식이었습니다. 그러기 위해 AXIOS를 사용했고, 그래서 로그인과 로그인 상태 유지까지 만들었습니다. 또한 DB에 담긴 상품 리스트를 받아와서 출력하는 방식도 구현했습니다.",
+      "route": "/portfolio/2",
+      "links": {
+        "github": "https://github.com/LDH9276/BaO_Portfolio",
+        "homepage": "https://github.com/LDH9276/BaO_Portfolio"
+      },
+      "assets": {
+        "thumb": "/images/id003_thumb.jpg",
+        "hero": "/portfolio/id003_000.webp",
+        "intro": "/images/id003_001.webp",
+        "gallery": [
+          "/images/id003_002.webp",
+          "/images/id003_003.webp",
+          "/images/id003_004.webp"
+        ]
+      },
+      "detail": {
+        "headline": "심플하고 반응형 쇼핑몰을 만들기",
+        "intro": "쇼핑몰을 구현하기 위해서 DB를 이용하는 방식에 익숙해야 하며, 프론트엔드는 DB를 받아와서 출력할 줄 알아야 하기에 개인 프로젝트 겸 데이터 연동 연습으로 B&O 사이트를 리뉴얼하였습니다. 개인이 했던 프로젝트 중에서 가장 많은 시간을 써왔던 것 같으며, DB연동과 웹페이지의 DB출력으로 많은 시간을 들었던 것 같습니다. \n\n데이터 연동을 위해 PHP를 사용하였으며, 프론트엔드는 JQuery를 사용하였습니다. 디자인은 figma를 사용하여 디자인을 하였습니다.",
+        "design": "디자인은 B&O의 깔끔한 블랙과 화이트톤을 최대한 살려내어 디자인 하였습니다. 또한 이번 프로젝트에서는 시험삼아 다크모드를 구현했으며 디자인적으로도 깔끔하고 눈이 편안한 디자인을 하였습니다. \n\n 반응형 레이아웃으로 PC, 태블릿, 모바일 환경에서도 최대한 깔끔하게 보이도록 하였습니다. 상품사진이 우선이므로, 동일한 톤의 배경을 사용하여 상품사진이 더욱 돋보이도록 하였습니다.",
+        "library": "원래는 리액트를 위한 사이트로 디자인 하였으나 리액트의 데이터 전송 및 출력 방식에 익속하지 않아서 우선적으로 PHP언어로 작업하였습니다. 또한 자바스크립트 보다는 빠른 개발시간을 위해 제이쿼리를 사용하였습니다.",
+        "chapters": [
+          {
+            "title": "DB연동 및 구현",
+            "description": "PHP는 자바스크립트와 비슷한 언어를 가졌으나, 서버에서 직접 연결하여 랜더링하기 때문에 코드를 실시간으로 수정할 수 없다는 단점이 있습니다. 그렇기에 우선적으로 HTML을 먼저 퍼블리싱을 한 이후에 DB를 연결하여 해당 데이터베이스의 컬럼을 조회하도록 하였습니다.",
+            "code": "include ('./lib.php');\n$sql = 'select * from goods_tab where goods_code = 'Earphone'';\n$result = mysqli_query($conn, $sql);\n\nwhile ($row = mysqli_fetch_assoc($result)) {\n  $id = $row['goods_id'];\n  $image = $row['goods_image'];\n  $title = $row['goods_name'];\n  $info = $row['goods_info'];\n  $price = '₩ ' . $row['goods_price'];\n  if ($price == '₩ ') {\n    $price = '출시예정';\n  }\n...   }"
+          },
+          {
+            "title": "다크모드 구현",
+            "description": "다크모드를 css로 구현하였습니다. 디바이스의 다크모드 세팅에 따라 어두운 테마와 밝은 테마를 보여주어 어두운 밤의 유저들에게 편안함을 줄 수 있었으며 디자인적으로 한층 더 새로운 느낌을 줄 수 있도록 하였습니다. 아쉬운점은 기기에 따라 강제 적용이 불가능한 문제가 있기에 추후에 다크모드 / 라이트모드 토글 버튼과 자바스크립트 제어 방식을 도입할 예정입니다.",
+            "code": "@media (prefers-color-scheme: dark) {\n  html, body {\n    background-color: #000;\n    color: #fff;\n  }\na {\n  color: #fff;\n}\n:root {\n  --m-color01 : #272727;\n  --m-color02 : #fff;\n  --m-color03 : #777;        --f-size01 : 14px;\n  --f-size02 : 16px;\n  --f-size03 : 18px;\n  --f-size04 : 32px;\n}\n}\n@media (prefers-color-scheme: light) {      :root {\n    --m-color01 : #272727;\n    --m-color02 : #fff;\n    --m-color03 : #f4f4f4;\n    --f-size01 : 14px;\n    --f-size02 : 16px;\n    --f-size03 : 18px;\n    --f-size04 : 32px;n      }\n}"
+          },
+          {
+            "title": "로그인과 세션 구현",
+            "description": "우선 가장 먼저 회원정보를 DB에 입력시키도록 하는 것이 먼저였습니다. Insert Into 쿼리로 넣기 전에 STMT를 이용하여 입력값을 묶은 뒤에 SQL공격에 방어하도록 하였습니다. 또한 암호는 password_hash라는 함수를 이용하여 암호화를 하여 DB에 저장하게 해두었습니다. \n\n로그인은 우선적으로 POST로 보낸 두 값, ID와 PW를 대조합니다. 우선적으로 DB에 해당 ID가 존재하는지를 먼저 확인을 하며, ID가 존재할 경우에 DB에 암호화를 해둔 DB를 password_verify라는 함수를 이용하여 복호화 한 뒤에 대조하여 조회한 뒤에 성공하면 세션을 부여하도록 하였습니다.",
+            "code": "//회원가입\n\n$ID = $_POST['ID'] ?? '';\n$PW = $_POST['PW'] ?? '';\n$Email = $_POST['Email'] ?? '';\n$markerting = $_POST['marketing'] ?? '0';\n$hashed_password = password_hash($PW, PASSWORD_DEFAULT);\n$stmt = $conn->prepare('INSERT INTO user_data SET\n  user_id=?,\n  user_password=?,\n  user_defaultEmail=?,\n  marketing=?\n  ');\n\n$stmt->bind_param('ssss', $ID, $hashed_password, $Email, $markerting);\n$stmt->execute();\necho '<script>alert('가입이 완료되었습니다.');</script>';\necho '<script>location.replace('./login.html');</script>';\nmysqli_close($conn); // 데이터베이스 접속 종료\nexit;\n\n//로그인\n\n$stmt = $conn->prepare('SELECT * FROM user_data WHERE user_id = ?');\n$stmt->bind_param('s', $ID);\n$stmt->execute();\n$checkRes = $stmt->get_result();\n\nif (mysqli_num_rows($checkRes) == 0){ // 아이디가 없을 경우\n  echo '<script>alert('아이디가 존재하지 않습니다.');</script>';\n  echo '<script>history.back();</script>'';\n  exit;\n} else { // 아이디가 일치할 경우\n$array = mysqli_fetch_array($checkRes);\n\n$dbPW = $array['user_password'];\nif (password_verify($PW, $dbPW)) {\n  $_SESSION['UserID'] = $ID;\n  mysqli_close($conn); ...\n} else {\necho '<script>alert('비밀번호가 일치하지 않습니다.');</script>';\n...;\n};"
+          },
+          {
+            "title": "장바구니 구현하기",
+            "description": "장바구니는 제품 상세페이지의 input의 상품수량을 가져오고 DB에서 가격을 조회한 후에 세션에 담아 cart.php에 출력하도록 하였습니다. \n\n 또한 중복 상품일 경우에는 배열에서 해당 상품의 수량만 추가되는 기능으로 수정하였고, 장바구니 페이지에서는 해당 세션을 조회하여 출력하도록 하였습니다. \n\n",
+            "code": "//장바구니 함수 function addToCart() {\n  const price = document.querySelector('.item-order-price').textContent;\n  if (price.indexOf('출시예정') > -1) {\n    alert('출시예정입니다.');\n    return;\n  } else {\n  // 인풋의 밸류를 가져온다\n  const quantity = document.getElementById('quantity').value;\n  // 주소를 다음으로 설정한다\n  const url = 'cartlist.php?mode=add&insert=<?=$id?>&value=' + quantity;\n  // 다음으로 이동한다\n  window.location.href = url;\n}\n}// 장바구니 세션이 존재하지 않을 때, 새로 생성한다.\nif (!isset($_SESSION['cart'])) {\n  $_SESSION['cart'] = array();\n}\n\n// GET으로 받아온 값을 변수에 저장한다.\n$id = $_GET['insert'];\n$quantity = $_GET['value'];\n\n// 필터링 처리\n$id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);\n$quantity = filter_var($quantity, FILTER_SANITIZE_NUMBER_INT);\n\n// 상품의 id와 수량을 배열에 저장한다.\n$item = array('id' => $id, 'quantity' => $quantity);\n$found = false;\n\n// 장바구니에 이미 상품이 존재하는지 확인한다.\nforeach ($_SESSION['cart'] as $key => $value) {\n  if (is_array($value) && isset($value['id']) && $value['id'] == $id) {\n    // 조건식의 조건은 배열에 값이 존재하고(상품), 그 상품의 id가 현재 상품의 id와 같을 때\n    // 만약에 이미 장바구니에 있는 상품이라면, 수량만 더해준다.\n    $_SESSION['cart'][$key]['quantity'] += $quantity;\n    $found = true;\n    break;\n  }\n}\n\nif (!$found) {\n  // 만약에 장바구니에 없는 상품이라면, 새로 추가한다.\n  array_push($_SESSION['cart'], $item);\n}\n\n// 장바구니에 담긴 상품을 확인한다.\nforeach ($_SESSION['cart'] as $key => $value) {\n  // 배열에 값이 존재하고, 그 값이 id와 quantity를 가지고 있다면\n  // 상품의 id와 수량을 출력한다.\n  if (is_array($value) && isset($value['id']) && isset($value['quantity'])) {\n    echo $value['id'] . ' '. $value['quantity'] . '<br>';\n  }\n}\n\n// 장바구니 페이지로 이동한다.\necho '<script>location.href = 'cart.php';</script>';"
+          }
+        ],
+        "review": "PHP를 중점으로 다뤘고 DB를 연결하여 데이터를 주고받는 방식을 배웠습니다. 또한 세션을 이용하여 로그인 상태를 유지하는 방법을 배웠습니다. 하지만 PHP는 코드가 길어지면 길어질수록 가독성이 떨어지는 단점이 있으며 HTML과 PHP언어를 섞어쓰다 보니 유지관리에도 취약한 점이 계속해서 노출되는 문제를 접했습니다. \n\n가장 컸던 것은 코드를 수정할 때마다 서버를 재시작해야하는 불편함이 있습니다. 그렇기에 리액트를 통한 쇼핑몰 구축을 기획하게 되었습니다 향후 이 사이트도 리액트를 기반으로 교체하고자 기획하고 있습니다..",
+        "rotateGallery": true
+      }
+    },
+    {
+      "id": "personal-1",
+      "legacyId": 1,
+      "type": "personal",
+      "status": "archived",
+      "visible": false,
+      "detailAvailable": false,
+      "title": "사세 적응형 프로젝트",
+      "stack": [
+        "JAVASCRIPT",
+        "JQuery"
+      ],
+      "stackLabel": "JAVASCRIPT, JQuery",
+      "programLabel": "JAVASCRIPT, JQuery",
+      "programIcon": "jquery-logo.svg",
+      "period": "",
+      "summary": "가장 처음으로 본격적으로 프론트엔드를 배워서 만든 첫 프로젝트입니다. 제이쿼리를 중점적으로 사용하다보니 애착이 가지만 한편으로는 많은 아쉬움을 가지고 있기도 한 프로젝트입니다.",
+      "listDescription": "반응형으로 구현했으며, 개인적으로 사세 제품을 좋아하다보니(버팔로윙을 좋아합니다 :p ) 자연스럽게 사세를 택했고 사세제품 위주의 반응형 퍼블리싱을 하였습니다.",
+      "route": "",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/images/id004_thumb.jpg",
+        "hero": "",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "headline": "",
+        "intro": "가장 처음으로 본격적으로 프론트엔드를 배워서 만든 첫 프로젝트입니다. 제이쿼리를 중점적으로 사용하다보니 애착이 가지만 한편으로는 많은 아쉬움을 가지고 있기도 한 프로젝트입니다.",
+        "design": "",
+        "library": "더보기 버튼을 누르면 JSON으로 저장된 썸네이들이 나옵니다. 이 역시 처음에는 잘 몰랐지만 뒤에 있을 리액트 프로젝트때에 잘 사용하게 되어서 나름 뿌듯하기도 하고요.",
+        "chapters": [],
+        "review": "",
+        "rotateGallery": false
+      }
+    },
+    {
+      "id": "personal-3",
+      "legacyId": 3,
+      "type": "personal",
+      "status": "archived",
+      "visible": false,
+      "detailAvailable": false,
+      "title": "나만의 가계부 프로젝트",
+      "stack": [
+        "REACT"
+      ],
+      "stackLabel": "REACT",
+      "programLabel": "REACT",
+      "programIcon": "react-logo.svg",
+      "period": "",
+      "summary": "기존사이트에서는 리액트로 제작된 사이트가 아니다보ㄴ 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+      "listDescription": "우선적으로 구현하는 방식은 PHP에서 데이터를 주고받는 방식이었습니다. 그러기 위해 AXIOS를 사용했고, 그래서 로그인과 로그인 상태 유지까지 만들었습니다. 또한 DB에 담긴 상품 리스트를 받아와서 출력하는 방식도 구현했습니다.",
+      "route": "",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/images/id002_thumb.jpg",
+        "hero": "",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "headline": "",
+        "intro": "기존사이트에서는 리액트로 제작된 사이트가 아니다보ㄴ 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+        "design": "",
+        "library": "기획과는 다르게 각 컴포넌트별로 Axios를 불러오기 때문에 리소스 낭비가 심했습니다. <br> ex : mujisale.php / mujieven.php / mujiweather.php <br> 하지만 상품에서 json으로 일괄 출력 후 해당 카테고리만 filter()메서드로 추출하는 방식으로 해결했습니다.",
+        "chapters": [],
+        "review": "",
+        "rotateGallery": false
+      }
+    },
+    {
+      "id": "personal-5",
+      "legacyId": 5,
+      "type": "personal",
+      "status": "archived",
+      "visible": false,
+      "detailAvailable": false,
+      "title": "시드물 반응형 프로젝트",
+      "stack": [
+        "HTML"
+      ],
+      "stackLabel": "HTML",
+      "programLabel": "HTML",
+      "programIcon": "jquery-logo.svg",
+      "period": "",
+      "summary": "기존사이트에서는 리액트로 제작된 사이트가 아니다보ㄴ 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+      "listDescription": "우선적으로 구현하는 방식은 PHP에서 데이터를 주고받는 방식이었습니다. 그러기 위해 AXIOS를 사용했고, 그래서 로그인과 로그인 상태 유지까지 만들었습니다. 또한 DB에 담긴 상품 리스트를 받아와서 출력하는 방식도 구현했습니다.",
+      "route": "",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/images/id005_thumb.webp",
+        "hero": "",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "headline": "",
+        "intro": "기존사이트에서는 리액트로 제작된 사이트가 아니다보ㄴ 리액트 기반으로 쇼핑몰을 만들었습니다. 기존 디자인 보다는 반응형을 중점으로 상품을 메인으로 해서 신상품, 이벤트 상품, 이벤트 상품2, MD의 추천, 계절의 추천 순으로 만들었습니다.",
+        "design": "",
+        "library": "기획과는 다르게 각 컴포넌트별로 Axios를 불러오기 때문에 리소스 낭비가 심했습니다. <br> ex : mujisale.php / mujieven.php / mujiweather.php <br> 하지만 상품에서 json으로 일괄 출력 후 해당 카테고리만 filter()메서드로 추출하는 방식으로 해결했습니다.",
+        "chapters": [],
+        "review": "",
+        "rotateGallery": false
+      }
+    },
+    {
+      "id": "company-9",
+      "legacyId": 9,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "Volvik 리뉴얼 작업",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "JAVASCRIPT"
+      ],
+      "stackLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programIcon": "",
+      "period": "2024-12 ~ 2025-05",
+      "summary": "국·영문 메인 및 서브페이지 퍼블리싱",
+      "listDescription": "국·영문 메인 및 서브페이지 퍼블리싱",
+      "role": "국·영문 메인 및 서브페이지 퍼블리싱",
+      "route": "/publishing/9",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/volvik-bg.webp",
+        "hero": "/portfolio/company/volvik-bg.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "국, 영문 메인 페이지 및 서브페이지 전반",
+          "메인페이지 소개",
+          "서브페이지 전반"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/volvik01.jpg",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/volvik.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-10",
+      "legacyId": 10,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "웰파인 반응형 홈페이지",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "JAVASCRIPT"
+      ],
+      "stackLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programIcon": "",
+      "period": "2024-10 ~ 2024-12",
+      "summary": "국·영문 메인 및 서브페이지 반응형 퍼블리싱",
+      "listDescription": "국·영문 메인 및 서브페이지 반응형 퍼블리싱",
+      "role": "국·영문 메인 및 서브페이지 반응형 퍼블리싱",
+      "route": "/publishing/10",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/wellfine.webp",
+        "hero": "/portfolio/company/wellfine.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "국, 영문 메인 페이지 및 서브페이지 전반",
+          "메인페이지 소개",
+          "서브페이지 전반"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/wellfine-home.webp",
+            "alt": "웰파인 메인 페이지"
+          },
+          {
+            "src": "/portfolio/company/wellfine-sub.webp",
+            "alt": "웰파인 서브 페이지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-11",
+      "legacyId": 11,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "미래DSN",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "JAVASCRIPT"
+      ],
+      "stackLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programIcon": "",
+      "period": "2024-05 ~ 2024-06",
+      "summary": "분양 홈페이지 퍼블리싱",
+      "listDescription": "분양 홈페이지 퍼블리싱",
+      "role": "분양 홈페이지 퍼블리싱",
+      "route": "/publishing/11",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/miraedsn.webp",
+        "hero": "/portfolio/company/miraedsn.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "메인페이지 유지보수",
+          "서브페이지 전체 (반응형)"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/mirae01.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/mirae02.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/mirae03.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-12",
+      "legacyId": 12,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "서울원 아이파크",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "jQuery"
+      ],
+      "stackLabel": "HTML, PHP, CSS, jQuery",
+      "programLabel": "HTML, PHP, CSS, jQuery",
+      "programIcon": "",
+      "period": "2024-10 ~ 2024-12",
+      "summary": "페이지 퍼블리싱",
+      "listDescription": "페이지 퍼블리싱",
+      "role": "페이지 퍼블리싱",
+      "route": "/publishing/12",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/seoulone-logo.webp",
+        "hero": "/portfolio/company/seoulone-logo.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "사업안내",
+          "단지안내",
+          "분양안내(평면안내, 인테리어)",
+          "관심고객등록"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/seoulone01.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/seoulone02.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-13",
+      "legacyId": 13,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "김해 에피트",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "JAVASCRIPT"
+      ],
+      "stackLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programIcon": "",
+      "period": "2025-05 ~ 2024-06",
+      "summary": "분양 홈페이지 퍼블리싱",
+      "listDescription": "분양 홈페이지 퍼블리싱",
+      "role": "분양 홈페이지 퍼블리싱",
+      "route": "/publishing/13",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/efete-bg.webp",
+        "hero": "/portfolio/company/efete-bg.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "PC, 모바일 메인화면",
+          "서브페이지 전반",
+          "관심고객등록"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/efete.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/efete01.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-14",
+      "legacyId": 14,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "103 Stay 부여",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "jQuery"
+      ],
+      "stackLabel": "HTML, PHP, CSS, jQuery",
+      "programLabel": "HTML, PHP, CSS, jQuery",
+      "programIcon": "",
+      "period": "2025-04 ~ 2025-05",
+      "summary": "페이지 퍼블리싱",
+      "listDescription": "페이지 퍼블리싱",
+      "role": "페이지 퍼블리싱",
+      "route": "/publishing/14",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/103stay-logo.webp",
+        "hero": "/portfolio/company/103stay-logo.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "반응형 메인화면",
+          "서브페이지 전반",
+          "관심고객등록"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/103stay01.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/103stay02.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-15",
+      "legacyId": 15,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "동래반도유보라",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "jQuery"
+      ],
+      "stackLabel": "HTML, PHP, CSS, jQuery",
+      "programLabel": "HTML, PHP, CSS, jQuery",
+      "programIcon": "",
+      "period": "2025-01 ~ 2025-01",
+      "summary": "페이지 퍼블리싱",
+      "listDescription": "페이지 퍼블리싱",
+      "role": "페이지 퍼블리싱",
+      "route": "/publishing/15",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/ubora-logo.webp",
+        "hero": "/portfolio/company/ubora-logo.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "PC, 모바일 메인화면",
+          "서브페이지 전반",
+          "관심고객등록"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/ubora01.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/ubora02.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-16",
+      "legacyId": 16,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "그란츠",
+      "stack": [
+        "HTML",
+        "PHP",
+        "CSS",
+        "JAVASCRIPT"
+      ],
+      "stackLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programLabel": "HTML, PHP, CSS, JAVASCRIPT",
+      "programIcon": "",
+      "period": "2024-08 ~ 2024-10",
+      "summary": "분양 홈페이지 퍼블리싱",
+      "listDescription": "분양 홈페이지 퍼블리싱",
+      "role": "분양 홈페이지 퍼블리싱",
+      "route": "/publishing/16",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/glanz-logo.webp",
+        "hero": "/portfolio/company/glanz-logo.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "PC버전 메인화면 유지보수, 모바일 메인화면",
+          "서브페이지 전반",
+          "관심고객등록"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/glanzlife01.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/glanz-sub.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-17",
+      "legacyId": 17,
+      "type": "company",
+      "status": "published",
+      "visible": true,
+      "detailAvailable": true,
+      "title": "LS e-Mobility Solutions",
+      "stack": [
+        "HTML",
+        ".Net"
+      ],
+      "stackLabel": "HTML, .Net",
+      "programLabel": "HTML, .Net",
+      "programIcon": "",
+      "period": "2023-12 ~ 2025-07",
+      "summary": "유지보수 및 페이지 퍼블리싱 변경",
+      "listDescription": "유지보수 및 페이지 퍼블리싱 변경",
+      "role": "유지보수 및 페이지 퍼블리싱 변경",
+      "route": "/publishing/17",
+      "links": {
+        "github": "",
+        "homepage": ""
+      },
+      "assets": {
+        "thumb": "/portfolio/company/lsems-logo.webp",
+        "hero": "/portfolio/company/lsems-logo.webp",
+        "intro": "",
+        "gallery": []
+      },
+      "detail": {
+        "pages": [
+          "PC, 모바일 메인화면",
+          "서브페이지 (BDU, EV릴레이)"
+        ],
+        "samples": [
+          {
+            "src": "/portfolio/company/lsems01.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          },
+          {
+            "src": "/portfolio/company/lsems02.webp",
+            "alt": "회사 퍼블리싱 작업 01 샘플 이미지"
+          }
+        ]
+      }
+    }
+  ]
+}

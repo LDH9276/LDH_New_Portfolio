@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import portfolio from "./companydata.json";
+import { getCompanyWorks } from "../data/portfolio";
 
 function WorkRow({ item, index, isVisible, reset }) {
   return (
     <Link
-      href={`/publishing/${item.id}`}
-      aria-label={`${item.name} 회사 포트폴리오 상세 보기`}
+      href={item.route}
+      aria-label={`${item.title} 회사 포트폴리오 상세 보기`}
       onClick={reset}
       className={`work-row group ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
@@ -18,18 +18,18 @@ function WorkRow({ item, index, isVisible, reset }) {
       <span className="work-index">{String(index + 1).padStart(2, "0")}</span>
 
       <span className="min-w-0">
-        <strong className="work-title block">{item.name}</strong>
+        <strong className="work-title block">{item.title}</strong>
         <span className="work-meta">
-          <span>{item.responsibility}</span>
-          <span>{item.family}</span>
-          <span>{item.duration}</span>
+          <span>{item.role}</span>
+          <span>{item.stackLabel}</span>
+          <span>{item.period}</span>
         </span>
       </span>
 
       <span className="media-strip">
         <Image
-          src={item.thumb}
-          alt={`${item.name} 썸네일`}
+          src={item.assets.thumb}
+          alt={`${item.title} 썸네일`}
           fill
           sizes="(min-width: 1024px) 220px, (min-width: 640px) 132px, 90vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -51,7 +51,7 @@ function PubProject({ activeSlide, reset, titleId = "publishing-title" }) {
   }, [activeSlide]);
 
   const isVisible = active === "";
-  const items = portfolio.portfolio.slice().sort((a, b) => b.id - a.id);
+  const items = getCompanyWorks();
 
   return (
     <div
