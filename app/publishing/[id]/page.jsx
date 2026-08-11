@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { Briefcase, Clock3, PanelsTopLeft } from 'lucide-react';
+import { ArrowUpRight, Briefcase, Clock3, PanelsTopLeft } from 'lucide-react';
 import Scroll from '../../../src/Header/Scroll';
 import ScrollPf from '../../../src/Header/ScrollPf';
 import { getCompanyWorkByLegacyId } from '../../../src/data/portfolio';
@@ -62,6 +62,17 @@ function PublishingPage() {
               <h1 className="text-display text-white">{portfolioItem.title}</h1>
               <p className="text-sm text-white/90">{portfolioItem.role}</p>
               <p className="text-xs text-white/50">{portfolioItem.period}</p>
+              {portfolioItem.links.homepage && (
+                <a
+                  href={portfolioItem.links.homepage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary mt-6 inline-flex"
+                >
+                  웹사이트 바로가기
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </a>
+              )}
             </div>
             <ScrollPf />
           </div>
