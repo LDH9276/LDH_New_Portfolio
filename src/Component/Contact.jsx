@@ -1,9 +1,49 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ArrowUpRight, ExternalLink, Mail, MessageCircle } from "lucide-react";
+import {
+  ArrowUpRight,
+  Check,
+  Copy,
+  ExternalLink,
+  Mail,
+  MessageCircle,
+} from "lucide-react";
 
 function Contact({ activeSlide, titleId = "contact-title" }) {
   const [active, setActive] = useState("ready");
+  const [copied, setCopied] = useState(null);
+  const [copyStatus, setCopyStatus] = useState("");
+  const copyTimerRef = useRef(null);
+  const copyRequestRef = useRef(0);
+
+  useEffect(
+    () => () => {
+      clearTimeout(copyTimerRef.current);
+      copyRequestRef.current += 1;
+    },
+    [],
+  );
+
+  const copyAddress = async (item) => {
+    const request = ++copyRequestRef.current;
+    clearTimeout(copyTimerRef.current);
+    try {
+      await navigator.clipboard.writeText(item.value);
+      if (request !== copyRequestRef.current) return;
+      setCopied(item.label);
+      setCopyStatus(`${item.label} 주소를 복사했습니다.`);
+      copyTimerRef.current = setTimeout(() => {
+        setCopied(null);
+        setCopyStatus("");
+      }, 2400);
+    } catch {
+      if (request !== copyRequestRef.current) return;
+      setCopied(null);
+      setCopyStatus("복사하지 못했습니다. 아래 주소를 선택해서 복사해주세요.");
+    }
+  };
 
   useEffect(() => {
     if (activeSlide === 5) setActive("");
@@ -48,14 +88,16 @@ function Contact({ activeSlide, titleId = "contact-title" }) {
               Connect
             </h2>
             <p className="section-copy mt-8">
-              프로젝트 협업, 프론트엔드 포지션, 포트폴리오 관련 문의를
-              편하게 보내주세요.
+              프로젝트 협업, 프론트엔드 포지션, 포트폴리오 관련 문의를 편하게
+              보내주세요.
             </p>
           </div>
 
           <div
             className={`relative border-l border-border-light pl-6 transition-all delay-150 duration-700 dark:border-border-dark ${
-              isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+              isVisible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-6 opacity-0"
             }`}
           >
             <Image
@@ -73,32 +115,64 @@ function Contact({ activeSlide, titleId = "contact-title" }) {
             const Icon = item.icon;
 
             return (
-              <a
-                key={item.label}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group grid gap-4 border-b border-border-light py-6 transition-all duration-700 hover:bg-surface-muted-light dark:border-border-dark dark:hover:bg-surface-muted-dark sm:grid-cols-[52px_160px_minmax(0,1fr)_40px] sm:items-center ${
-                  isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-                }`}
-                style={{ transitionDelay: isVisible ? `${index * 90}ms` : "0ms" }}
-              >
-                <span className="flex h-10 w-10 items-center justify-center text-lime-contrast dark:text-lime">
-                  <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                </span>
-                <span className="text-[11px] font-black uppercase tracking-[0.16em] text-text-muted-light dark:text-text-muted-dark">
-                  {item.label}
-                </span>
-                <span className="min-w-0 text-[clamp(1.25rem,4vw,3.3rem)] font-black leading-none text-text-primary-light transition-colors duration-300 group-hover:text-lime-contrast dark:text-text-primary-dark dark:group-hover:text-lime">
-                  {item.value}
-                </span>
-                <span className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 group-hover:text-lime-contrast dark:text-text-muted-dark dark:group-hover:text-lime">
-                  <ArrowUpRight size={19} strokeWidth={1.8} aria-hidden="true" />
-                </span>
-              </a>
+              <div key={item.label} className="contact-interaction-row">
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group grid gap-4 border-b border-border-light py-6 transition-all duration-700 hover:bg-surface-muted-light dark:border-border-dark dark:hover:bg-surface-muted-dark sm:grid-cols-[52px_160px_minmax(0,1fr)_40px] sm:items-center ${
+                    isVisible
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-6 opacity-0"
+                  }`}
+                  style={{
+                    transitionDelay: isVisible ? `${index * 90}ms` : "0ms",
+                  }}
+                >
+                  <span className="flex h-10 w-10 items-center justify-center text-lime-contrast dark:text-lime">
+                    <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.16em] text-text-muted-light dark:text-text-muted-dark">
+                    {item.label}
+                  </span>
+                  <span className="min-w-0 text-[clamp(1.25rem,4vw,3.3rem)] font-black leading-none text-text-primary-light transition-colors duration-300 group-hover:text-lime-contrast dark:text-text-primary-dark dark:group-hover:text-lime">
+                    {item.value}
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 group-hover:text-lime-contrast dark:text-text-muted-dark dark:group-hover:text-lime">
+                    <ArrowUpRight
+                      size={19}
+                      strokeWidth={1.8}
+                      aria-hidden="true"
+                    />
+                  </span>
+                </a>
+                {item.href.startsWith("mailto:") && (
+                  <button
+                    type="button"
+                    className="contact-copy"
+                    onClick={() => copyAddress(item)}
+                    aria-label={`${item.label} 주소 복사`}
+                  >
+                    {copied === item.label ? (
+                      <Check size={15} aria-hidden="true" />
+                    ) : (
+                      <Copy size={15} aria-hidden="true" />
+                    )}
+                    <span>
+                      {copied === item.label ? "복사 완료" : "주소 복사"}
+                    </span>
+                  </button>
+                )}
+              </div>
             );
           })}
         </div>
+        <p
+          className="mt-4 min-h-[24px] text-sm text-lime-contrast dark:text-lime"
+          role="status"
+        >
+          {copyStatus}
+        </p>
       </div>
     </div>
   );

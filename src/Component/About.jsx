@@ -205,7 +205,7 @@ function About({ activeSlide, titleId = "about-title" }) {
                 {skills.map((skill, index) => (
                   <li
                     key={skill.title}
-                    className={`border-b border-border-light py-8 transition-all duration-700 dark:border-border-dark ${
+                    className={`skill-item border-b border-border-light py-8 transition-all duration-700 dark:border-border-dark ${
                       isVisible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
                     }`}
                     style={{ transitionDelay: isVisible ? `${index * 70 + 180}ms` : "0ms" }}
@@ -264,6 +264,7 @@ function About({ activeSlide, titleId = "about-title" }) {
                   id={`about-${id}-panel`}
                   role="tabpanel"
                   aria-labelledby={`about-${id}-tab`}
+                  className="career-panel"
                   hidden={tab !== id}
                 >
                   <ol className="border-t border-border-light dark:border-border-dark">

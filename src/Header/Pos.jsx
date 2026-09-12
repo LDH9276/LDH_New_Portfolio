@@ -11,7 +11,7 @@ function Pos({ handleSlideNavigation, activeSlide }) {
 
   return (
     <nav
-      className="fixed right-7 top-1/2 z-40 hidden w-[180px] -translate-y-1/2 lg:block"
+      className="pointer-events-none fixed right-7 top-1/2 z-40 hidden w-16 -translate-y-1/2 lg:block"
       aria-label="섹션 바로가기"
     >
       <ol className="flex flex-col items-end gap-3">
@@ -22,16 +22,16 @@ function Pos({ handleSlideNavigation, activeSlide }) {
             <li key={label}>
               <button
                 type="button"
-                className="group grid w-[180px] grid-cols-[1fr_40px_24px] items-center gap-3 text-right"
+                className="pointer-events-auto group relative grid h-8 w-16 grid-cols-[1fr_20px] items-center gap-2 text-right"
                 onClick={() => handleSlideNavigation(index)}
                 aria-label={`${label} 섹션으로 이동`}
                 aria-current={isActive ? "page" : undefined}
               >
                 <span
-                  className={`justify-self-end text-right text-[10px] font-black uppercase tracking-[0.16em] transition-all duration-300 ${
+                  className={`pointer-events-none absolute right-full mr-3 whitespace-nowrap bg-surface-light px-2 py-1 text-right text-[10px] font-black uppercase tracking-[0.16em] opacity-0 transition-all duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-surface-dark ${
                     isActive
                       ? "text-lime-contrast dark:text-lime"
-                      : "translate-x-2 text-text-muted-light opacity-0 group-hover:translate-x-0 group-hover:opacity-100 dark:text-text-muted-dark"
+                      : "text-text-muted-light dark:text-text-secondary-dark"
                   }`}
                 >
                   {label}

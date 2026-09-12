@@ -6,11 +6,14 @@ import PersonProject from '../src/Component/PersonProject';
 import PubProject from '../src/Component/PubProject';
 import Contact from "../src/Component/Contact";
 import Pos from '../src/Header/Pos';
+import ScrollProgress from '../src/Component/ScrollProgress';
+import useReducedMotion from '../src/hooks/useReducedMotion';
 import { useAppContext } from './Context';
 
 export default function Page() {
   const { isStart, activeSlide, setActiveSlide, setIsScrolled, pendingScrollIndex, setPendingScrollIndex, reset } = useAppContext();
   const containerRef = useRef(null);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (pendingScrollIndex !== null) {
@@ -52,13 +55,14 @@ export default function Page() {
     setActiveSlide(index);
     const section = containerRef.current?.querySelector(`[data-index="${index}"]`);
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+      section.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth' });
     }
   };
 
   return (
     <div className={`transition-opacity duration-[2.5s] ${isStart === 'ready' ? 'opacity-0' : 'opacity-100'}`}>
       <Pos handleSlideNavigation={handleSlideNavigation} activeSlide={activeSlide} />
+      <ScrollProgress containerRef={containerRef} />
 
       <div
         ref={containerRef}
@@ -69,13 +73,13 @@ export default function Page() {
             setIsScrolled(false);
           }
         }}
-        className="h-screen w-full overflow-y-auto scroll-smooth"
+        className="portfolio-scroll h-[100dvh] w-full overflow-y-auto scroll-smooth motion-reduce:scroll-auto"
       >
         <section
           id="intro"
           data-index="0"
           aria-labelledby="intro-title"
-          className="scroll-section h-screen w-full relative"
+          className="scroll-section min-h-[100dvh] w-full relative"
         >
           <Banner activeSlide={activeSlide} titleId="intro-title" />
         </section>

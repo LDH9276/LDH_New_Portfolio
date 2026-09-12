@@ -192,7 +192,7 @@ function Scene({ compact }) {
 }
 
 /* ── Exported Canvas Component ── */
-export default function ThreeBackground() {
+export default function ThreeBackground({ active = true }) {
   const [compact, setCompact] = useState(false);
 
   useEffect(() => {
@@ -205,8 +205,9 @@ export default function ThreeBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 z-0 pointer-events-none">
+    <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
       <Canvas
+        frameloop={active ? 'always' : 'demand'}
         camera={{ position: [0, 0, 10], fov: 35 }}
         dpr={[1, 1.5]}
         gl={{ antialias: false, alpha: true }}

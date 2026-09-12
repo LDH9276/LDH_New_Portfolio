@@ -1,60 +1,9 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { getCompanyWorks } from "../data/portfolio";
 
-function WorkRow({ item, index, isVisible, reset }) {
-  return (
-    <article
-      className={`work-row group ${
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-      }`}
-      style={{ transitionDelay: isVisible ? `${index * 70}ms` : "0ms" }}
-    >
-      <Link
-        href={item.route}
-        aria-label={`${item.title} 회사 포트폴리오 상세 보기`}
-        onClick={reset}
-        className="contents"
-      >
-        <span className="work-index">{String(index + 1).padStart(2, "0")}</span>
-
-        <span className="min-w-0">
-          <strong className="work-title block">{item.title}</strong>
-          <span className="work-meta">
-            <span>{item.role}</span>
-            <span>{item.stackLabel}</span>
-            <span>{item.period}</span>
-          </span>
-        </span>
-
-        <span className="media-strip">
-          <Image
-            src={item.assets.thumb}
-            alt={`${item.title} 썸네일`}
-            fill
-            sizes="(min-width: 1024px) 220px, (min-width: 640px) 132px, 90vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        </span>
-      </Link>
-
-      {item.links.homepage && (
-        <a
-          href={item.links.homepage}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${item.title} 웹사이트 새 창으로 열기`}
-          title="웹사이트 새 창으로 열기"
-          className="flex h-10 w-10 items-center justify-center justify-self-end text-text-muted-light transition-colors duration-300 hover:text-lime-hover dark:text-text-muted-dark dark:hover:text-lime"
-        >
-          <ArrowUpRight size={19} strokeWidth={1.8} aria-hidden="true" />
-        </a>
-      )}
-    </article>
-  );
-}
+import ProjectExplorer from "./ProjectExplorer";
 
 function PubProject({ activeSlide, reset, titleId = "publishing-title" }) {
   const [active, setActive] = useState("ready");
@@ -88,17 +37,7 @@ function PubProject({ activeSlide, reset, titleId = "publishing-title" }) {
           </p>
         </div>
 
-        <div className="work-list">
-          {items.map((item, index) => (
-            <WorkRow
-              key={item.id}
-              item={item}
-              index={index}
-              isVisible={isVisible}
-              reset={reset}
-            />
-          ))}
-        </div>
+        <ProjectExplorer items={items} reset={reset} id="company" />
       </div>
     </div>
   );

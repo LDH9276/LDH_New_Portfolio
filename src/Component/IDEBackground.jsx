@@ -78,13 +78,13 @@ const highlight = (text) => {
   });
 };
 
-export default function IDEBackground({ contentClassName = "" }) {
+export default function IDEBackground({ contentClassName = "", active = true, reducedMotion = false }) {
   const [lines, setLines] = useState([]);
   const [currentLineIdx, setCurrentLineIdx] = useState(0);
   const [currentCharIdx, setCurrentCharIdx] = useState(0);
 
   useEffect(() => {
-    if (currentLineIdx >= rawCode.length) return;
+    if (!active || reducedMotion || currentLineIdx >= rawCode.length) return;
 
     const currentRawLine = rawCode[currentLineIdx];
 
@@ -101,7 +101,7 @@ export default function IDEBackground({ contentClassName = "" }) {
       }, 150); // 줄바꿈 대기 시간
       return () => clearTimeout(timeout);
     }
-  }, [currentLineIdx, currentCharIdx]);
+  }, [currentLineIdx, currentCharIdx, active, reducedMotion]);
 
   return (
     <div
@@ -109,19 +109,19 @@ export default function IDEBackground({ contentClassName = "" }) {
       className="absolute inset-0 overflow-hidden bg-surface-light dark:bg-[#0d1117] transition-colors duration-500 pointer-events-none select-none opacity-100 z-0"
     >
       <div className={`w-full h-full p-4 md:p-8 font-mono text-[10px] md:text-xs lg:text-sm leading-loose md:leading-loose opacity-50 dark:opacity-80 lg:opacity-70 lg:dark:opacity-100 ${contentClassName}`}>
-        {lines.map((line, idx) => (
+        {(reducedMotion ? rawCode : lines).map((line, idx) => (
           <div key={idx} className="flex">
             <span className="w-8 text-right pr-4 text-gray-400 dark:text-gray-600 select-none">{idx + 1}</span>
             <span className="whitespace-pre">{highlight(line)}</span>
           </div>
         ))}
         
-        {currentLineIdx < rawCode.length && (
+        {!reducedMotion && currentLineIdx < rawCode.length && (
           <div className="flex">
             <span className="w-8 text-right pr-4 text-gray-400 dark:text-gray-600 select-none">{lines.length + 1}</span>
             <span className="whitespace-pre">
               {highlight(rawCode[currentLineIdx].substring(0, currentCharIdx))}
-              <span className="inline-block w-2 h-4 md:h-5 bg-lime ml-1 align-middle animate-pulse" />
+              <span className={`inline-block w-2 h-4 md:h-5 bg-lime ml-1 align-middle ${active ? "animate-pulse" : ""}`} />
             </span>
           </div>
         )}
